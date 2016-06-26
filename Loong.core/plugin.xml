@@ -219,7 +219,7 @@
       <perspective
             class="loongplugin.PerspectiveFactory"
             fixed="true"
-            icon="icons/loong.png"
+            icon="icons/loong.jpg"
             id="LoongPlugin.perspective"
             name="Loong">
       </perspective>
@@ -276,6 +276,15 @@
             icon="icons/umlicon.png"
             id="Loongplugin.uml.editors.UMLBuilderEditor"
             name="Class Diagram Editor">
+      </editor>
+      <editor
+            class="loongplugin.configfeaturemodeleditor.ui.ConfigurableFeatureModelEditor"
+            contributorClass="loongplugin.configfeaturemodeleditor.actions.DiagramActionBarContributor"
+            default="true"
+            extensions="mconfig"
+            icon="icons/mconfig.gif"
+            id="LoongPlugin.mConfigFeatureModelEditor"
+            name="Configurable Feature Model Editor">
       </editor>
    </extension>
    <extension
@@ -350,15 +359,22 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            id="LoongPlugin.umlcategory"
+            id="LoongPlugin.newwizard"
             name="Loong">
       </category>
       <wizard
-            category="LoongPlugin.umlcategory"
+            category="LoongPlugin.newwizard"
             class="loongplugin.uml.classdiagram.wizard.NewClassDiagramWizard"
             icon="icons/umlicon.png"
             id="LoongPlugin.uml.wizard"
             name="Class Diagram">
+      </wizard>
+      <wizard
+            category="LoongPlugin.newwizard"
+            class="loongplugin.newWizard.MConfigFileWizard"
+            icon="icons/ConfigurationFileSmall.png"
+            id="LoongPlugin.mConfigFeatureModelwizard"
+            name="Temprorary Configurable Feature Model">
       </wizard>
    </extension>
 

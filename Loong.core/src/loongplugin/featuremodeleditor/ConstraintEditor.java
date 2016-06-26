@@ -111,8 +111,7 @@ public class ConstraintEditor {
 				.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
 					public void widgetSelected(
 							org.eclipse.swt.events.SelectionEvent e) {
-						Program
-								.launch("http://www.cs.utexas.edu/~schwartz/ATS/fopdocs/guidsl.html");
+						Program.launch("http://www.cs.utexas.edu/~schwartz/ATS/fopdocs/guidsl.html");
 					}
 				});
 		gridData = new GridData(SWT.BEGINNING);

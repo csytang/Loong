@@ -141,7 +141,7 @@ public class LoongUMLPlugin extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("LoongPlugin.uml", path);
+		return AbstractUIPlugin.imageDescriptorFromPlugin("LoongPluginUML", path);
 	}
 	
 	public List getDndListeners() {
