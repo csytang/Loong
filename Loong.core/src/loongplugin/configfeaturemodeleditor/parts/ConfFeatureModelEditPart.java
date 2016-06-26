@@ -12,7 +12,7 @@ import org.eclipse.draw2d.Layer;
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.gef.EditPolicy;
 
-public class ContentsEditPart extends EditPartWithListener {
+public class ConfFeatureModelEditPart extends EditPartWithListener {
 
 	@Override
 	protected IFigure createFigure() {

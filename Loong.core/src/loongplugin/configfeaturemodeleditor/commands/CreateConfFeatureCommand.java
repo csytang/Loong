@@ -5,7 +5,7 @@ import loongplugin.configfeaturemodeleditor.model.ConfFeature;
 
 import org.eclipse.gef.commands.Command;
 
-public class DeleteCommand extends Command {
+public class CreateConfFeatureCommand extends Command {
 
 	private ConfFeatureModel contentsModel;
 
@@ -13,20 +13,20 @@ public class DeleteCommand extends Command {
 
 	@Override
 	public void execute() {
-		contentsModel.removeChild(helloModel);
+		contentsModel.addChild(helloModel);
 	}
 
-	public void setContentsModel(Object model) {
+	public void setConfFeatureModel(Object model) {
 		contentsModel = (ConfFeatureModel) model;
 	}
 
-	public void setHelloModel(Object model) {
+	public void setConfFeature(Object model) {
 		helloModel = (ConfFeature) model;
 	}
 
 	@Override
 	public void undo() {
-		contentsModel.addChild(helloModel);
+		contentsModel.removeChild(helloModel);
 	}
 
 }

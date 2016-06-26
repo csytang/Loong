@@ -1,7 +1,7 @@
 package loongplugin.configfeaturemodeleditor.policies;
 
-import loongplugin.configfeaturemodeleditor.commands.ChangeConstraintCommand;
-import loongplugin.configfeaturemodeleditor.commands.CreateCommand;
+import loongplugin.configfeaturemodeleditor.commands.ChangeConfFeatureConstraintCommand;
+import loongplugin.configfeaturemodeleditor.commands.CreateConfFeatureCommand;
 import loongplugin.configfeaturemodeleditor.model.ConfFeature;
 
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -15,7 +15,7 @@ public class CustomXYLayoutEditPolicy extends XYLayoutEditPolicy {
 	@Override
 	protected Command createChangeConstraintCommand(EditPart child,
 			Object constraint) {
-		ChangeConstraintCommand command = new ChangeConstraintCommand();
+		ChangeConfFeatureConstraintCommand command = new ChangeConfFeatureConstraintCommand();
 		command.setModel(child.getModel());
 		command.setConstraint((Rectangle) constraint);
 		return command;
@@ -23,12 +23,12 @@ public class CustomXYLayoutEditPolicy extends XYLayoutEditPolicy {
 
 	@Override
 	protected Command getCreateCommand(CreateRequest request) {
-		CreateCommand createCommand = new CreateCommand();
+		CreateConfFeatureCommand createCommand = new CreateConfFeatureCommand();
 		Rectangle constraint = (Rectangle) getConstraintFor(request);
 		ConfFeature model = (ConfFeature) request.getNewObject();
 		model.setConstraint(constraint);
-		createCommand.setContentsModel(getHost().getModel());
-		createCommand.setHelloModel(model);
+		createCommand.setConfFeatureModel(getHost().getModel());
+		createCommand.setConfFeature(model);
 		return createCommand;
 	}
 

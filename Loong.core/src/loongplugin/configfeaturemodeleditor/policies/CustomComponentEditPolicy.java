@@ -1,6 +1,6 @@
 package loongplugin.configfeaturemodeleditor.policies;
 
-import loongplugin.configfeaturemodeleditor.commands.DeleteCommand;
+import loongplugin.configfeaturemodeleditor.commands.DeleteConfFeatureCommand;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.ComponentEditPolicy;
@@ -10,9 +10,9 @@ public class CustomComponentEditPolicy extends ComponentEditPolicy {
 
 	@Override
 	protected Command createDeleteCommand(GroupRequest deleteRequest) {
-		DeleteCommand deleteCommand = new DeleteCommand();
-		deleteCommand.setContentsModel(getHost().getParent().getModel());
-		deleteCommand.setHelloModel(getHost().getModel());
+		DeleteConfFeatureCommand deleteCommand = new DeleteConfFeatureCommand();
+		deleteCommand.setConfFeatureModel(getHost().getParent().getModel());
+		deleteCommand.setConfFeature(getHost().getModel());
 		return deleteCommand;
 	}
 

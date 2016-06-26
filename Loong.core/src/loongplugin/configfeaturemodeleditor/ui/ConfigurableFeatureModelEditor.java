@@ -5,12 +5,14 @@ import java.net.URL;
 import loongplugin.LoongPlugin;
 import loongplugin.configfeaturemodeleditor.model.ConfFeatureModel;
 import loongplugin.configfeaturemodeleditor.model.ConfFeature;
+import loongplugin.configfeaturemodeleditor.model.FeatureConnectionModel;
 import loongplugin.configfeaturemodeleditor.parts.PartFactory;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DefaultEditDomain;
+import org.eclipse.gef.palette.ConnectionCreationToolEntry;
 import org.eclipse.gef.palette.CreationToolEntry;
 import org.eclipse.gef.palette.MarqueeToolEntry;
 import org.eclipse.gef.palette.PaletteDrawer;
@@ -32,12 +34,14 @@ public class ConfigurableFeatureModelEditor extends GraphicalEditorWithPalette {
 	public static final String ID = LoongPlugin.PLUGIN_ID+".mConfigFeatureModelEditor";
 	
 	public ImageDescriptor FEATURE_DESCRIPTION;
+	public ImageDescriptor FEATURECONNECTION_DESCRIPTION;
 	
 	public ConfigurableFeatureModelEditor() {
 		Bundle bundle = Platform.getBundle(LoongPlugin.PLUGIN_ID);
 		URL fullPathString = BundleUtility.find(bundle,"icons/feature.jpg");
 		FEATURE_DESCRIPTION = ImageDescriptor.createFromURL(fullPathString);
-		
+		URL fullConnectionPathString = BundleUtility.find(bundle,"icons/arrow.gif");
+		FEATURECONNECTION_DESCRIPTION = ImageDescriptor.createFromURL(fullConnectionPathString);
 		setEditDomain(new DefaultEditDomain(this));
 	}
 
@@ -54,7 +58,7 @@ public class ConfigurableFeatureModelEditor extends GraphicalEditorWithPalette {
 
 
 		ConfFeature confF = new ConfFeature();
-		confF.setConstraint(new Rectangle(10, 80, 80, 50));
+		confF.setConstraint(new Rectangle(20, 80, 80, 50));
 		contents.addChild(confF);
 
 		getGraphicalViewer().setContents(contents);
@@ -81,10 +85,18 @@ public class ConfigurableFeatureModelEditor extends GraphicalEditorWithPalette {
 				"Add a feature to diagram", new SimpleFactory(ConfFeature.class), FEATURE_DESCRIPTION,
 				FEATURE_DESCRIPTION);
 		drawer.add(creationEntry);
+		
+		PaletteDrawer relations = new PaletteDrawer("Relations");
+		ConnectionCreationToolEntry connectionEntry = new ConnectionCreationToolEntry("Connection",
+				"Connect featurs", new SimpleFactory(FeatureConnectionModel.class), FEATURECONNECTION_DESCRIPTION,
+				FEATURECONNECTION_DESCRIPTION);
+		relations.add(connectionEntry);
 
 		root.add(toolGroup);
 		root.add(drawer);
-
+		root.add(relations);
+		
+		
 		return root;
 	}
 

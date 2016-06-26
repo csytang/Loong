@@ -2,6 +2,7 @@ package loongplugin.configfeaturemodeleditor.parts;
 
 import loongplugin.configfeaturemodeleditor.model.ConfFeatureModel;
 import loongplugin.configfeaturemodeleditor.model.ConfFeature;
+import loongplugin.configfeaturemodeleditor.model.FeatureConnectionModel;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartFactory;
@@ -21,10 +22,12 @@ public class PartFactory implements EditPartFactory {
 	 */
 	private EditPart getPartForElement(Object modelElement) {
 		if (modelElement instanceof ConfFeatureModel) 
-			return new ContentsEditPart();
+			return new ConfFeatureModelEditPart();
 		if (modelElement instanceof ConfFeature) 
-			return new HelloEditPart();
-
+			return new ConfFeaturePart();
+		if (modelElement instanceof FeatureConnectionModel)
+			return new FeatureConnectionEditPart();
+		
 		throw new RuntimeException("Can't create part for model element: "
 				+ ((modelElement != null) ? modelElement.getClass().getName()
 						: "null"));

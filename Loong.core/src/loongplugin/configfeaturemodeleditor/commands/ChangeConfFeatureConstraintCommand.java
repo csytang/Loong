@@ -5,9 +5,9 @@ import loongplugin.configfeaturemodeleditor.model.ConfFeature;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.commands.Command;
 
-public class ChangeConstraintCommand extends Command {
+public class ChangeConfFeatureConstraintCommand extends Command {
 
-	private ConfFeature helloModel;
+	private ConfFeature confFeature;
 
 	private Rectangle constraint;
 
@@ -15,12 +15,12 @@ public class ChangeConstraintCommand extends Command {
 
 	@Override
 	public void execute() {
-		helloModel.setConstraint(constraint);
+		confFeature.setConstraint(constraint);
 	}
 
 	public void setModel(Object model) {
-		this.helloModel = (ConfFeature) model;
-		oldConstraint = helloModel.getConstraint();
+		this.confFeature = (ConfFeature) model;
+		oldConstraint = confFeature.getConstraint();
 	}
 
 	public void setConstraint(Rectangle constraint) {
@@ -29,7 +29,7 @@ public class ChangeConstraintCommand extends Command {
 
 	@Override
 	public void undo() {
-		helloModel.setConstraint(oldConstraint);
+		confFeature.setConstraint(oldConstraint);
 	}
 
 }
