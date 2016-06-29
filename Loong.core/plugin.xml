@@ -246,6 +246,15 @@
             name="ASTView"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="LoongPlugin.viewcategory"
+            class="loongplugin.views.recommendedfeatureview.RecommendedFeatureView"
+            icon="icons/recommend.png"
+            id="LoongPlugin.recommendedFeatureList"
+            name="Recommended Feature List"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

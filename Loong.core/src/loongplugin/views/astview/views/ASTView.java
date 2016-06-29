@@ -504,8 +504,8 @@ public class ASTView extends ViewPart implements IShowInSource {
 	
 	public ASTView() {
 		fSuperListener= null;
-		fDialogSettings= LoongPlugin.getDefault().getDialogSettings();
-		fDoLinkWithEditor= fDialogSettings.getBoolean(SETTINGS_LINK_WITH_EDITOR);
+		fDialogSettings = LoongPlugin.getDefault().getDialogSettings();
+		fDoLinkWithEditor = fDialogSettings.getBoolean(SETTINGS_LINK_WITH_EDITOR);
 		try {
 			fCurrentInputKind= fDialogSettings.getInt(SETTINGS_INPUT_KIND);
 		} catch (NumberFormatException e) {

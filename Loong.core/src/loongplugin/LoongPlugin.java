@@ -14,8 +14,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,6 +26,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
 import loongplugin.color.IColorChangeListener;
 import loongplugin.editor.bindings.BindingColorCache;
 import loongplugin.events.ASTColorChangedEvent;
@@ -265,5 +269,19 @@ public class LoongPlugin extends AbstractUIPlugin {
 	public TypingManager getTypingManager() {
 		return typingManager;
 	}
+
 	
+	public static void logException(Throwable ex) {
+		ILog log = getDefault().getLog();
+		IStatus status = null;
+		if (ex instanceof CoreException) {
+			status = ((CoreException) ex).getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, PLUGIN_ID, 0, ex.toString(), ex);
+		}
+		log.log(status);
+
+		// TODO debug
+		ex.printStackTrace();
+	}
 }

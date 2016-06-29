@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="kxml2-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="kxml2-min-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="org.sat4j.core.jar"/>
 	<classpathentry exported="true" kind="lib" path="jakarta.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
@@ -17,5 +19,22 @@
 	<classpathentry kind="lib" path="guidsl.jar"/>
 	<classpathentry kind="lib" path="dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="dom4j.jar"/>
+	<classpathentry kind="lib" path="org.eclipse.uml2_5.2.0.v20160516-0939.jar"/>
+	<classpathentry kind="lib" path="xstream-1.4.2.jar"/>
+	<classpathentry kind="lib" path="stanford-english-corenlp-2016-01-10-models.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp-3.6.0.jar"/>
+	<classpathentry kind="lib" path="slf4j-api.jar"/>
+	<classpathentry kind="lib" path="slf4j-simple.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp-3.6.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp-3.6.0-models.jar"/>
+	<classpathentry kind="lib" path="stanford-corenlp-3.6.0-sources.jar"/>
+	<classpathentry kind="lib" path="xom-1.2.10-src.jar"/>
+	<classpathentry kind="lib" path="xom.jar"/>
+	<classpathentry kind="lib" path="javax.json-api-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="javax.json.jar"/>
+	<classpathentry kind="lib" path="joda-time-2.9-sources.jar"/>
+	<classpathentry kind="lib" path="joda-time.jar"/>
+	<classpathentry kind="lib" path="jollyday-0.4.7-sources.jar"/>
+	<classpathentry kind="lib" path="jollyday.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

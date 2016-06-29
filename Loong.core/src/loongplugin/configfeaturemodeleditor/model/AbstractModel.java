@@ -2,11 +2,12 @@ package loongplugin.configfeaturemodeleditor.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-public class AbstractModel implements IPropertySource{
+public class AbstractModel implements Serializable, IPropertySource{
 
 	private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 

@@ -6,12 +6,6 @@ package loongplugin.uml.dnd;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-
-
-
-
-
 import loongplugin.uml.java.ImportClassModelCommand;
 import loongplugin.uml.java.UMLJavaUtils;
 import loongplugin.uml.model.RootModel;
