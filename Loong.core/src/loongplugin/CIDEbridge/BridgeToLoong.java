@@ -31,8 +31,6 @@ public class BridgeToLoong implements IObjectActionDelegate{
 		job.setUser(true);
 		job.setPriority(Job.LONG);
 		job.schedule();
-		
-		
 	}
 
 	@Override

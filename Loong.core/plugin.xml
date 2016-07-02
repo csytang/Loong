@@ -233,7 +233,7 @@
       <view
             category="LoongPlugin.viewcategory"
             class="loongplugin.views.featureview.FeatureView"
-            icon="icons/FeatureIconSmall.ico"
+            icon="icons/loong.jpg"
             id="LoongPlugin.featureview"
             name="Feature List"
             restorable="true">

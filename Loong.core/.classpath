@@ -4,9 +4,18 @@
 	<classpathentry exported="true" kind="lib" path="kxml2-min-2.3.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="org.sat4j.core.jar"/>
 	<classpathentry exported="true" kind="lib" path="jakarta.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="swing2swt.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.core.filebuffers_3.5.300.v20130225-1821.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.jdt.core_3.9.2.v20140114-1555.jar"/>
@@ -21,20 +30,17 @@
 	<classpathentry kind="lib" path="dom4j.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.uml2_5.2.0.v20160516-0939.jar"/>
 	<classpathentry kind="lib" path="xstream-1.4.2.jar"/>
-	<classpathentry kind="lib" path="stanford-english-corenlp-2016-01-10-models.jar"/>
-	<classpathentry kind="lib" path="stanford-corenlp-3.6.0.jar"/>
 	<classpathentry kind="lib" path="slf4j-api.jar"/>
 	<classpathentry kind="lib" path="slf4j-simple.jar"/>
-	<classpathentry kind="lib" path="stanford-corenlp-3.6.0-javadoc.jar"/>
-	<classpathentry kind="lib" path="stanford-corenlp-3.6.0-models.jar"/>
-	<classpathentry kind="lib" path="stanford-corenlp-3.6.0-sources.jar"/>
 	<classpathentry kind="lib" path="xom-1.2.10-src.jar"/>
 	<classpathentry kind="lib" path="xom.jar"/>
 	<classpathentry kind="lib" path="javax.json-api-1.0-sources.jar"/>
 	<classpathentry kind="lib" path="javax.json.jar"/>
-	<classpathentry kind="lib" path="joda-time-2.9-sources.jar"/>
-	<classpathentry kind="lib" path="joda-time.jar"/>
-	<classpathentry kind="lib" path="jollyday-0.4.7-sources.jar"/>
-	<classpathentry kind="lib" path="jollyday.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="deeplearning4j-nlp-0.4-rc3.10.jar"/>
+	<classpathentry kind="lib" path="protobuf.jar"/>
+	<classpathentry kind="lib" path="canova-api-0.0.0.16.jar"/>
+	<classpathentry kind="lib" path="ejml-0.23.jar"/>
+	<classpathentry kind="lib" path="deeplearning4j-core-0.4-rc3.10-sources.jar"/>
+	<classpathentry kind="lib" path="nd4j-api-0.4-rc3.10.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
