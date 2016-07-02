@@ -36,11 +36,8 @@
 	<classpathentry kind="lib" path="xom.jar"/>
 	<classpathentry kind="lib" path="javax.json-api-1.0-sources.jar"/>
 	<classpathentry kind="lib" path="javax.json.jar"/>
-	<classpathentry kind="lib" path="deeplearning4j-nlp-0.4-rc3.10.jar"/>
 	<classpathentry kind="lib" path="protobuf.jar"/>
-	<classpathentry kind="lib" path="canova-api-0.0.0.16.jar"/>
 	<classpathentry kind="lib" path="ejml-0.23.jar"/>
-	<classpathentry kind="lib" path="deeplearning4j-core-0.4-rc3.10-sources.jar"/>
-	<classpathentry kind="lib" path="nd4j-api-0.4-rc3.10.jar"/>
+	<classpathentry kind="lib" path="google-collections.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
