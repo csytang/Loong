@@ -15,31 +15,49 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "malloc.h"
+#include "word2vecJ_word2vecUtil.h"
 
 const long long max_size = 2000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown
 const long long max_w = 50;              // max length of vocabulary entries
 
-int main(int argc, char **argv) {
-  FILE *f;
-  char st1[max_size];
-  char *bestw[N];
-  char file_name[max_size], st[100][max_size];
-  float dist, len, bestd[N], vec[max_size];
-  long long words, size, a, b, c, d, cn, bi[100];
-  char ch;
-  float *M;
-  char *vocab;
+JNIEXPORT void JNICALL Java_word2vecJ_word2vecUtil_word2vec
+	  (JNIEnv * env, jclass jazz, jint argc, jobjectArray Javaargv) {
+
+
+	jstring jstr;
+	jsize lenth = (*env)->GetArrayLength(env, Javaargv);
+	char **pstr = (char **) malloc(lenth*sizeof(char *));
+
+	int i=0;
+
+	for (i=0 ; i<lenth; i++) {
+		 jstr = (*env)->GetObjectArrayElement(env, Javaargv, i);
+		 const char* nativeString = (char *)(*env)->GetStringUTFChars(env, jstr, 0);
+		 pstr[i] = (char*) malloc(strlen(&nativeString)+1);
+		 strcpy(pstr[i],nativeString);
+		 printf("argv_\t%d\t,%s\n",i,&pstr[i]);
+		 //(*env)->ReleaseStringUTFChars(env,jstr,nativeString);
+	}
+
+
+	  FILE *f;
+	  char st1[max_size];
+	  char *bestw[N];
+	  char file_name[max_size], st[100][max_size];
+	  float dist, len, bestd[N], vec[max_size];
+	  long long words, size, a, b, c, d, cn, bi[100];
+	  char ch;
+	  float *M;
+	  char *vocab;
   if (argc < 2) {
     printf("Usage: ./distance <FILE>\nwhere FILE contains word projections in the BINARY FORMAT\n");
-    return 0;
   }
-  strcpy(file_name, argv[1]);
+  strcpy(file_name, pstr[1]);
   f = fopen(file_name, "rb");
   if (f == NULL) {
     printf("Input file not found\n");
-    return -1;
+    return;
   }
   fscanf(f, "%lld", &words);
   fscanf(f, "%lld", &size);
@@ -48,7 +66,7 @@ int main(int argc, char **argv) {
   M = (float *)malloc((long long)words * (long long)size * sizeof(float));
   if (M == NULL) {
     printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
-    return -1;
+    return;
   }
   for (b = 0; b < words; b++) {
     a = 0;
@@ -138,5 +156,5 @@ int main(int argc, char **argv) {
     }
     for (a = 0; a < N; a++) printf("%50s\t\t%f\n", bestw[a], bestd[a]);
   }
-  return 0;
+
 }
