@@ -16,6 +16,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include "loongplugin_word2vec_word2vecUtil.h"
 
 const long long max_size = 2000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown

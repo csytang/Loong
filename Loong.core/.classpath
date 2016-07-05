@@ -30,14 +30,10 @@
 	<classpathentry kind="lib" path="dom4j.jar"/>
 	<classpathentry kind="lib" path="org.eclipse.uml2_5.2.0.v20160516-0939.jar"/>
 	<classpathentry kind="lib" path="xstream-1.4.2.jar"/>
-	<classpathentry kind="lib" path="slf4j-api.jar"/>
-	<classpathentry kind="lib" path="slf4j-simple.jar"/>
 	<classpathentry kind="lib" path="xom-1.2.10-src.jar"/>
 	<classpathentry kind="lib" path="xom.jar"/>
 	<classpathentry kind="lib" path="javax.json-api-1.0-sources.jar"/>
 	<classpathentry kind="lib" path="javax.json.jar"/>
 	<classpathentry kind="lib" path="protobuf.jar"/>
-	<classpathentry kind="lib" path="ejml-0.23.jar"/>
-	<classpathentry kind="lib" path="google-collections.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

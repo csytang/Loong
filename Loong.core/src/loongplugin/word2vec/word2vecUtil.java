@@ -8,13 +8,25 @@ public class word2vecUtil {
     native public static void distance(int argc,String[] argv);
     // 
     static{
-        System.load("./libword2vec.jnilib");
-        System.load("./libdistance.jnilib");
+    	
+    	String s = word2vecUtil.class.getName();
+    	int i = s.lastIndexOf(".");
+    	if(i > -1) s = s.substring(i + 1);
+    	s = s + ".class";
+    	String projectPath = word2vecUtil.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    	projectPath += "jnilibs/"; 
+    	String libLocationDis = projectPath+"libdistance.jnilib";
+    	String libLocationWord2vec = projectPath+"libword2vec.jnilib";
+    	
+    	System.load(libLocationDis);
+    	System.load(libLocationWord2vec);
     }
-    public word2vecUtil(String filestring){
+    
+    public word2vecUtil(String filePath,String fileoutPath){
+    	
     	String[] argv = {"word2vec",
-				"-train",filestring,
-				"-output","vectors.log",
+				"-train",filePath,
+				"-output",fileoutPath,
 				"-cbow","1",
 				"-size","200",
 				"-window","8",
@@ -27,6 +39,8 @@ public class word2vecUtil {
 		};
 		int size = argv.length;
 		word2vec(size,argv);
-		
+		String[] argv2 ={"distance",fileoutPath};
+		int sizeargv2 = argv2.length;
+		//distance(sizeargv2,argv2);
     }
 }

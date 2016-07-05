@@ -89,6 +89,8 @@ public class RecommendedFeatureView extends ViewPart {
 		if(selectedProject==null){
 			// Obtain the selectedProject from active editor
 			IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+			if(activeEditor==null)
+				return;
 			IEditorInput input = activeEditor.getEditorInput();
 			if (input instanceof IFileEditorInput){
 				IFileEditorInput editorinput = (IFileEditorInput)input;
@@ -247,8 +249,9 @@ public class RecommendedFeatureView extends ViewPart {
 			RecommendFeatureNameJob job;
 			if(selectedProject!=null)
 				job = new RecommendFeatureNameJob(allJavaElements,selectedProject);
-			else
-				job = new RecommendFeatureNameJob(allJavaElements);
+			else{
+				job = new RecommendFeatureNameJob(allJavaElements,allJavaElements.get(0).getJavaProject().getProject());
+			}
 			job.setUser(true);
 			job.setPriority(Job.LONG);
 			job.schedule();

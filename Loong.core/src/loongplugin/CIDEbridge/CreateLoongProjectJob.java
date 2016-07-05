@@ -1,12 +1,5 @@
 package loongplugin.CIDEbridge;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.Policy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,17 +7,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
-
 import loongplugin.color.ColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
-import loongplugin.feature.FeatureModelManager;
 import loongplugin.feature.guidsl.GuidslReader;
 import loongplugin.feature.guidsl.UnsupportedModelException;
 import loongplugin.modelcolor.ModelIDCLRFile;
 import loongplugin.nature.CIDEProjectNature;
 import loongplugin.nature.LoongProjectNature;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -46,7 +36,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -54,7 +43,6 @@ import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 
 public class CreateLoongProjectJob extends WorkspaceJob {
 

@@ -48,15 +48,13 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 	
 	private List<IJavaElement> unifiedIJavaElements = new LinkedList<IJavaElement>();
 	private List<IJavaElement> ununifiedIJavaElements;
-	private FeatureNameDictionary dict = new FeatureNameDictionary();
-	 
+	private FeatureNameDictionary dict;
+	private IProject selectProject = null;
+	
 	public RecommendFeatureNameJob(List<IJavaElement>elements,IProject project) {
 		super("Building recommended name list for project:"+project.getName());
 		ununifiedIJavaElements = elements;
-	}
-	public RecommendFeatureNameJob(List<IJavaElement>elements){
-		super("Building recommended name list");
-		ununifiedIJavaElements = elements;
+		selectProject = project;
 	}
 
 	@Override
@@ -64,6 +62,8 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 			throws CoreException {
 		// TODO Auto-generated method stub
 		// Extract all List into a java file fashion(at least)
+		dict = new FeatureNameDictionary(monitor);
+		dict.setProject(selectProject);
 		for(IJavaElement element:ununifiedIJavaElements){
 			if(element instanceof IPackageFragment){
 				ICompilationUnit[]allcompilationUnit = ((IPackageFragment)element).getCompilationUnits();
@@ -91,7 +91,7 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 			}
 		}
 		int processUnit = unifiedIJavaElements.size();
-		monitor.beginTask("Building recommended name list", processUnit+2);
+		monitor.beginTask("Building recommended name list", processUnit+5);
 		for(IJavaElement element:unifiedIJavaElements){
 			if(element instanceof IAnnotation){
 				monitor.worked(1);
@@ -176,10 +176,18 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 			monitor.worked(1);
 		}
 		// build dictionary
-		
+		dict.convertToList();
 		
 		monitor.worked(1);
+		
+		dict.normalizationTrack1();
+		monitor.worked(1);
+		dict.normalizationTrack2();
+		monitor.worked(1);
+		
 		// extract name
+		dict.mergeAndOptimizeDict();
+		monitor.worked(1);
 		
 		monitor.done();
 		return Status.OK_STATUS;

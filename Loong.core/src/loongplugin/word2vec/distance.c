@@ -15,15 +15,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "word2vecJ_word2vecUtil.h"
+#include "loongplugin_word2vec_word2vecUtil.h"
 
 const long long max_size = 2000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown
 const long long max_w = 50;              // max length of vocabulary entries
 
-JNIEXPORT void JNICALL Java_word2vecJ_word2vecUtil_word2vec
-	  (JNIEnv * env, jclass jazz, jint argc, jobjectArray Javaargv) {
-
+JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
+	  (JNIEnv * env, jclass jazz, jint argc, jobjectArray Javaargv){
 
 	jstring jstr;
 	jsize lenth = (*env)->GetArrayLength(env, Javaargv);

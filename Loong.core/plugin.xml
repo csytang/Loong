@@ -29,13 +29,6 @@
             </separator>
          </menu>
          <action
-               class="loongplugin.popup.actions.ImportRequirSpecification"
-               icon="icons/document.png"
-               id="LoongPlugin.importRequirementSpecification"
-               label="Import Reqirement Specification"
-               menubarPath="LoongPlugin.menu/group1">
-         </action>
-         <action
                class="loongplugin.popup.actions.EditFeatureModelAction"
                icon="icons/FeatureIconSmall.ico"
                id="LoongPlugin.editFeatureNames"
@@ -191,11 +184,6 @@
                id="LoongPlugin.SetResourceColor"
                label="Set File/Directory Feature(Loong)"
                menubarPath="group.open">
-         </action>
-         <action
-               class="loongplugin.popup.actions.ParseRequirSpecification"
-               id="LoongPlugin.parseRequirement"
-               label="Parse Requirement Specification into Feature Model">
          </action>
       </objectContribution>
    </extension>

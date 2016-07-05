@@ -17,7 +17,7 @@
 #include <string.h>
 #include <math.h>
 #include <pthread.h>
-#include "word2vecJ_word2vecUtil.h"
+#include "loongplugin_word2vec_word2vecUtil.h"
 
 #define MAX_STRING 100
 #define EXP_TABLE_SIZE 1000
@@ -626,8 +626,8 @@ int *table;
 		  return -1;
 	}
 
-	JNIEXPORT void JNICALL Java_word2vecJ_word2vecUtil_word2vec
-	  (JNIEnv * env, jclass jazz, jint argc, jobjectArray Javaargv) {
+JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_word2vec
+		  (JNIEnv *env, jclass jazz, jint argc, jobjectArray Javaargv){
 	  int i;
 
 	  jstring jstr;
@@ -639,7 +639,6 @@ int *table;
 	  	  const char* nativeString = (char *)(*env)->GetStringUTFChars(env, jstr, 0);
 	  	  argv[i] = (char*) malloc(strlen(&nativeString)+1);
 	  	  strcpy(argv[i],nativeString);
-	  	  printf("argv_\t%d\t,%s\n",i,&argv[i]);
 	  	  //(*env)->ReleaseStringUTFChars(env,jstr,nativeString);
 	  }
 
@@ -694,7 +693,6 @@ int *table;
 		  layer1_size = atoi(argv[i + 1]);
 	  }
 	  if ((i = ArgPos((char *)"-train", argc, argv)) > 0) {
-		  printf("traning_file:%s\n",argv[i+1]);
 		  strcpy(train_file, argv[i + 1]);
 	  }
 	  if ((i = ArgPos((char *)"-save-vocab", argc, argv)) > 0) strcpy(save_vocab_file, argv[i + 1]);
