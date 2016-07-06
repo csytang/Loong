@@ -407,14 +407,16 @@ public class ASTStringTracker extends ASTVisitor {
 			public boolean visit(SimpleName node) {
 				// TODO Auto-generated method stub
 				Set<ASTNode>bindingnodes;
-				if(recommendfeatureMapping.containsKey(node.toString())){
-					bindingnodes = recommendfeatureMapping.get(node.toString());
+				if(node.getFullyQualifiedName().isEmpty())
+					return super.visit(node);
+				if(recommendfeatureMapping.containsKey(node.getFullyQualifiedName())){
+					bindingnodes = recommendfeatureMapping.get(node.getFullyQualifiedName());
 					bindingnodes.add(expression);
 				}else{
 					bindingnodes = new HashSet<ASTNode>();
 					bindingnodes.add(expression);
 				}
-				recommendfeatureMapping.put(node.toString(), bindingnodes);
+				recommendfeatureMapping.put(node.getFullyQualifiedName(), bindingnodes);
 				return super.visit(node);
 			}
 			
@@ -427,17 +429,21 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		final ArrayType type = node.getType();
 		Type elementtype = type.getElementType();
-		if(!elementtype.isSimpleType()){
-			Set<ASTNode>bindingnodes;
-			if(recommendnonfeatureMapping.containsKey(elementtype.toString())){
+		
+		if(elementtype.toString().isEmpty())
+			return super.visit(node);
+		
+		Set<ASTNode>bindingnodes;
+			
+		if(recommendnonfeatureMapping.containsKey(elementtype.toString())){
 				bindingnodes = recommendnonfeatureMapping.get(elementtype.toString());
 				bindingnodes.add(type);
-			}else{
+		}else{
 				bindingnodes = new HashSet<ASTNode>();
 				bindingnodes.add(type);
-			}
-			recommendnonfeatureMapping.put(elementtype.toString(), bindingnodes);
 		}
+		recommendnonfeatureMapping.put(elementtype.toString(), bindingnodes);
+		
 		return super.visit(node);
 	}
 
@@ -447,6 +453,7 @@ public class ASTStringTracker extends ASTVisitor {
 		List<Expression> expressions = node.expressions();
 		for(Expression exp:expressions){
 			Set<ASTNode>bindingnodes;
+			
 			if(recommendnonfeatureMapping.containsKey(exp.toString())){
 				bindingnodes = recommendnonfeatureMapping.get(exp.toString());
 				bindingnodes.add(node);
@@ -465,6 +472,7 @@ public class ASTStringTracker extends ASTVisitor {
 		Type elementtype = node.getElementType();
 		if(!elementtype.isSimpleType()){
 			Set<ASTNode>bindingnodes;
+			
 			if(recommendnonfeatureMapping.containsKey(elementtype.toString())){
 				bindingnodes = recommendnonfeatureMapping.get(elementtype.toString());
 				bindingnodes.add(node);
@@ -499,6 +507,7 @@ public class ASTStringTracker extends ASTVisitor {
 		Expression leftSide = node.getLeftHandSide();
 		Expression rightSide = node.getRightHandSide();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(leftSide.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(leftSide.toString());
 			bindingnodes.add(node);
@@ -523,6 +532,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		Expression exp  = node.getExpression();
 		Set<ASTNode>bindingnodes;
+	
 		if(recommendnonfeatureMapping.containsKey(exp.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(exp.toString());
 			bindingnodes.add(node);
@@ -539,6 +549,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		Type nodetype = node.getType();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(nodetype.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(nodetype.toString());
 			bindingnodes.add(node);
@@ -556,6 +567,7 @@ public class ASTStringTracker extends ASTVisitor {
 		List<Expression> arguments = node.arguments();
 		IMethodBinding constructorbinding = node.resolveConstructorBinding();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendfeatureMapping.containsKey(constructorbinding.getName())){
 			bindingnodes = recommendfeatureMapping.get(constructorbinding.getName());
 			bindingnodes.add(node);
@@ -568,6 +580,7 @@ public class ASTStringTracker extends ASTVisitor {
 		for(Expression argument:arguments){
 			
 			bindingnodes.clear();
+			
 			if(recommendnonfeatureMapping.containsKey(argument.toString())){
 				bindingnodes = recommendnonfeatureMapping.get(argument.toString());
 				bindingnodes.add(node);
@@ -587,14 +600,15 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName enumName = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(enumName.toString())){
-			bindingnodes = recommendfeatureMapping.get(enumName.toString());
+		
+		if(recommendfeatureMapping.containsKey(enumName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(enumName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(enumName.toString(), bindingnodes);
+		recommendfeatureMapping.put(enumName.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -612,15 +626,16 @@ public class ASTStringTracker extends ASTVisitor {
          	}
 		 */
 		SimpleName nodeName = node.getName();
+		
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(nodeName.toString())){
-			bindingnodes = recommendfeatureMapping.get(nodeName.toString());
+		if(recommendfeatureMapping.containsKey(nodeName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(nodeName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(nodeName.toString(), bindingnodes);
+		recommendfeatureMapping.put(nodeName.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -629,14 +644,15 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName methodName = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(methodName.toString())){
-			bindingnodes = recommendfeatureMapping.get(methodName.toString());
+		
+		if(recommendfeatureMapping.containsKey(methodName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(methodName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(methodName.toString(), bindingnodes);
+		recommendfeatureMapping.put(methodName.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -645,6 +661,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		String expStatement = node.toString();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(expStatement.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(expStatement.toString());
 			bindingnodes.add(node);
@@ -661,14 +678,15 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName field = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(field.toString())){
-			bindingnodes = recommendfeatureMapping.get(field.toString());
+		
+		if(recommendfeatureMapping.containsKey(field.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(field.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(field.toString(), bindingnodes);
+		recommendfeatureMapping.put(field.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -678,14 +696,15 @@ public class ASTStringTracker extends ASTVisitor {
 		List<VariableDeclarationFragment>fields = node.fragments();
 		for(VariableDeclarationFragment fieldfrag:fields){
 			Set<ASTNode>bindingnodes;
-			if(recommendfeatureMapping.containsKey(fieldfrag.getName().toString())){
-				bindingnodes = recommendfeatureMapping.get(fieldfrag.getName().toString());
+			
+			if(recommendfeatureMapping.containsKey(fieldfrag.getName().getFullyQualifiedName())){
+				bindingnodes = recommendfeatureMapping.get(fieldfrag.getName().getFullyQualifiedName());
 				bindingnodes.add(node);
 			}else{
 				bindingnodes = new HashSet<ASTNode>();
 				bindingnodes.add(node);
 			}
-			recommendfeatureMapping.put(fieldfrag.getName().toString(), bindingnodes);
+			recommendfeatureMapping.put(fieldfrag.getName().getFullyQualifiedName(), bindingnodes);
 		}
 		return super.visit(node);
 	}
@@ -697,6 +716,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		Name importedName = node.getName();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(importedName.getFullyQualifiedName())){
 			bindingnodes = recommendnonfeatureMapping.get(importedName.getFullyQualifiedName());
 			bindingnodes.add(node);
@@ -715,6 +735,7 @@ public class ASTStringTracker extends ASTVisitor {
 		Expression leftOpenand = node.getLeftOperand();
 		Type rightOpenand = node.getRightOperand();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendfeatureMapping.containsKey(rightOpenand.toString())){
 			bindingnodes = recommendfeatureMapping.get(rightOpenand.toString());
 			bindingnodes.add(node);
@@ -731,6 +752,7 @@ public class ASTStringTracker extends ASTVisitor {
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
+		
 		recommendnonfeatureMapping.put(leftOpenand.toString(), bindingnodes);
 		return super.visit(node);
 	}
@@ -739,6 +761,7 @@ public class ASTStringTracker extends ASTVisitor {
 	public boolean visit(Javadoc node) {
 		// TODO Auto-generated method stub
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(node.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(node.toString());
 			bindingnodes.add(node);
@@ -755,6 +778,7 @@ public class ASTStringTracker extends ASTVisitor {
 	public boolean visit(LineComment node) {
 		// TODO Auto-generated method stub
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(node.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(node.toString());
 			bindingnodes.add(node);
@@ -770,15 +794,16 @@ public class ASTStringTracker extends ASTVisitor {
 	public boolean visit(MethodRef node) {
 		// TODO Auto-generated method stub
 		SimpleName methodName = node.getName();
+		
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(methodName.toString())){
-			bindingnodes = recommendfeatureMapping.get(methodName.toString());
+		if(recommendfeatureMapping.containsKey(methodName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(methodName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(methodName.toString(), bindingnodes);
+		recommendfeatureMapping.put(methodName.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -788,15 +813,17 @@ public class ASTStringTracker extends ASTVisitor {
 		SimpleName name = node.getName();
 		Type type = node.getType();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(name.toString())){
-			bindingnodes = recommendfeatureMapping.get(name.toString());
+		
+		if(recommendfeatureMapping.containsKey(name.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(name.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(name.toString(), bindingnodes);
+		recommendfeatureMapping.put(name.getFullyQualifiedName(), bindingnodes);
 		bindingnodes.clear();
+		
 		if(recommendnonfeatureMapping.containsKey(type.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(type.toString());
 			bindingnodes.add(node);
@@ -813,14 +840,15 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName methodName = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(methodName.toString())){
-			bindingnodes = recommendfeatureMapping.get(methodName.toString());
+		
+		if(recommendfeatureMapping.containsKey(methodName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(methodName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(methodName.toString(), bindingnodes);
+		recommendfeatureMapping.put(methodName.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -830,16 +858,18 @@ public class ASTStringTracker extends ASTVisitor {
 		SimpleName methodName = node.getName();
 		List<Expression> arguments = node.arguments();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(methodName.toString())){
-			bindingnodes = recommendfeatureMapping.get(methodName.toString());
+		
+		if(recommendfeatureMapping.containsKey(methodName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(methodName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(methodName.toString(), bindingnodes);
+		recommendfeatureMapping.put(methodName.getFullyQualifiedName(), bindingnodes);
 		for(Expression exp:arguments){
-			bindingnodes.clear();;
+			bindingnodes.clear();
+			
 			if(recommendnonfeatureMapping.containsKey(exp.toString())){
 				bindingnodes = recommendnonfeatureMapping.get(exp.toString());
 				bindingnodes.add(node);
@@ -859,14 +889,15 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName name = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendnonfeatureMapping.containsKey(name.toString())){
-			bindingnodes = recommendnonfeatureMapping.get(name.toString());
+		
+		if(recommendnonfeatureMapping.containsKey(name.getFullyQualifiedName().toString())){
+			bindingnodes = recommendnonfeatureMapping.get(name.getFullyQualifiedName().toString());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendnonfeatureMapping.put(name.toString(), bindingnodes);
+		recommendnonfeatureMapping.put(name.getFullyQualifiedName().toString(), bindingnodes);
 		return super.visit(node);
 	}
 
@@ -875,6 +906,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		Name packageName = node.getName();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendfeatureMapping.containsKey(packageName.getFullyQualifiedName().toString())){
 			bindingnodes = recommendfeatureMapping.get(packageName.getFullyQualifiedName().toString());
 			bindingnodes.add(node);
@@ -892,6 +924,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		Expression returnexp = node.getExpression();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(returnexp.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(returnexp.toString());
 			bindingnodes.add(node);
@@ -909,6 +942,7 @@ public class ASTStringTracker extends ASTVisitor {
 		SimpleName nodeName = node.getName();
 		Type nodeType = node.getType();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendfeatureMapping.containsKey(nodeName.toString())){
 			bindingnodes = recommendfeatureMapping.get(nodeName.toString());
 			bindingnodes.add(node);
@@ -918,6 +952,7 @@ public class ASTStringTracker extends ASTVisitor {
 		}
 		recommendfeatureMapping.put(nodeName.toString(), bindingnodes);
 		bindingnodes.clear();
+		
 		if(recommendnonfeatureMapping.containsKey(nodeType.toString())){
 			bindingnodes = recommendnonfeatureMapping.get(nodeType.toString());
 			bindingnodes.add(node);
@@ -934,6 +969,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		String value = node.getLiteralValue();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendnonfeatureMapping.containsKey(value)){
 			bindingnodes = recommendnonfeatureMapping.get(value);
 			bindingnodes.add(node);
@@ -950,6 +986,7 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		String supermethodName = node.resolveConstructorBinding().getName();
 		Set<ASTNode>bindingnodes;
+		
 		if(recommendfeatureMapping.containsKey(supermethodName)){
 			bindingnodes = recommendfeatureMapping.get(supermethodName);
 			bindingnodes.add(node);
@@ -966,30 +1003,33 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName fieldName = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(fieldName.toString())){
-			bindingnodes = recommendfeatureMapping.get(fieldName.toString());
+		if(fieldName.getFullyQualifiedName().isEmpty())
+			return super.visit(node);
+		if(recommendfeatureMapping.containsKey(fieldName.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(fieldName.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(fieldName.toString(), bindingnodes);
+		recommendfeatureMapping.put(fieldName.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SuperMethodInvocation node) {
 		// TODO Auto-generated method stub
-		SimpleName methodName = node.getName();
+		String methodName = node.resolveMethodBinding().getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(methodName.toString())){
-			bindingnodes = recommendfeatureMapping.get(methodName.toString());
+		
+		if(recommendfeatureMapping.containsKey(methodName)){
+			bindingnodes = recommendfeatureMapping.get(methodName);
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(methodName.toString(), bindingnodes);
+		recommendfeatureMapping.put(methodName, bindingnodes);
 		return super.visit(node);
 	}
 
@@ -1015,15 +1055,15 @@ public class ASTStringTracker extends ASTVisitor {
 	public boolean visit(TypeDeclaration node) {
 		// TODO Auto-generated method stub
 		Set<ASTNode>bindingnodes;
-		for(TypeDeclaration type:node.getTypes()){			
-			if(recommendnonfeatureMapping.containsKey(type.getName().toString())){
-				bindingnodes = recommendnonfeatureMapping.get(type.getName().toString());
+		for(TypeDeclaration type:node.getTypes()){	
+			if(recommendfeatureMapping.containsKey(type.getName().getFullyQualifiedName())){
+				bindingnodes = recommendfeatureMapping.get(type.getName().getFullyQualifiedName());
 				bindingnodes.add(node);
 			}else{
 				bindingnodes = new HashSet<ASTNode>();
 				bindingnodes.add(node);
 			}
-			recommendnonfeatureMapping.put(type.getName().toString(), bindingnodes);
+			recommendfeatureMapping.put(type.getName().getFullyQualifiedName(), bindingnodes);
 			bindingnodes.clear();
 		}
 		return super.visit(node);
@@ -1034,15 +1074,16 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		TypeDeclaration typeDeclaration = node.getTypeDeclaration();
 		for(TypeDeclaration type:typeDeclaration.getTypes()){
+			
 			Set<ASTNode>bindingnodes;
-			if(recommendnonfeatureMapping.containsKey(type.getName().toString())){
-				bindingnodes = recommendnonfeatureMapping.get(type.getName().toString());
+			if(recommendnonfeatureMapping.containsKey(type.getName().getFullyQualifiedName())){
+				bindingnodes = recommendnonfeatureMapping.get(type.getName().getFullyQualifiedName());
 				bindingnodes.add(node);
 			}else{
 				bindingnodes = new HashSet<ASTNode>();
 				bindingnodes.add(node);
 			}
-			recommendnonfeatureMapping.put(type.getName().toString(), bindingnodes);
+			recommendnonfeatureMapping.put(type.getName().getFullyQualifiedName(), bindingnodes);
 			bindingnodes.clear();
 		}
 		
@@ -1056,14 +1097,14 @@ public class ASTStringTracker extends ASTVisitor {
 		Type type = node.getType();
 		
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(name.toString())){
-			bindingnodes = recommendfeatureMapping.get(name.toString());
+		if(recommendfeatureMapping.containsKey(name.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(name.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(name.toString(), bindingnodes);
+		recommendfeatureMapping.put(name.getFullyQualifiedName(), bindingnodes);
 		bindingnodes.clear();
 		
 		if(recommendnonfeatureMapping.containsKey(type.toString())){
@@ -1085,15 +1126,16 @@ public class ASTStringTracker extends ASTVisitor {
 		List<VariableDeclarationFragment>fragements = node.fragments();
 		for(VariableDeclarationFragment frag:fragements){
 			SimpleName name = frag.getName();
+			
 			Set<ASTNode>bindingnodes;
-			if(recommendfeatureMapping.containsKey(name.toString())){
-				bindingnodes = recommendfeatureMapping.get(name.toString());
+			if(recommendfeatureMapping.containsKey(name.getFullyQualifiedName())){
+				bindingnodes = recommendfeatureMapping.get(name.getFullyQualifiedName());
 				bindingnodes.add(node);
 			}else{
 				bindingnodes = new HashSet<ASTNode>();
 				bindingnodes.add(node);
 			}
-			recommendfeatureMapping.put(name.toString(), bindingnodes);
+			recommendfeatureMapping.put(name.getFullyQualifiedName(), bindingnodes);
 			bindingnodes.clear();
 		}
 		return super.visit(node);
@@ -1105,14 +1147,15 @@ public class ASTStringTracker extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SimpleName name = node.getName();
 		Set<ASTNode>bindingnodes;
-		if(recommendfeatureMapping.containsKey(name.toString())){
-			bindingnodes = recommendfeatureMapping.get(name.toString());
+		
+		if(recommendfeatureMapping.containsKey(name.getFullyQualifiedName())){
+			bindingnodes = recommendfeatureMapping.get(name.getFullyQualifiedName());
 			bindingnodes.add(node);
 		}else{
 			bindingnodes = new HashSet<ASTNode>();
 			bindingnodes.add(node);
 		}
-		recommendfeatureMapping.put(name.toString(), bindingnodes);
+		recommendfeatureMapping.put(name.getFullyQualifiedName(), bindingnodes);
 		return super.visit(node);
 	}
 

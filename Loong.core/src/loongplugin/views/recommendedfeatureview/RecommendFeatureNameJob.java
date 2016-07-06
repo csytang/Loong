@@ -95,7 +95,7 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 			}
 		}
 		int processUnit = unifiedIJavaElements.size();
-		monitor.beginTask("Building recommended name list", processUnit+5);
+		monitor.beginTask("Building recommended name list", processUnit+3);
 		for(IJavaElement element:unifiedIJavaElements){
 			if(element instanceof IAnnotation){
 				monitor.worked(1);
@@ -119,7 +119,7 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 					dict.addDictBuiltElement(entry.getKey(), element,entry.getValue());
 				}
 				for(Map.Entry<String, Set<ASTNode>> entry:recommendnonfeatureNames.entrySet()){
-					dict.addAnyElement(entry.getKey(), element,entry.getValue());
+					dict.addAnyElement(entry.getKey(), element ,entry.getValue());
 				}
 			}else if(element instanceof IField){
 				IField jfieldelement = (IField)element;
@@ -206,12 +206,6 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 		}
 		
 		
-		
-		dict.normalizationTrack1();
-		monitor.worked(1);
-		dict.normalizationTrack2();
-		monitor.worked(1);
-		
 		// extract name
 		dict.mergeAndOptimizeDict();
 		monitor.worked(1);
@@ -220,25 +214,6 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 		return Status.OK_STATUS;
 	}
 	
-	
-	/*
-	private FieldDeclaration getBindingFieldDecl(ASTNode rootNode,
-			IField jfieldelement) {
-		// TODO Auto-generated method stub
-		rootNode.accept(new ASTVisitor(){
-
-			@Override
-			public boolean visit(FieldDeclaration node) {
-				// TODO Auto-generated method stub
-				
-				return super.visit(node);
-			}
-			
-		});
-		
-		
-		return null;
-	}*/
 
 	public MethodDeclaration convertIMethodToMethodDecl(IMethod method,ICompilationUnit unit){
 		MethodDeclaration methodDecl = null;
