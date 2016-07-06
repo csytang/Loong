@@ -39,9 +39,13 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.internal.corext.refactoring.structure.ASTNodeSearchUtil;
 
 public class RecommendFeatureNameJob extends WorkspaceJob{
 
@@ -106,25 +110,32 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 				parser.setBindingsRecovery( true );
 				parser.setSource((ICompilationUnit)element);
 			    ASTNode rootNode = parser.createAST( null );
-			    dict.addDictBuiltElement(((ICompilationUnit)element).getElementName(), element);
+			    dict.addDictBuiltElement(((ICompilationUnit)element).getElementName(), element,rootNode);
 			    ASTStringTracker astTracker = new ASTStringTracker(rootNode);
-				List<String> recommendfeatureNames = astTracker.getRecommendedFeatureNameList();
-				List<String> recommendnonfeatureNames = astTracker.getRecommendedNonFeatureNameList();
-				for(String str:recommendfeatureNames){
-					dict.addDictBuiltElement(str, element);
+			    Map<String,Set<ASTNode>> recommendfeatureNames = astTracker.getRecommendedFeatureNameList();
+			    Map<String,Set<ASTNode>> recommendnonfeatureNames = astTracker.getRecommendedNonFeatureNameList();
+			    
+			    for(Map.Entry<String, Set<ASTNode>> entry:recommendfeatureNames.entrySet()){
+					dict.addDictBuiltElement(entry.getKey(), element,entry.getValue());
 				}
-				for(String str:recommendnonfeatureNames){
-					dict.addAnyElement(str, element);
+				for(Map.Entry<String, Set<ASTNode>> entry:recommendnonfeatureNames.entrySet()){
+					dict.addAnyElement(entry.getKey(), element,entry.getValue());
 				}
 			}else if(element instanceof IField){
-				String name = ((IField)element).getElementName();
-				dict.addDictBuiltElement(name, element);
+				IField jfieldelement = (IField)element;
+				String name = jfieldelement.getElementName();
+				ICompilationUnit icomp = jfieldelement.getCompilationUnit();
+				ASTParser parser = ASTParser.newParser(LoongPlugin.AST_VERSION);
+				parser.setKind( ASTParser.K_COMPILATION_UNIT );
+				parser.setResolveBindings( true );
+				parser.setBindingsRecovery( true );
+				parser.setSource((ICompilationUnit)element);
+			    ASTNode rootNode = parser.createAST( null );
+			    FieldDeclaration  fieldDecl = ASTNodeSearchUtil.getFieldDeclarationNode(jfieldelement, (CompilationUnit)rootNode);
+				dict.addDictBuiltElement(name, element, fieldDecl);
 			}else if(element instanceof IImportContainer){
 				monitor.worked(1);
 				continue;
-			}else if(element instanceof IImportDeclaration){
-				String name = ((IImportDeclaration)element).getElementName();
-				dict.addDictBuiltElement(name, element);
 			}else if(element instanceof IInitializer){
 				monitor.worked(1);
 				continue;
@@ -135,28 +146,28 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 				monitor.worked(1);
 				continue;
 			}else if(element instanceof ILocalVariable){
-				String name = ((ILocalVariable)element).getElementName();
-				dict.addDictBuiltElement(name, element);
+				monitor.worked(1);
+				continue;
 			}else if(element instanceof IMember){
 				monitor.worked(1);
 				continue;
 			}else if(element instanceof IMethod){
 				String methodname = ((IMethod)element).getElementName();
 				ICompilationUnit unit = ((IMethod)element).getCompilationUnit();
-				dict.addDictBuiltElement(methodname, element);
 				MethodDeclaration methodDecl = convertIMethodToMethodDecl((IMethod)element,unit);
+				dict.addDictBuiltElement(methodname, element, methodDecl);
 				ASTStringTracker astTracker = new ASTStringTracker(methodDecl);
-				List<String> recommendfeatureNames = astTracker.getRecommendedFeatureNameList();
-				List<String> recommendnonfeatureNames = astTracker.getRecommendedNonFeatureNameList();
-				for(String str:recommendfeatureNames){
-					dict.addDictBuiltElement(str, element);
+				Map<String,Set<ASTNode>> recommendfeatureNames = astTracker.getRecommendedFeatureNameList();
+				Map<String,Set<ASTNode>> recommendnonfeatureNames = astTracker.getRecommendedNonFeatureNameList();
+				for(Map.Entry<String, Set<ASTNode>> entry:recommendfeatureNames.entrySet()){
+					dict.addDictBuiltElement(entry.getKey(), element,entry.getValue());
 				}
-				for(String str:recommendnonfeatureNames){
-					dict.addAnyElement(str, element);
+				for(Map.Entry<String, Set<ASTNode>> entry:recommendnonfeatureNames.entrySet()){
+					dict.addAnyElement(entry.getKey(), element,entry.getValue());
 				}
 			}else if(element instanceof IPackageDeclaration){
-				String name = ((IPackageDeclaration)element).getElementName();
-				dict.addDictBuiltElement(name, element);
+				monitor.worked(1);
+				continue;
 			}else if(element instanceof IPackageFragment){
 				monitor.worked(1);
 				continue;
@@ -165,20 +176,36 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 				continue;
 			}else if(element instanceof IType){
 				String name = ((IType)element).getElementName();
-				dict.addDictBuiltElement(name, element);
+				IType itypeElement = (IType)element;
+				ICompilationUnit unit = itypeElement.getCompilationUnit();
+				ASTParser parser = ASTParser.newParser(LoongPlugin.AST_VERSION);
+				parser.setKind( ASTParser.K_COMPILATION_UNIT );
+				parser.setResolveBindings( true );
+				parser.setBindingsRecovery( true );
+				parser.setSource((ICompilationUnit)element);
+			    ASTNode rootNode = parser.createAST( null );
+			    TypeDeclaration typeDecl = ASTNodeSearchUtil.getTypeDeclarationNode(itypeElement, (CompilationUnit) rootNode);
+				dict.addDictBuiltElement(name, element, typeDecl);
 			}else if(element instanceof ITypeParameter){
 				monitor.worked(1);
 				continue;
 			}else if(element instanceof ITypeRoot){
 				String name = (((ITypeRoot)element).findPrimaryType()).getElementName();
-				dict.addDictBuiltElement(name, element);
+				IType itypeElement = (((ITypeRoot)element).findPrimaryType());
+				ICompilationUnit unit = itypeElement.getCompilationUnit();
+				ASTParser parser = ASTParser.newParser(LoongPlugin.AST_VERSION);
+				parser.setKind( ASTParser.K_COMPILATION_UNIT );
+				parser.setResolveBindings( true );
+				parser.setBindingsRecovery( true );
+				parser.setSource((ICompilationUnit)element);
+			    ASTNode rootNode = parser.createAST( null );
+			    TypeDeclaration typeDecl = ASTNodeSearchUtil.getTypeDeclarationNode(itypeElement, (CompilationUnit) rootNode);
+				dict.addDictBuiltElement(name, element, typeDecl);
 			}
 			monitor.worked(1);
 		}
-		// build dictionary
-		dict.convertToList();
 		
-		monitor.worked(1);
+		
 		
 		dict.normalizationTrack1();
 		monitor.worked(1);
@@ -194,7 +221,25 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 	}
 	
 	
-	
+	/*
+	private FieldDeclaration getBindingFieldDecl(ASTNode rootNode,
+			IField jfieldelement) {
+		// TODO Auto-generated method stub
+		rootNode.accept(new ASTVisitor(){
+
+			@Override
+			public boolean visit(FieldDeclaration node) {
+				// TODO Auto-generated method stub
+				
+				return super.visit(node);
+			}
+			
+		});
+		
+		
+		return null;
+	}*/
+
 	public MethodDeclaration convertIMethodToMethodDecl(IMethod method,ICompilationUnit unit){
 		MethodDeclaration methodDecl = null;
 		ASTParser parser = ASTParser.newParser(LoongPlugin.AST_VERSION);

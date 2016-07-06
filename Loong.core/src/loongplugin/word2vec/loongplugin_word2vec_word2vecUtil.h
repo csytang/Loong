@@ -18,10 +18,10 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_word2vec
 /*
  * Class:     loongplugin_word2vec_word2vecUtil
  * Method:    distance
- * Signature: (I[Ljava/lang/String;)V
+ * Signature: (I[Ljava/lang/String;Ljava/lang/String;)Ljava/util/Map;
  */
-JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
-  (JNIEnv *, jclass, jint, jobjectArray);
+JNIEXPORT jobject JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
+  (JNIEnv *, jclass, jint, jobjectArray, jstring);
 
 #ifdef __cplusplus
 }

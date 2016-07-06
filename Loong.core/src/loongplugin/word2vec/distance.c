@@ -21,8 +21,8 @@ const long long max_size = 2000;         // max length of strings
 const long long N = 40;                  // number of closest words that will be shown
 const long long max_w = 50;              // max length of vocabulary entries
 
-JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
-	  (JNIEnv * env, jclass jazz, jint argc, jobjectArray Javaargv){
+JNIEXPORT jobject JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
+	  (JNIEnv * env, jclass jazz, jint argc, jobjectArray Javaargv, jstring inputstr){
 
 	jstring jstr;
 	jsize lenth = (*env)->GetArrayLength(env, Javaargv);
@@ -35,7 +35,7 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
 		 const char* nativeString = (char *)(*env)->GetStringUTFChars(env, jstr, 0);
 		 pstr[i] = (char*) malloc(strlen(&nativeString)+1);
 		 strcpy(pstr[i],nativeString);
-		 printf("argv_\t%d\t,%s\n",i,&pstr[i]);
+		 //printf("argv_\t%d\t,%s\n",i,pstr[i]);
 		 //(*env)->ReleaseStringUTFChars(env,jstr,nativeString);
 	}
 
@@ -56,7 +56,7 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
   f = fopen(file_name, "rb");
   if (f == NULL) {
     printf("Input file not found\n");
-    return;
+    return NULL;
   }
   fscanf(f, "%lld", &words);
   fscanf(f, "%lld", &size);
@@ -65,7 +65,7 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
   M = (float *)malloc((long long)words * (long long)size * sizeof(float));
   if (M == NULL) {
     printf("Cannot allocate memory: %lld MB    %lld  %lld\n", (long long)words * size * sizeof(float) / 1048576, words, size);
-    return;
+    return NULL;
   }
   for (b = 0; b < words; b++) {
     a = 0;
@@ -82,20 +82,24 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
     for (a = 0; a < size; a++) M[a + b * size] /= len;
   }
   fclose(f);
-  while (1) {
-    for (a = 0; a < N; a++) bestd[a] = 0;
-    for (a = 0; a < N; a++) bestw[a][0] = 0;
-    printf("Enter word or sentence (EXIT to break): ");
-    a = 0;
-    while (1) {
-      st1[a] = fgetc(stdin);
-      if ((st1[a] == '\n') || (a >= max_size - 1)) {
-        st1[a] = 0;
-        break;
-      }
-      a++;
-    }
-    if (!strcmp(st1, "EXIT")) break;
+  // while (1) {
+      for (a = 0; a < N; a++)
+      	bestd[a] = 0;
+      for (a = 0; a < N; a++)
+      	bestw[a][0] = 0;
+      //printf("Enter word or sentence (EXIT to break): ");
+      /*
+      while (1) {
+        st1[a] = fgetc(stdin);
+        if ((st1[a] == '\n') || (a >= max_size - 1)) {
+          st1[a] = 0;
+          break;
+        }
+        a++;
+      }*/
+
+    const char* nativeString = (char *)(*env)->GetStringUTFChars(env, inputstr, 0);
+    strcpy(st1,nativeString);
     cn = 0;
     b = 0;
     c = 0;
@@ -122,7 +126,8 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
         break;
       }
     }
-    if (b == -1) continue;
+    if (b == -1)
+    	return NULL;
     printf("\n                                              Word       Cosine distance\n------------------------------------------------------------------------\n");
     for (a = 0; a < size; a++) vec[a] = 0;
     for (b = 0; b < cn; b++) {
@@ -153,7 +158,18 @@ JNIEXPORT void JNICALL Java_loongplugin_word2vec_word2vecUtil_distance
         }
       }
     }
-    for (a = 0; a < N; a++) printf("%50s\t\t%f\n", bestw[a], bestd[a]);
-  }
+    jclass class_hashmap = (*env)->FindClass(env, "java/util/HashMap");
+    jmethodID hashmap_init = (*env)->GetMethodID(env, class_hashmap, "<init>",
+                    "()V");
+    jobject HashMap = (*env)->NewObject(env, class_hashmap, hashmap_init, "");
+        jmethodID HashMap_put = (*env)->GetMethodID(env, class_hashmap, "put",
+                    "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+
+        for (a = 0; a < N; a++){
+        	//printf("%50s\t\t%f\n", bestw[a], bestd[a]);
+        	(*env)->CallObjectMethod(env, HashMap, HashMap_put, (*env)->NewStringUTF(env,  bestw[a]),(jfloat)bestd[a]);
+        }
+      //}
+        return HashMap;
 
 }

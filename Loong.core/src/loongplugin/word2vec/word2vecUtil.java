@@ -1,11 +1,12 @@
 package loongplugin.word2vec;
 
 import java.io.File;
+import java.util.Map;
 
 public class word2vecUtil {
 	// 声明自定义本地库方法接口
     native public static void word2vec(int argc,String[] argv);
-    native public static void distance(int argc,String[] argv);
+    native public static Map<String,Float> distance(int argc,String[] argv,String inputstr);
     // 
     static{
     	
