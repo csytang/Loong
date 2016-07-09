@@ -46,7 +46,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.ViewPart;
-
 import loongplugin.LoongImages;
 import loongplugin.LoongPlugin;
 import loongplugin.color.ColorHelper;
@@ -276,7 +275,7 @@ public class FeatureView extends ViewPart{
 	private void createTable(Composite parent) {
 		table = new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.CHECK);
-		table.setHeaderVisible(false);
+		table.setHeaderVisible(true);
 
 		TableColumn column;
 		column = new TableColumn(table, SWT.LEFT);

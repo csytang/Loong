@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import loongplugin.LoongPlugin;
+import loongplugin.feature.Feature;
+import loongplugin.feature.FeatureModelNotFoundException;
+import loongplugin.featuremodeleditor.IFeatureModelChangeListener;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -50,6 +53,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -57,8 +61,15 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.part.ViewPart;
@@ -69,13 +80,15 @@ import org.osgi.framework.Bundle;
 public class RecommendedFeatureView extends ViewPart {
 
 	public static final String ID = LoongPlugin.PLUGIN_ID+".recommendedFeatureList";
-	private TreeViewer fViewer;
-	
-	private Map<String,Set<IJavaElement>>featureNameToBelongings = new HashMap<String,Set<IJavaElement>>();
+	private TableViewer fViewer;
+	private Table table;
+	private RSFeatureModel rsfeatureModel = new RSFeatureModel();
 	private List<IJavaElement> allJavaElements;
 	public static RecommendedFeatureView instance;
-	private IProject selectedProject=null;
+	private String[]columnNames={"properties","value"};
 	
+	private IProject selectedProject=null;
+	private RSFeatureModelChangeListener featuremodelListener;
 	
 	public static RecommendedFeatureView getInstance(){
 		if(instance==null)
@@ -97,6 +110,8 @@ public class RecommendedFeatureView extends ViewPart {
 				selectedProject = editorinput.getFile().getProject();
 			}
 		}
+		featuremodelListener = new RSFeatureModelChangeListener();
+		
 	}
 	
 	public void setIJavaElementsToResolve(List<IJavaElement> pallJavaElements){
@@ -105,16 +120,53 @@ public class RecommendedFeatureView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		fViewer = new TreeViewer(parent);
+		createTable(parent);
+		createTableViewer();
+		
+	}
+	
+	private void createTableViewer() {
+		fViewer = new TableViewer(table);
+		fViewer.setColumnProperties(columnNames);
 		// add drop support to fViewer
 		int ops = DND.DROP_COPY|DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[]{LocalSelectionTransfer.getTransfer()};
 		fViewer.addDropSupport(ops, transfers, new RecommendTreeDropAdapter(fViewer));
-		//fViewer.setContentProvider(new RecommendedFeatureNameContentProvider());
-		//fViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new RecommendedFeatureNameLabelProvider(createImageDescriptor())));
-		//fViewer.setInput(featureNameToBelongings);
+		fViewer.setContentProvider(new RecommendedFeatureNameContentProvider());
+		fViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new RecommendedFeatureNameLabelProvider(createImageDescriptor())));
+		fViewer.setInput(rsfeatureModel);
+		
+		
 	}
-	
+	private void createTable(Composite parent) {
+		table = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.MULTI);
+		table.setHeaderVisible(true);
+
+		TableColumn column;
+		column = new TableColumn(table, SWT.LEFT);
+		column.setText("FeatureName_Properties");
+		column.setWidth(120);
+		column = new TableColumn(table, SWT.LEFT);
+		column.setText("Value");
+		column.setWidth(80);
+
+		table.addControlListener(new ControlListener() {
+			public void controlMoved(ControlEvent e) {
+			}
+
+			public void controlResized(ControlEvent e) {
+				int width = table.getClientArea().width;
+				if (width > 200) {
+					table.getColumn(0).setWidth(width - 60);
+					table.getColumn(1).setWidth(80);
+				} else {
+					table.getColumn(0).setWidth(width / 2);
+					table.getColumn(1).setWidth(width / 2);
+				}
+			}
+		});
+
+	}
 	
 	class RecommendedFeatureNameContentProvider implements ITreeContentProvider{
 
@@ -229,7 +281,7 @@ public class RecommendedFeatureView extends ViewPart {
 	class RecommendTreeDropAdapter extends ViewerDropAdapter {
 		
 		private List<IJavaElement> allJavaElements;
-		protected RecommendTreeDropAdapter(TreeViewer viewer) {
+		protected RecommendTreeDropAdapter(TableViewer viewer) {
 			super(viewer);
 			// TODO Auto-generated constructor stub
 		}
@@ -288,5 +340,34 @@ public class RecommendedFeatureView extends ViewPart {
 		
 		
 	}
+	
+	private void redraw(){
+		if (table.isDisposed()){
+			return;
+		}
+		
+		table.setRedraw(false);
+		table.removeAll();
+		if (selectedProject != null && rsfeatureModel != null) {
+			for(RSFeature feature:rsfeatureModel.getFeatures()){
+				TableItem item = new TableItem(table, SWT.DEFAULT);
+				
+			}
+		}
+		
+		table.setRedraw(true);
+		
+	}
 
+	class RSFeatureModelChangeListener implements IRSFeatureModelChangeListener{
+
+		@Override
+		public void featureModelChanged(RSFeatureModelChangedEvent event) {
+			// TODO Auto-generated method stub
+			rsfeatureModel = event.getFeatureModel();
+			
+			redraw();
+		}
+		
+	}
 }

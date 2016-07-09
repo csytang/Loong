@@ -409,14 +409,14 @@ public class ASTStringTracker extends ASTVisitor {
 				Set<ASTNode>bindingnodes;
 				if(node.getFullyQualifiedName().isEmpty())
 					return super.visit(node);
-				if(recommendfeatureMapping.containsKey(node.getFullyQualifiedName())){
-					bindingnodes = recommendfeatureMapping.get(node.getFullyQualifiedName());
+				if(recommendnonfeatureMapping.containsKey(node.getFullyQualifiedName())){
+					bindingnodes = recommendnonfeatureMapping.get(node.getFullyQualifiedName());
 					bindingnodes.add(expression);
 				}else{
 					bindingnodes = new HashSet<ASTNode>();
 					bindingnodes.add(expression);
 				}
-				recommendfeatureMapping.put(node.getFullyQualifiedName(), bindingnodes);
+				recommendnonfeatureMapping.put(node.getFullyQualifiedName(), bindingnodes);
 				return super.visit(node);
 			}
 			

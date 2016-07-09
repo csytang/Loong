@@ -110,7 +110,9 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 				parser.setBindingsRecovery( true );
 				parser.setSource((ICompilationUnit)element);
 			    ASTNode rootNode = parser.createAST( null );
-			    dict.addDictBuiltElement(((ICompilationUnit)element).getElementName(), element,rootNode);
+			    String compilationUnitName = ((ICompilationUnit)element).getElementName();
+			    compilationUnitName = compilationUnitName.split("\\.")[0];
+			    dict.addDictBuiltElement(compilationUnitName, element,rootNode);
 			    ASTStringTracker astTracker = new ASTStringTracker(rootNode);
 			    Map<String,Set<ASTNode>> recommendfeatureNames = astTracker.getRecommendedFeatureNameList();
 			    Map<String,Set<ASTNode>> recommendnonfeatureNames = astTracker.getRecommendedNonFeatureNameList();

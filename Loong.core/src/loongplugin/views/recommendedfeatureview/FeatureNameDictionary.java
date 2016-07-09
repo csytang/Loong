@@ -1,5 +1,6 @@
 package loongplugin.views.recommendedfeatureview;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ public class FeatureNameDictionary {
 	private IProgressMonitor monitor;
 	private String tempfilePath = "input.txt";
 	private List<String>allStringList = new LinkedList<String>();
+	private static List<IRSFeatureModelChangeListener>listeners = new LinkedList<IRSFeatureModelChangeListener>();
 	
 	public static FeatureNameDictionary getInstance(IProgressMonitor pmonitor){
 		if(instance==null)
@@ -35,12 +37,23 @@ public class FeatureNameDictionary {
 		this.monitor = pmonitor;
 	}
 	
+	public static void	addRSFeatureModelChangeListener(IRSFeatureModelChangeListener listener){
+		listeners.add(listener);
+	}
+	/**
+	 * 
+	 * @param associatedString potential feature name
+	 * @param element   IJavaElement belongs
+	 * @param astnode   a specific astnode contains this string
+	 */
 	public void addDictBuiltElement(String associatedString,IJavaElement element,ASTNode astnode){
 		String asssociatedStringLowwercase = associatedString.toLowerCase();
 		asssociatedStringLowwercase = replaceSymbolToSpace(asssociatedStringLowwercase);
 		asssociatedStringLowwercase = asssociatedStringLowwercase.trim();
 		Stemmer stemmer = new Stemmer();
 		asssociatedStringLowwercase = stemmer.stem(asssociatedStringLowwercase);
+		if(asssociatedStringLowwercase.length()<=2)
+			return;
 		
 		if(featureNameDictionary.containsKey(asssociatedStringLowwercase)){
 			Map<IJavaElement,Set<ASTNode>> iJavaElementBindings = featureNameDictionary.get(asssociatedStringLowwercase);
@@ -63,12 +76,21 @@ public class FeatureNameDictionary {
 			featureNameDictionary.put(asssociatedStringLowwercase, iJavaElementBindings);
 		}
 	}
+	
+	/**
+	 * 
+	 * @param associatedString potential feature name
+	 * @param element IJavaElement belongs
+	 * @param astnodes  a specific astnode contains this string
+	 */
 	public void addDictBuiltElement(String associatedString,IJavaElement element,Set<ASTNode> astnodes){
 		String asssociatedStringLowwercase = associatedString.toLowerCase();
 		asssociatedStringLowwercase = replaceSymbolToSpace(asssociatedStringLowwercase);
 		asssociatedStringLowwercase = asssociatedStringLowwercase.trim();
 		Stemmer stemmer = new Stemmer();
 		asssociatedStringLowwercase = stemmer.stem(asssociatedStringLowwercase);
+		if(asssociatedStringLowwercase.length()<=2)
+			return;
 		
 		if(featureNameDictionary.containsKey(asssociatedStringLowwercase)){
 			Map<IJavaElement,Set<ASTNode>> iJavaElementBindings = featureNameDictionary.get(asssociatedStringLowwercase);
@@ -99,6 +121,10 @@ public class FeatureNameDictionary {
 		asssociatedStringLowwercase = asssociatedStringLowwercase.trim();
 		Stemmer stemmer = new Stemmer();
 		asssociatedStringLowwercase = stemmer.stem(asssociatedStringLowwercase);
+		if(asssociatedStringLowwercase.length()<=2)
+			return;
+		
+		
 		if(nonfeaturetextMapping.containsKey(asssociatedStringLowwercase)){
 			Map<IJavaElement,Set<ASTNode>> iJavaElementBindings = nonfeaturetextMapping.get(asssociatedStringLowwercase);
 			if(iJavaElementBindings.containsKey(element)){
@@ -120,6 +146,8 @@ public class FeatureNameDictionary {
 			nonfeaturetextMapping.put(asssociatedStringLowwercase, iJavaElementBindings);
 		}
 	}
+	
+	
 	public void addAnyElement(String associatedString,IJavaElement element,Set<ASTNode> astnodes){
 		String asssociatedStringLowwercase = associatedString.toLowerCase();
 		
@@ -127,6 +155,9 @@ public class FeatureNameDictionary {
 		asssociatedStringLowwercase = asssociatedStringLowwercase.trim();
 		Stemmer stemmer = new Stemmer();
 		asssociatedStringLowwercase = stemmer.stem(asssociatedStringLowwercase);
+		if(asssociatedStringLowwercase.length()<=2)
+			return;
+		
 		if(nonfeaturetextMapping.containsKey(asssociatedStringLowwercase)){
 			Map<IJavaElement,Set<ASTNode>> iJavaElementBindings = nonfeaturetextMapping.get(asssociatedStringLowwercase);
 			if(iJavaElementBindings.containsKey(element)){
@@ -153,7 +184,7 @@ public class FeatureNameDictionary {
 	 * Insert a dict to dictionary
 	 */
 	public void mergeAndOptimizeDict(){
-		/*
+		
 		assert(project!=null);
 		IPath path = project.getLocation();
 		path = path.append("/"+tempfilePath);
@@ -161,7 +192,9 @@ public class FeatureNameDictionary {
 		convertToList();
 		StringListToFile strToFile = new StringListToFile(allStringList,tempfilePath);
 		strToFile.writeToFile();
-		*/
+		
+		
+		FeatureNameMatrix fMatrix = new FeatureNameMatrix(featureNameDictionary,nonfeaturetextMapping);
 		
 		
 	}
