@@ -1,11 +1,12 @@
 package loongplugin.views.recommendedfeatureview;
 
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class RSFeatureModel {
+public class RSFeatureModel implements Serializable{
 	
 	public Set<RSFeature> allRSFeatures = new HashSet<RSFeature>();
 	

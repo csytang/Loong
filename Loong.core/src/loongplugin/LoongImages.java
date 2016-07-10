@@ -47,7 +47,24 @@ public class LoongImages {
 	
 	public static final String CLREDITOR = "editor.gif";//$NON-NLS-1$
 
+	public static final String FEATURE = "feature.jpg";
 	
+	public static final String JAVA_OBJ = "/eclipse/jcu_obj.png";
+	
+	
+	public static final String ABSTRACT_CO = "/eclipse/abstract_co.png";
+	public static final String ANNOTATION_OBJ = "/eclipse/annotation_obj.png";
+	public static final String CLASS_OBJ = "/eclipse/class_obj.gif";
+	public static final String CONST_OVR = "/eclipse/constr_ovr.png";
+	public static final String ENMU_OBJ = "/eclipse/enum_obj.gif";
+	public static final String EXC_CATCH = "/eclipse/exc_catch.gif";
+	public static final String FIELD_DEFAULT_OBJ = "/eclipse/field_default_obj.png";
+	public static final String IMPORT_CO = "/eclipse/import_co.gif";
+	public static final String INTERFACE_OBJ = "/eclipse/int_obj.gif";
+	public static final String TYPES = "/eclipse/types.gif";
+	public static final String PACKAGE_OBJ = "/eclipse/package_obj.gif";
+	public static final String LOCAL_OBJ = "/eclipse/localvariable_obj.gif";
+	public static final String METHOD_DEF = "/eclipse/methpub_obj.gif";
 	// ---- Helper methods to access icons on the file system
 	// --------------------------------------
 
@@ -60,10 +77,10 @@ public class LoongImages {
 		if (id != null) {
 			action.setHoverImageDescriptor(id);
 			action.setImageDescriptor(id);
-		} else {
-			action.setImageDescriptor(ImageDescriptor
-					.getMissingImageDescriptor());
+		}else{
+			action.setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
 		}
+		
 		
 	}
 

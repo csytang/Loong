@@ -23,7 +23,6 @@ public final class SVD_NR
   
     double[] rv1 = new double[n];
 
-    System.out.println("SVD beware results may not be sorted!");
 
     for (i = 0; i<n; i++) {
       l = i+1;

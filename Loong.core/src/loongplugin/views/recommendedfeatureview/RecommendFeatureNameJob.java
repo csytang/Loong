@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import loongplugin.LoongPlugin;
+import loongplugin.views.recommendedfeatureview.RecommendedFeatureView.RSFeatureModelChangeListener;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -54,11 +55,12 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 	private List<IJavaElement> ununifiedIJavaElements;
 	private FeatureNameDictionary dict;
 	private IProject selectProject = null;
-	
-	public RecommendFeatureNameJob(List<IJavaElement>elements,IProject project) {
+	private RSFeatureModelChangeListener listener;
+	public RecommendFeatureNameJob(List<IJavaElement>elements,IProject project,RSFeatureModelChangeListener plistener) {
 		super("Building recommended name list for project:"+project.getName());
 		ununifiedIJavaElements = elements;
 		selectProject = project;
+		listener = plistener;
 	}
 
 	@Override
@@ -68,6 +70,7 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 		// Extract all List into a java file fashion(at least)
 		dict = new FeatureNameDictionary(monitor);
 		dict.setProject(selectProject);
+		dict.addRSFeatureModelChangeListener(listener);
 		for(IJavaElement element:ununifiedIJavaElements){
 			if(element instanceof IPackageFragment){
 				ICompilationUnit[]allcompilationUnit = ((IPackageFragment)element).getCompilationUnits();
@@ -266,5 +269,10 @@ public class RecommendFeatureNameJob extends WorkspaceJob{
 	      		allContainedFile.add((IFile)member);
 	      	}
 	   }
+	}
+
+	public FeatureNameDictionary getDictionary() {
+		// TODO Auto-generated method stub
+		return dict;
 	}
 }

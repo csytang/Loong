@@ -20,6 +20,7 @@ public class FeatureNameMatrix {
 	int num_rows = 0;
 	double[][] correlationMatrix;
 	boolean debug = true;
+	private RSFeatureModel model = new RSFeatureModel();
 	Map<String,Double>featureNameToWeight = new HashMap<String,Double>();
 	
 	public FeatureNameMatrix(Map<String,Map<IJavaElement,Set<ASTNode>>>featureNameDictionary,Map<String,Map<IJavaElement,Set<ASTNode>>>nonfeaturetextMapping){
@@ -52,6 +53,8 @@ public class FeatureNameMatrix {
 	    for(int i = 0;i < num_columns;i++){
 	    	String featurestr = featureNameCol_Index.get(i);
 	    	featureNameToWeight.put(featurestr, w[i]);
+	    	RSFeature feature = new RSFeature(featurestr,w[i],afeatureNameDictionary.get(featurestr));
+	    	model.addRSFeature(feature);
 	    }
 	    
 	    
@@ -99,5 +102,11 @@ public class FeatureNameMatrix {
 			}
 		}
 		
+	}
+
+	public RSFeatureModel getRSFeatureModel() {
+		// TODO Auto-generated method stub
+		
+		return model;
 	}
 }

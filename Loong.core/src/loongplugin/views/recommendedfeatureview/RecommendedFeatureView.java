@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import loongplugin.LoongImages;
 import loongplugin.LoongPlugin;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModelNotFoundException;
 import loongplugin.featuremodeleditor.IFeatureModelChangeListener;
+import loongplugin.views.astview.views.ASTAttribute;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -41,6 +43,24 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -48,8 +68,10 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -57,6 +79,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
@@ -66,10 +90,17 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.part.ViewPart;
@@ -80,8 +111,9 @@ import org.osgi.framework.Bundle;
 public class RecommendedFeatureView extends ViewPart {
 
 	public static final String ID = LoongPlugin.PLUGIN_ID+".recommendedFeatureList";
-	private TableViewer fViewer;
-	private Table table;
+	private TreeViewer fViewer;
+	
+	private Tree tree;
 	private RSFeatureModel rsfeatureModel = new RSFeatureModel();
 	private List<IJavaElement> allJavaElements;
 	public static RecommendedFeatureView instance;
@@ -111,7 +143,6 @@ public class RecommendedFeatureView extends ViewPart {
 			}
 		}
 		featuremodelListener = new RSFeatureModelChangeListener();
-		
 	}
 	
 	public void setIJavaElementsToResolve(List<IJavaElement> pallJavaElements){
@@ -120,55 +151,66 @@ public class RecommendedFeatureView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		createTable(parent);
+		createTree(parent);
 		createTableViewer();
-		
+	}
+	
+	public RSFeatureModelChangeListener getFeatureModelListener(){
+		if(featuremodelListener==null)
+			featuremodelListener = new RSFeatureModelChangeListener();
+		return featuremodelListener;
 	}
 	
 	private void createTableViewer() {
-		fViewer = new TableViewer(table);
+		fViewer = new TreeViewer(tree);
 		fViewer.setColumnProperties(columnNames);
 		// add drop support to fViewer
 		int ops = DND.DROP_COPY|DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[]{LocalSelectionTransfer.getTransfer()};
 		fViewer.addDropSupport(ops, transfers, new RecommendTreeDropAdapter(fViewer));
-		fViewer.setContentProvider(new RecommendedFeatureNameContentProvider());
-		fViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new RecommendedFeatureNameLabelProvider(createImageDescriptor())));
+		
+		fViewer.setLabelProvider(new RecommendedFeatureNameLabelProvider());
+		fViewer.setContentProvider(new RecommendedFeatureContentProvider());
 		fViewer.setInput(rsfeatureModel);
-		
-		
+		fViewer.expandAll();
 	}
-	private void createTable(Composite parent) {
-		table = new Table(parent, SWT.BORDER | SWT.CHECK | SWT.MULTI);
-		table.setHeaderVisible(true);
+	private void createTree(Composite parent) {
+		tree = new Tree(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		
+		tree.setHeaderVisible(true);
 
-		TableColumn column;
-		column = new TableColumn(table, SWT.LEFT);
+		TreeColumn column;
+		column = new TreeColumn(tree, SWT.LEFT);
 		column.setText("FeatureName_Properties");
 		column.setWidth(120);
-		column = new TableColumn(table, SWT.LEFT);
+		column = new TreeColumn(tree, SWT.LEFT);
 		column.setText("Value");
 		column.setWidth(80);
 
-		table.addControlListener(new ControlListener() {
+		// Pack the columns
+	    for (int i = 0, n = tree.getColumnCount(); i < n; i++) {
+	    	tree.getColumn(i).pack();
+	    }
+	    
+	    tree.addControlListener(new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 			}
 
 			public void controlResized(ControlEvent e) {
-				int width = table.getClientArea().width;
+				int width = tree.getClientArea().width;
 				if (width > 200) {
-					table.getColumn(0).setWidth(width - 60);
-					table.getColumn(1).setWidth(80);
+					tree.getColumn(0).setWidth(width - 60);
+					tree.getColumn(1).setWidth(80);
 				} else {
-					table.getColumn(0).setWidth(width / 2);
-					table.getColumn(1).setWidth(width / 2);
+					tree.getColumn(0).setWidth(width / 2);
+					tree.getColumn(1).setWidth(width / 2);
 				}
 			}
 		});
 
 	}
 	
-	class RecommendedFeatureNameContentProvider implements ITreeContentProvider{
+	class RecommendedFeatureContentProvider implements ITreeContentProvider{
 
 		@Override
 		public void dispose() {
@@ -185,63 +227,153 @@ public class RecommendedFeatureView extends ViewPart {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// TODO Auto-generated method stub
-			return null;
+			return getChildren(inputElement);
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			// TODO Auto-generated method stub
+			if(parentElement instanceof RSFeatureModel){
+				RSFeatureModel featuremodel = (RSFeatureModel)parentElement;
+				return featuremodel.getFeatures().toArray();
+			}
+			else if(parentElement instanceof RSFeature){
+				RSFeature rselement = (RSFeature)parentElement;
+				return rselement.getChildren().toArray();
+			}else if(parentElement instanceof IJavaElementWrapper){
+				IJavaElementWrapper ijavaparentElement = (IJavaElementWrapper)parentElement;
+				return ijavaparentElement.getChildren().toArray();
+			}else if(parentElement instanceof ASTNodeWrapper){
+				return null;
+			}
 			return null;
 		}
 
 		@Override
 		public Object getParent(Object element) {
 			// TODO Auto-generated method stub
+			if(element instanceof RSFeature){
+				return null;
+			}else if(element instanceof IJavaElementWrapper){
+				IJavaElementWrapper ijavaparentElement = (IJavaElementWrapper)element;
+				return ijavaparentElement.getParent();
+			}else if(element instanceof ASTNodeWrapper){
+				ASTNodeWrapper astwrapper = (ASTNodeWrapper)element;
+				return astwrapper.getParent();
+			}
 			return null;
 		}
 
 		@Override
 		public boolean hasChildren(Object element) {
 			// TODO Auto-generated method stub
+			if(element instanceof RSFeature){
+				RSFeature rselement = (RSFeature)element;
+				return rselement.getChildren().size()>0;
+			}else if(element instanceof IJavaElementWrapper){
+				IJavaElementWrapper ijavaparentElement = (IJavaElementWrapper)element;
+				return ijavaparentElement.getChildren().size()>0;
+			}else if(element instanceof ASTNodeWrapper){
+				return false;
+			}
 			return false;
 		}
 		
 	}
 	
 	
-	class RecommendedFeatureNameLabelProvider extends LabelProvider implements IStyledLabelProvider{
+	class RecommendedFeatureNameLabelProvider implements ITableLabelProvider{
 		
-		private ImageDescriptor featureImage;
-		private ResourceManager resourceManager;
 		
-		public RecommendedFeatureNameLabelProvider(ImageDescriptor pfeatureImage){
-			this.featureImage = pfeatureImage;
+		
+		public RecommendedFeatureNameLabelProvider(){
+			//this.featureImage = pfeatureImage;
+		}
+		
+		
+		@Override
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
 		}
 		@Override
-		public StyledString getStyledText(Object element) {
+		public void dispose() {
 			// TODO Auto-generated method stub
-			if(element instanceof IJavaElement){
-				String name = ((IJavaElement)element).getElementName();
-				return new StyledString(name);
-			}else if(element instanceof String){
-				return new StyledString((String)element);
+			
+		}
+		@Override
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			// TODO Auto-generated method stub
+			
+			switch(columnIndex){
+				case 0:{
+					if(element instanceof RSFeature){
+						return LoongImages.getImage(LoongImages.FEATURE);
+					}else if(element instanceof ASTNodeWrapper){
+						ASTNodeWrapper wrapper = (ASTNodeWrapper)element;
+						ASTNode node = wrapper.getASTNode();
+						if(node instanceof MethodDeclaration){
+							return LoongImages.getImage(LoongImages.METHOD_DEF);
+						}else if(node instanceof FieldDeclaration){
+							return LoongImages.getImage(LoongImages.FIELD_DEFAULT_OBJ);
+						}else if(node instanceof CompilationUnit){
+							return LoongImages.getImage(LoongImages.JAVA_OBJ);
+						}else if(node instanceof ImportDeclaration){
+							return LoongImages.getImage(LoongImages.IMPORT_CO);
+						}else if(node instanceof SingleVariableDeclaration||
+								node instanceof VariableDeclarationStatement||
+								node instanceof VariableDeclarationFragment||
+								node instanceof VariableDeclarationExpression){
+							return LoongImages.getImage(LoongImages.LOCAL_OBJ);
+						}else if(node instanceof PackageDeclaration){
+							return  LoongImages.getImage(LoongImages.PACKAGE_OBJ);
+						}else if(node instanceof TypeDeclaration||
+								node instanceof TypeDeclarationStatement){
+							return  LoongImages.getImage(LoongImages.TYPES);
+						}else
+						
+							return null;
+					}else if(element instanceof IJavaElementWrapper){
+						return  LoongImages.getImage(LoongImages.JAVA_OBJ);
+					}
+				}
 			}
 			return null;
 		}
 		@Override
-		public Image getImage(Object element) {
+		public String getColumnText(Object element, int columnIndex) {
 			// TODO Auto-generated method stub
-			if(element instanceof String){
-				return getResourceManager().createImage(featureImage);
+			switch(columnIndex){
+				case 0:{ 
+					if(element instanceof RSFeature){
+						return "name";
+					}else if(element instanceof ASTNodeWrapper){
+						return "ASTNode";
+					}else if(element instanceof IJavaElementWrapper){
+						return "IJavaElement";
+					}
+				}
+				case 1:{
+					if(element instanceof RSFeature){
+						return ((RSFeature)element).getFeatureName();
+					}else if(element instanceof ASTNodeWrapper){
+						return getText(((ASTNodeWrapper)element).getASTNode());
+					}else if(element instanceof IJavaElementWrapper){
+						return ((IJavaElementWrapper)element).getIJavaElement().getElementName();
+					}
+				}
 			}
-			return super.getImage(element);
-		}
-		
-		protected ResourceManager getResourceManager() {
-		    if (resourceManager == null) {
-		        resourceManager = new LocalResourceManager(JFaceResources.getResources());
-		     }
-		     return resourceManager;
+			return null;
 		}
 		
 	}
@@ -255,7 +387,7 @@ public class RecommendedFeatureView extends ViewPart {
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
-
+		fViewer.getControl().setFocus();
 	}
 	
 	private IProject getSelectedProject() {
@@ -281,8 +413,8 @@ public class RecommendedFeatureView extends ViewPart {
 	class RecommendTreeDropAdapter extends ViewerDropAdapter {
 		
 		private List<IJavaElement> allJavaElements;
-		protected RecommendTreeDropAdapter(TableViewer viewer) {
-			super(viewer);
+		protected RecommendTreeDropAdapter(TreeViewer fViewer) {
+			super(fViewer);
 			// TODO Auto-generated constructor stub
 		}
 		
@@ -299,10 +431,11 @@ public class RecommendedFeatureView extends ViewPart {
 			}
 			//Create a job for this update
 			RecommendFeatureNameJob job;
+			
 			if(selectedProject!=null)
-				job = new RecommendFeatureNameJob(allJavaElements,selectedProject);
+				job = new RecommendFeatureNameJob(allJavaElements,selectedProject,RecommendedFeatureView.getInstance().getFeatureModelListener());
 			else{
-				job = new RecommendFeatureNameJob(allJavaElements,allJavaElements.get(0).getJavaProject().getProject());
+				job = new RecommendFeatureNameJob(allJavaElements,allJavaElements.get(0).getJavaProject().getProject(),RecommendedFeatureView.getInstance().getFeatureModelListener());
 			}
 			job.setUser(true);
 			job.setPriority(Job.LONG);
@@ -314,7 +447,6 @@ public class RecommendedFeatureView extends ViewPart {
 				e.printStackTrace();
 			}
 			
-			getViewer().refresh();
 			return true;
 		}
 		@Override
@@ -342,20 +474,12 @@ public class RecommendedFeatureView extends ViewPart {
 	}
 	
 	private void redraw(){
-		if (table.isDisposed()){
-			return;
-		}
 		
-		table.setRedraw(false);
-		table.removeAll();
-		if (selectedProject != null && rsfeatureModel != null) {
-			for(RSFeature feature:rsfeatureModel.getFeatures()){
-				TableItem item = new TableItem(table, SWT.DEFAULT);
-				
-			}
-		}
 		
-		table.setRedraw(true);
+		tree.setRedraw(false);
+		fViewer.setInput(rsfeatureModel);
+		fViewer.expandAll();
+		tree.setRedraw(true);
 		
 	}
 
@@ -365,9 +489,45 @@ public class RecommendedFeatureView extends ViewPart {
 		public void featureModelChanged(RSFeatureModelChangedEvent event) {
 			// TODO Auto-generated method stub
 			rsfeatureModel = event.getFeatureModel();
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						redraw();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
 			
-			redraw();
 		}
 		
+	}
+	
+	
+	
+	public String getText(Object obj) {
+		StringBuffer buf= new StringBuffer();
+		if (obj instanceof ASTNode) {
+			getNodeType((ASTNode) obj, buf);
+		} else if (obj instanceof ASTAttribute) {
+			buf.append(((ASTAttribute) obj).getLabel());
+		}
+		return buf.toString(); 
+	}
+	
+	private void getNodeType(ASTNode node, StringBuffer buf) {
+		buf.append(Signature.getSimpleName(node.getClass().getName()));
+		buf.append(" ["); //$NON-NLS-1$
+		buf.append(node.getStartPosition());
+		buf.append(", "); //$NON-NLS-1$
+		buf.append(node.getLength());
+		buf.append(']');
+		if ((node.getFlags() & ASTNode.MALFORMED) != 0) {
+			buf.append(" (malformed)"); //$NON-NLS-1$
+		}
+		if ((node.getFlags() & ASTNode.RECOVERED) != 0) {
+			buf.append(" (recovered)"); //$NON-NLS-1$
+		}
 	}
 }

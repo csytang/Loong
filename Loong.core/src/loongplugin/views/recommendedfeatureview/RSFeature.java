@@ -1,20 +1,26 @@
 package loongplugin.views.recommendedfeatureview;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 
-public class RSFeature {
+public class RSFeature implements Serializable{
 	private String afeatureName;
 	private double aweight = 0.0;
-	private Map<IJavaElement,Set<ASTNode>>abindings;
+	private Set<IJavaElementWrapper>wrappers;
 	
 	public RSFeature(String pfeatureName,double pweight,Map<IJavaElement,Set<ASTNode>>pbindings){
 		afeatureName = pfeatureName;
 		aweight = pweight;
-		abindings = pbindings;
+		wrappers = new HashSet<IJavaElementWrapper>();
+		for(Map.Entry<IJavaElement, Set<ASTNode>>entry:pbindings.entrySet()){
+			IJavaElementWrapper wrapper = new IJavaElementWrapper(entry.getKey(),entry.getValue(),this);
+			wrappers.add(wrapper);
+		}
 	}
 	
 	public String getFeatureName(){
@@ -25,8 +31,8 @@ public class RSFeature {
 		return aweight;
 	}
 	
-	public Map<IJavaElement,Set<ASTNode>> getAllBindings(){
-		return abindings;
+	public Set<IJavaElementWrapper> getChildren(){
+		return wrappers;
 	}
 	
 }

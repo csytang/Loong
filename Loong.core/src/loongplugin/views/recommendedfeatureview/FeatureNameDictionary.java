@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import loongplugin.LoongPlugin;
+import loongplugin.featuremodeleditor.event.FeatureModelChangedEvent;
 import loongplugin.utils.Stemmer;
 import loongplugin.utils.StringListToFile;
 
@@ -24,9 +26,9 @@ public class FeatureNameDictionary {
 	private IProject project = null;
 	private static FeatureNameDictionary instance;
 	private IProgressMonitor monitor;
-	private String tempfilePath = "input.txt";
 	private List<String>allStringList = new LinkedList<String>();
-	private static List<IRSFeatureModelChangeListener>listeners = new LinkedList<IRSFeatureModelChangeListener>();
+	private List<IRSFeatureModelChangeListener>listeners = new LinkedList<IRSFeatureModelChangeListener>();
+	private RSFeatureModel rsfeaturemodel = new RSFeatureModel();
 	
 	public static FeatureNameDictionary getInstance(IProgressMonitor pmonitor){
 		if(instance==null)
@@ -37,7 +39,7 @@ public class FeatureNameDictionary {
 		this.monitor = pmonitor;
 	}
 	
-	public static void	addRSFeatureModelChangeListener(IRSFeatureModelChangeListener listener){
+	public void addRSFeatureModelChangeListener(IRSFeatureModelChangeListener listener){
 		listeners.add(listener);
 	}
 	/**
@@ -186,20 +188,18 @@ public class FeatureNameDictionary {
 	public void mergeAndOptimizeDict(){
 		
 		assert(project!=null);
-		IPath path = project.getLocation();
-		path = path.append("/"+tempfilePath);
-		tempfilePath = path.toOSString();
-		convertToList();
-		StringListToFile strToFile = new StringListToFile(allStringList,tempfilePath);
-		strToFile.writeToFile();
-		
 		
 		FeatureNameMatrix fMatrix = new FeatureNameMatrix(featureNameDictionary,nonfeaturetextMapping);
-		
-		
+		rsfeaturemodel = fMatrix.getRSFeatureModel();
+		notifyFeatureModelListener();
 	}
-	public void buildBaseVectorSpace(){
-		
+	
+	public void notifyFeatureModelListener(){
+		long timesequence = System.currentTimeMillis();
+		RSFeatureModelChangedEvent event = new RSFeatureModelChangedEvent(this,rsfeaturemodel,timesequence);
+		for(IRSFeatureModelChangeListener listener:listeners){
+			listener.featureModelChanged(event);
+		}
 	}
 
 
