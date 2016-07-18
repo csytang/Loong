@@ -2,19 +2,12 @@ package loongplugin.views.recommendedfeatureview;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import loongplugin.LoongImages;
 import loongplugin.LoongPlugin;
-import loongplugin.feature.Feature;
-import loongplugin.feature.FeatureModelNotFoundException;
-import loongplugin.featuremodeleditor.IFeatureModelChangeListener;
 import loongplugin.views.astview.views.ASTAttribute;
-
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -25,62 +18,33 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IAnnotation;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
-import org.eclipse.jdt.core.IImportContainer;
-import org.eclipse.jdt.core.IImportDeclaration;
-import org.eclipse.jdt.core.IInitializer;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.ILocalVariable;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageDeclaration;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.ITypeParameter;
-import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.swt.custom.TableTree;
-import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
@@ -90,15 +54,8 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.Workbench;
@@ -107,6 +64,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.SWT;
 import org.osgi.framework.Bundle;
+import org.eclipse.swt.dnd.DragSource;
 
 public class RecommendedFeatureView extends ViewPart {
 
@@ -118,7 +76,7 @@ public class RecommendedFeatureView extends ViewPart {
 	private List<IJavaElement> allJavaElements;
 	public static RecommendedFeatureView instance;
 	private String[]columnNames={"properties","value"};
-	
+	private Action exportsToEditors;
 	private IProject selectedProject=null;
 	private RSFeatureModelChangeListener featuremodelListener;
 	
@@ -127,6 +85,7 @@ public class RecommendedFeatureView extends ViewPart {
 			new RecommendedFeatureView();
 		return instance;
 	}
+	
 	public RecommendedFeatureView() {
 		// TODO Auto-generated constructor stub
 		instance = this;
@@ -145,6 +104,12 @@ public class RecommendedFeatureView extends ViewPart {
 		featuremodelListener = new RSFeatureModelChangeListener();
 	}
 	
+	private void contributeToActionBars() {
+		IActionBars bars = getViewSite().getActionBars();
+		IToolBarManager toolBar = bars.getToolBarManager();
+		toolBar.add(exportsToEditors);
+	}
+	
 	public void setIJavaElementsToResolve(List<IJavaElement> pallJavaElements){
 		this.allJavaElements = pallJavaElements;
 	}
@@ -153,6 +118,22 @@ public class RecommendedFeatureView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		createTree(parent);
 		createTableViewer();
+		makeActions();
+		contributeToActionBars();
+	}
+	
+	
+	private void makeActions() {
+		exportsToEditors = new Action() {
+			public void run() {
+				
+				
+			}
+		};
+		exportsToEditors.setText("&Export to Configurable Feature Model Editor"); //$NON-NLS-1$
+		exportsToEditors.setToolTipText("Export to Configurable Feature Model Editor"); //$NON-NLS-1$
+		LoongImages.setImageDescriptors(exportsToEditors, LoongImages.EXPORT);
+		exportsToEditors.setEnabled(true);
 	}
 	
 	public RSFeatureModelChangeListener getFeatureModelListener(){
@@ -168,7 +149,6 @@ public class RecommendedFeatureView extends ViewPart {
 		int ops = DND.DROP_COPY|DND.DROP_LINK;
 		Transfer[] transfers = new Transfer[]{LocalSelectionTransfer.getTransfer()};
 		fViewer.addDropSupport(ops, transfers, new RecommendTreeDropAdapter(fViewer));
-		
 		fViewer.setLabelProvider(new RecommendedFeatureNameLabelProvider());
 		fViewer.setContentProvider(new RecommendedFeatureContentProvider());
 		fViewer.setInput(rsfeatureModel);
@@ -176,7 +156,6 @@ public class RecommendedFeatureView extends ViewPart {
 	}
 	private void createTree(Composite parent) {
 		tree = new Tree(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		
 		tree.setHeaderVisible(true);
 
 		TreeColumn column;
@@ -356,7 +335,8 @@ public class RecommendedFeatureView extends ViewPart {
 			switch(columnIndex){
 				case 0:{ 
 					if(element instanceof RSFeature){
-						return "name";
+						RSFeature rsfeature = (RSFeature)element;
+						return rsfeature.getFeatureName();
 					}else if(element instanceof ASTNodeWrapper){
 						return "ASTNode";
 					}else if(element instanceof IJavaElementWrapper){
@@ -365,7 +345,7 @@ public class RecommendedFeatureView extends ViewPart {
 				}
 				case 1:{
 					if(element instanceof RSFeature){
-						return ((RSFeature)element).getFeatureName();
+						return ((RSFeature)element).getWeight()+"";
 					}else if(element instanceof ASTNodeWrapper){
 						return getText(((ASTNodeWrapper)element).getASTNode());
 					}else if(element instanceof IJavaElementWrapper){
@@ -475,7 +455,6 @@ public class RecommendedFeatureView extends ViewPart {
 	
 	private void redraw(){
 		
-		
 		tree.setRedraw(false);
 		fViewer.setInput(rsfeatureModel);
 		fViewer.expandAll();
@@ -498,13 +477,9 @@ public class RecommendedFeatureView extends ViewPart {
 						e.printStackTrace();
 					}
 				}
-			});
-			
-		}
-		
+			});	
+		}	
 	}
-	
-	
 	
 	public String getText(Object obj) {
 		StringBuffer buf= new StringBuffer();

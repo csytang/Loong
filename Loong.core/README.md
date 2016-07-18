@@ -4,12 +4,12 @@ Loong Eclipse Plug-in - An Eclipse plug-in for migrating legacy system into prod
 
 Copyright @ 2016 The Hong Kong Polytechnic University. All Rights Reserved.
 
-DOCUMENTATION
+## DOCUMENTATION
 
 Please look at the URL below for documentation for Loong Plug-in
-[http://www.comp.polyu.edu.hk/csytang/Loong/loong.html](http://www.comp.polyu.edu.hk/csytang/Loong/loong.html)
+[http://www.comp.polyu.edu.hk/csytang/Loong/loong.html](http://www.comp.polyu.edu.hk/~csytang/Loong/loong.html)
 
-LICENSE
+## LICENSE
 
 ---- 
 
@@ -23,7 +23,9 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
  For more information, bug reports, fixes, contact:
-_ Chris Yutian Tang
+
+_Chris Yutian Tang_
+
 Dept of Computering, The Hong Kong Polytechnic University
 Hong Kong SAR, P.R. China
 

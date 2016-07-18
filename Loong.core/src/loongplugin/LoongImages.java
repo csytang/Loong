@@ -50,7 +50,7 @@ public class LoongImages {
 	public static final String FEATURE = "feature.jpg";
 	
 	public static final String JAVA_OBJ = "/eclipse/jcu_obj.png";
-	
+	public static final String EXPORT = "export.jpg";
 	
 	public static final String ABSTRACT_CO = "/eclipse/abstract_co.png";
 	public static final String ANNOTATION_OBJ = "/eclipse/annotation_obj.png";
@@ -68,17 +68,24 @@ public class LoongImages {
 	// ---- Helper methods to access icons on the file system
 	// --------------------------------------
 
+	
+
 	public static void setImageDescriptors(IAction action, String type) {
 		ImageDescriptor id = create("d", type); //$NON-NLS-1$
 		if (id != null)
 			action.setDisabledImageDescriptor(id);
-
 		id = create("c", type); //$NON-NLS-1$
 		if (id != null) {
 			action.setHoverImageDescriptor(id);
 			action.setImageDescriptor(id);
 		}else{
-			action.setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
+			id = create("", type);
+			if (id != null) {
+				action.setHoverImageDescriptor(id);
+				action.setImageDescriptor(id);
+			}else{
+				action.setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
+			}
 		}
 		
 		

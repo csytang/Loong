@@ -56,8 +56,6 @@ public class FeatureNameMatrix {
 	    	RSFeature feature = new RSFeature(featurestr,w[i],afeatureNameDictionary.get(featurestr));
 	    	model.addRSFeature(feature);
 	    }
-	    
-	    
 	}
 	
 	/**
