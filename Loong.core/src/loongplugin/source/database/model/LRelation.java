@@ -16,6 +16,14 @@ import java.util.Set;
 /**
  * Encapsulate various services related to relations.
  */
+/**
+ * enmu lrelation = {a(mmmm,mmmm),bb,b,c
+ *		public lrelation(mmmm,mmm){
+ *		} 
+ * }
+ * @author tangchris
+ *
+ */
 public enum LRelation
 {	
 	//////////////////// backward relations//////////////////////////////

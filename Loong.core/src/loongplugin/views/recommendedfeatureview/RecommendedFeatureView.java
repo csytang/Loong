@@ -262,8 +262,7 @@ public class RecommendedFeatureView extends ViewPart {
 	
 	
 	class RecommendedFeatureNameLabelProvider implements ITableLabelProvider{
-		
-		
+	
 		
 		public RecommendedFeatureNameLabelProvider(){
 			//this.featureImage = pfeatureImage;

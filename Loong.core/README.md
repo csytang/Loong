@@ -7,7 +7,7 @@ Copyright @ 2016 The Hong Kong Polytechnic University. All Rights Reserved.
 ## DOCUMENTATION
 
 Please look at the URL below for documentation for Loong Plug-in
-[http://www.comp.polyu.edu.hk/csytang/Loong/loong.html](http://www.comp.polyu.edu.hk/~csytang/Loong/loong.html)
+[http://www.comp.polyu.edu.hk/~csytang/Loong/loong.html](http://www.comp.polyu.edu.hk/~csytang/Loong/loong.html)
 
 ## LICENSE
 
