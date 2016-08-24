@@ -176,10 +176,14 @@ public class ProgramDatabase {
     	assert( pElement2 != null );
     	assert( pRelation != null );
     	
-    	if( !contains( pElement1 ))
-    		throw new ElementNotFoundException( pElement1.getId() );
-    	if( !contains( pElement2 ))
-    		throw new ElementNotFoundException( pElement2.getId() );
+    	if( !contains( pElement1 )){
+    		return;
+    		//throw new ElementNotFoundException( pElement1.getId() );
+    	}
+    	if( !contains( pElement2 )){
+    		return;
+    		//throw new ElementNotFoundException( pElement2.getId() );
+    	}
     	
     	if (contains(pElement1) && contains(pElement2)) {
 			addRelation(pElement1, pRelation, pElement2);

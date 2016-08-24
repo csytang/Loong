@@ -66,13 +66,15 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 		
 		
 		for(Feature feature:FeatureModelManager.getInstance().getFeatures()){
-			//System.out.println("For feature:"+feature.getName());
+			System.out.println("For feature:"+feature.getName());
 			Map<LElement, RecommendationContextCollection> recommendermaps = lerecommendationmanager.getRecommendations(feature);
+			
 			for(LElement element:recommendermaps.keySet()){
-				//System.out.println("LElement:"+element.getShortName());
+			//	System.out.println("LElement:"+element.getId());
 				CLRAnnotatedSourceFile clrsourcefile = element.getCLRFile();
 				CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrsourcefile.getColorManager();
 				annotatedfeatureToNode(clrsourcefile.getCompilationUnit(),colormanager,element.getASTNode(),feature);
+				
 			}
 			
 		}
@@ -91,11 +93,11 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 		
 	}
 	public void annotatedfeatureToNode(ICompilationUnit unit,CompilationUnitColorManager colormanager,ASTNode node,Feature feature){
-		System.out.println("----Annotated Features--[start]----------");
+		
 		colormanager.beginBatch();
 			colormanager.addColor(node, feature);
 			feature.addASTNodeToFeature(unit,node);
 		colormanager.endBatch();
-		System.out.println("----Annotated Features-[end]-----------");
+		
 	}
 }

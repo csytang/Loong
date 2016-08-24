@@ -42,7 +42,6 @@ public class EmbeddedASTNodeCollector {
 	public static Map<IBinding, Set<ASTNode>> collectBindingASTNodes(ASTNode node){
 		Map<IBinding, Set<ASTNode>> bindingastnodes = new HashMap<IBinding, Set<ASTNode>>();
 		CIDEASTNodeCollector cideastcollector = new CIDEASTNodeCollector();
-		
 		node.accept(cideastcollector);
 		bindingastnodes = cideastcollector.getBindingASTNodeSet();
 		return bindingastnodes;

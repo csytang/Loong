@@ -111,7 +111,7 @@ public class CompilationUnitColorManager extends AbstractColorManager implements
 					colorFile.create(source, true, monitor);
 				else
 					colorFile.setContents(source, true, true, monitor);
-				 System.out.println("saving color file " + colorFile);
+				 
 			} else {
 				if (colorFile.exists())
 					colorFile.delete(true, monitor);

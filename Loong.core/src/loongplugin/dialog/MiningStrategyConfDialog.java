@@ -72,8 +72,8 @@ public class MiningStrategyConfDialog extends TitleAreaDialog {
 		button_topology.addSelectionListener(selectionListners[0]);
 		
 		Button button_resolvebind = new Button(group, SWT.CHECK);
-		button_resolvebind.setText("Binding-resolve");
-		selectionListners[1] = new CheckBoxSelectionListener("BindResolve");
+		button_resolvebind.setText("StiCProb");
+		selectionListners[1] = new CheckBoxSelectionListener("StiCProb");
 		button_resolvebind.addSelectionListener(selectionListners[1]);
 		
 		Button button_textcomparision = new Button(group, SWT.CHECK);

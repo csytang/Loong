@@ -41,7 +41,12 @@ public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 		Map<LElement, RecommendationContext> recommendations = new HashMap<LElement,RecommendationContext>();
 		
 		// CHECK REFERENCE CHECK
-		Set<LElement> accessElements = AOB.getRange(element,LRelation.T_BELONGS_TO);
+		Set<LElement> accessElements;
+		try{
+			accessElements = AOB.getRange(element,LRelation.T_BELONGS_TO);
+		}catch(Exception e){
+			return recommendations;
+		}
 		for (LElement accessElement : accessElements) {
 
 			ReferenceCheck check = new ReferenceCheck(element, accessElement,

@@ -23,11 +23,12 @@ public class CLRAnnotateContextMenu extends MenuManager implements IContribution
 			Collection<? extends Feature> features){
 		super("Annotated feature to the selection");
 		Set<Feature>selectedset = new HashSet<Feature>();
-		/*
+		
 		for (Feature feature : features) {
 			if(!context.isChecked(feature))
 				this.add(new ToggleTextColorAction(context, feature,true));
-		}*/
+		}
+		/*
 		for (Feature feature : features) {
 			if(context.isChecked(feature))
 				selectedset.add(feature);
@@ -55,7 +56,7 @@ public class CLRAnnotateContextMenu extends MenuManager implements IContribution
 					e.printStackTrace();
 				}
 			}
-		}
+		}*/
 	}
 
 	

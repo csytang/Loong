@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public enum LRelation
 {	
-	//////////////////// backward relations//////////////////////////////
+	//////////////////// forward relations//////////////////////////////
 	DECLARES_TYPE(Type.ID_DECLARES_TYPE, true), 
 	DECLARES_IMPORT(Type.ID_DECLARES_IMPORT, true), 
 	DECLARES_FIELD(Type.ID_DECLARES_FIELD, true), 

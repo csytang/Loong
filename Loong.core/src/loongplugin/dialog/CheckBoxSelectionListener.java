@@ -20,7 +20,7 @@ public class CheckBoxSelectionListener extends SelectionAdapter {
 				MiningStrategyConfDialog.getDefault().setTopologySelected();
 				break;
 			}
-			case "BindResolve":{
+			case "StiCProb":{
 				MiningStrategyConfDialog.getDefault().setResolvebindSelected();
 				break;
 			}

@@ -97,9 +97,6 @@ public class ComparePerformance implements IObjectActionDelegate{
        job.setPriority(Job.LONG);
        job.schedule();
        
-       
-       
-       
 	}
 
 	@Override

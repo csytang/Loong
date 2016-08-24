@@ -50,6 +50,12 @@
                menubarPath="LoongPlugin.menu/group1">
          </action>
          <action
+               class="loongplugin.popup.actions.WriteToIDCLR"
+               id="LoongPlugin.createmodelIDCLR"
+               label="Create Log for modelIDCLR"
+               menubarPath="LoongPlugin.menu/group1">
+         </action>
+         <action
                class="loongplugin.popup.actions.EditMiningStrategy"
                icon="icons/mining.png"
                id="LoongPlugin.setstrategy"
@@ -121,6 +127,11 @@
                </objectState>
             </and>
          </visibility>
+         <action
+               class="loongplugin.popup.actions."
+               id="LoongPlugin.collectBenchmark"
+               label="Collect Information for Benchmark">
+         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
@@ -234,15 +245,6 @@
             name="ASTView"
             restorable="true">
       </view>
-      <view
-            allowMultiple="false"
-            category="LoongPlugin.viewcategory"
-            class="loongplugin.views.recommendedfeatureview.RecommendedFeatureView"
-            icon="icons/recommend.png"
-            id="LoongPlugin.recommendedFeatureList"
-            name="Recommended Feature List"
-            restorable="true">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -273,15 +275,6 @@
             icon="icons/umlicon.png"
             id="Loongplugin.uml.editors.UMLBuilderEditor"
             name="Class Diagram Editor">
-      </editor>
-      <editor
-            class="loongplugin.configfeaturemodeleditor.ui.ConfigurableFeatureModelEditor"
-            contributorClass="loongplugin.configfeaturemodeleditor.actions.DiagramActionBarContributor"
-            default="true"
-            extensions="mconfig"
-            icon="icons/mconfig.gif"
-            id="LoongPlugin.mConfigFeatureModelEditor"
-            name="Configurable Feature Model Editor">
       </editor>
    </extension>
    <extension
@@ -365,13 +358,6 @@
             icon="icons/umlicon.png"
             id="LoongPlugin.uml.wizard"
             name="Class Diagram">
-      </wizard>
-      <wizard
-            category="LoongPlugin.newwizard"
-            class="loongplugin.newWizard.MConfigFileWizard"
-            icon="icons/ConfigurationFileSmall.png"
-            id="LoongPlugin.mConfigFeatureModelwizard"
-            name="Temprorary Configurable Feature Model">
       </wizard>
    </extension>
 

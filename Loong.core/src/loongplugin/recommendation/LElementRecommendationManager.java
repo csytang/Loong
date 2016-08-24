@@ -14,7 +14,7 @@ import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModelManager;
 import loongplugin.recommendation.recommender.AbstractFeatureRecommender;
 import loongplugin.recommendation.recommender.AbstractLElementRecommnder;
-import loongplugin.recommendation.resolvebinding.ResolveBindingLElementRecommender;
+import loongplugin.recommendation.stiprob.StiProbLElementRecommender;
 import loongplugin.recommendation.textcomparsion.TextComparisionLElementRecommender;
 import loongplugin.recommendation.topology.TopologyLElementRecommender;
 import loongplugin.recommendation.typesystem.TypeCheckLElementRecommender;
@@ -52,7 +52,7 @@ public class LElementRecommendationManager implements Observer{
 		if(USE_TOPOLOGYANALYSIS)
 			elementRecommenders.add(new TopologyLElementRecommender());
 		if(USE_RESOLVEBIND)
-			elementRecommenders.add(new ResolveBindingLElementRecommender());
+			elementRecommenders.add(new StiProbLElementRecommender());
 			
 		if(USE_SUBSTRINGCOMP)	
 			featureRecommenders.add(new TextComparisionLElementRecommender());
@@ -93,19 +93,16 @@ public class LElementRecommendationManager implements Observer{
 
 		if (colorRecommendations == null)
 			return new HashMap<LElement, RecommendationContextCollection>();
-		colorRecommendations = new HashMap<LElement, RecommendationContextCollection>(
-				colorRecommendations);
+		colorRecommendations = new HashMap<LElement, RecommendationContextCollection>(colorRecommendations);
 
 		Map<LElement, RecommendationContextCollection> resultRecommendations = new HashMap<LElement, RecommendationContextCollection>();
 
-		for (Entry<LElement, RecommendationContextCollection> entry : colorRecommendations
-				.entrySet()) {
+		for (Entry<LElement, RecommendationContextCollection> entry : colorRecommendations.entrySet()) {
 			LElement recElement = entry.getKey();
 			RecommendationContextCollection collection = entry.getValue();
 			for (RecommendationContext context : collection.getContexts()) {
 				if (!element.equals(context.getSupporter()))
 					continue;
-
 				resultRecommendations.put(recElement, collection);
 				break;
 			}
@@ -130,7 +127,7 @@ public class LElementRecommendationManager implements Observer{
 		}
 
 		Set<LElement> elements = aAO.getElementsOfFeature(color);
-
+		int counter = 0;
 		for (LElement tmpElement : new ArrayList<LElement>(elements)) {
 
 			Map<LElement, RecommendationContextCollection> tmpRecommendations = getRecommendations(
@@ -138,11 +135,11 @@ public class LElementRecommendationManager implements Observer{
 
 			if (tmpRecommendations == null)
 				continue;
-
+			counter++;
 			mergeRecommendations(tmpRecommendations, recommendations);
 
 		}
-
+		System.out.println("Number of iteration for feature "+color.getName()+" is "+counter);
 		return recommendations;
 	}
 
@@ -169,7 +166,7 @@ public class LElementRecommendationManager implements Observer{
 
 			// ADD ELEMENTS OF RELATED COLORS
 			for (Feature relatedColor : aAO.getRelatedFeatures(color)) {
-					tmpElements.addAll(aAO.getElementsOfFeature(relatedColor));
+				tmpElements.addAll(aAO.getElementsOfFeature(relatedColor));
 			}
 			elements = tmpElements;
 
@@ -186,6 +183,7 @@ public class LElementRecommendationManager implements Observer{
 					addRecommendations(tmpRecommendations, recommendations);
 
 				}
+				
 
 			}
 

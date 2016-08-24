@@ -37,13 +37,7 @@ public class RecommendationContextCollection {
 
 		for (RecommendationContext context : contexts) {
 			// //FUZZY STANDARD
-			// supportValue = Math.max(supportValue, context.getSupportValue());
-
-			// ROB08-ANSATZ - �ber alle
-			// supportValue = supportValue + context.getSupportValue() -
-			// (supportValue * context.getSupportValue());
-
-			// ROB08- ANSATZ - zwischen unterschiedlichen Recommendern
+			
 			Double maxValue = max4Type.get(context.getRecommenderType());
 			if (maxValue == null) {
 				curMaxValue = context.getSupportValue();

@@ -186,7 +186,6 @@ public class CIDEcolorFileReader {
 			clrFile.create(source, true, monitor);
 		else
 			clrFile.setContents(source, true, true, monitor);
-		System.out.println("saving color file " + colorFile);
 	}
 	
 	public IFile getCreatedCLRIFile(){

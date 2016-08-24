@@ -44,15 +44,14 @@ public class LElement {
 	private int paramIndex = -1;
 	private Map<IBinding,Set<ASTNode>>bindingLElements = new HashMap<IBinding,Set<ASTNode>>();
 	
-	private double probability = 0;
-	private boolean debug = true;
-	private Map<LElement,Double> priorprobability = new HashMap<LElement,Double>();
-	private Map<LElement,Double> posterioriprobability = new HashMap<LElement,Double>();
+	
+	private boolean debug = false;
+	
 	
 	// this variable is only use for MethodDeclaration node;
 	private IMethod bindMethod = null;
 	
-	private Set<LElement>priorLElements = new HashSet<LElement>();
+	
 	
 	/**
 	 * Builds an abstract element. 
@@ -1044,41 +1043,9 @@ public class LElement {
 		return aColorSourceFile;
 	}
 	
-	/**
-	 * 计算先验概率 当前节点是条件 resultelement是结果
-	 */
-	public void setPrior_Probability(LElement resultelement,double probability){
-		if(!priorprobability.containsKey(resultelement)){
-			priorprobability.put(resultelement, probability);
-		}
-	}
 	
-	public boolean hasPrior_Probability(LElement forwardelement){
-		if(priorprobability.containsKey(forwardelement))
-			return true;
-		else
-			return false;
-	}
 	
-	/**
-	 * 计算后验概率 假定条件是 evidenceelement
-	 */
-	public void setPosteriori_Probability(LElement evidenceelement,double probability){
-		if(!posterioriprobability.containsKey(evidenceelement)){
-			posterioriprobability.put(evidenceelement, probability);
-		}else{
-			double existprobability = posterioriprobability.get(evidenceelement);
-			posterioriprobability.put(evidenceelement, existprobability+probability);
-		}
-	}
 	
-	public double getPrior_Probability(LElement resultelement){
-		if(!priorprobability.containsKey(resultelement)){
-			return 0;
-		}else{
-			return priorprobability.get(resultelement);
-		}
-	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -1178,18 +1145,7 @@ public class LElement {
 		return childrentmps;
 	}
 
-	public void setProbability(LElement element,double dprobability) {
-		// TODO Auto-generated method stub
-		if(element==null){
-			probability = dprobability;
-			return;
-		}else if(priorLElements.contains(element)){
-			return;
-		}else{
-			probability += dprobability;
-			priorLElements.add(element);
-		}
-	}
+	
 	
 	public void setIMethod(IMethod imethod){
 		if(aastNode instanceof MethodDeclaration){
@@ -1203,10 +1159,6 @@ public class LElement {
 		return null;
 	}
 
-	public double getProbability() {
-		// TODO Auto-generated method stub
-		return probability;
-	}
 	
 	public CompilationUnit getCompilationUnit(){
 		try {
