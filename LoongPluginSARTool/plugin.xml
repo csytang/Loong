@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.jdt.core.IJavaProject"
+            id="LoongPluginSARTool.contribution">
+         <action
+               class="loongpluginsartool.popup.actions.JavaProjectSARecovery"
+               enablesFor="1"
+               icon="icons/recovery.png"
+               id="LoongPluginSARTool.architecturerecoveryjava"
+               label="Recover the architecture for this Java project"
+               menubarPath="LoongPlugin.menu/group1">
+         </action>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="LoongPluginSARTool.objectContributioncpp"
+            objectClass="org.eclipse.cdt.core.model.ICProject">
+         <action
+               class="loongpluginsartool.popup.actions.CPPProjectSARecovery"
+               icon="icons/recovery.png"
+               id="LoongPluginSARTool.architecturerecoverycpp"
+               label="Recover the architecture for this C/Cpp project"
+               menubarPath="LoongPlugin.menu/group1">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="loongpluginsartool.editor.configfeaturemodeleditor.ui.ConfigurableFeatureModelEditor"
+            contributorClass="loongpluginsartool.editor.configfeaturemodeleditor.actions.DiagramActionBarContributor"
+            default="true"
+            extensions="mconfig"
+            icon="icons/mconfig.gif"
+            id="LoongPlugin.SARTool.mConfigFeatureModelEditor"
+            name="Configurable Feature Model Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            category="LoongPlugin.viewcategory"
+            class="loongpluginsartool.views.recommendedfeatureview.RecommendedFeatureView"
+            icon="icons/recommend.png"
+            id="LoongPlugin.SARTool.recommendedFeatureList"
+            name="Recommended Feature List"
+            restorable="true">
+      </view>
+      <category
+            id="LoongPlugin.viewcategory"
+            name="Loong">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="LoongPlugin.newwizard"
+            class="loongpluginsartool.newWizard.MConfigFileWizard"
+            icon="icons/ConfigurationFileSmall.png"
+            id="LoongPluginSARTool.mConfigFeatureModelwizard"
+            name="Temprorary Configurable Feature Model">
+      </wizard>
+   </extension>
+
+</plugin>

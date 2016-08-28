@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="xstream-1.4.2.jar"/>
+	<classpathentry kind="lib" path="xom-1.2.10-src.jar"/>
+	<classpathentry kind="lib" path="xom.jar"/>
+	<classpathentry kind="lib" path="javax.json-api-1.0-sources.jar"/>
+	<classpathentry kind="lib" path="javax.json.jar"/>
+	<classpathentry kind="lib" path="kxml2-2.3.0.jar"/>
+	<classpathentry kind="lib" path="kxml2-min-2.3.0.jar"/>
+	<classpathentry kind="lib" path="Jama-1.0.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
