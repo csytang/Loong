@@ -62,7 +62,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="loongpluginsartool.editor.configfeaturemodeleditor.ui.ConfigurableFeatureModelEditor"
+            class="loongpluginfmrtool.editor.configfeaturemodeleditor.ui.ConfigurableFeatureModelEditor"
             contributorClass="loongpluginsartool.editor.configfeaturemodeleditor.actions.DiagramActionBarContributor"
             default="true"
             extensions="mconfig"
@@ -76,7 +76,7 @@
       <view
             allowMultiple="false"
             category="LoongPlugin.viewcategory"
-            class="loongpluginsartool.views.recommendedfeatureview.RecommendedFeatureView"
+            class="loongpluginfmrtool.views.recommendedfeatureview.RecommendedFeatureView"
             icon="icons/recommend.png"
             id="LoongPlugin.FMRTool.recommendedFeatureList"
             name="Recommended Feature List"
@@ -91,7 +91,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             category="LoongPlugin.newwizard"
-            class="loongpluginsartool.newWizard.MConfigFileWizard"
+            class="loongpluginfmrtool.newWizard.MConfigFileWizard"
             icon="icons/ConfigurationFileSmall.png"
             id="LoongPluginSARTool.mConfigFeatureModelwizard"
             name="Temprorary Configurable Feature Model">

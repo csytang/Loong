@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ApplicationObserverException;
-import loongpluginsartool.architecturerecovery.java.JavaRecoverGen;
+import loongpluginfmrtool.architecturerecovery.java.JavaRecoverGen;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
