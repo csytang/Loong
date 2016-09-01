@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.EventObject;
 
 import loongplugin.LoongPlugin;
-import loongpluginsartool.LoongPluginSARTool;
+import loongpluginfmrtool.LoongPluginFMRTool;
 import loongpluginsartool.editor.configfeaturemodeleditor.model.AbstractModel;
 import loongpluginsartool.editor.configfeaturemodeleditor.model.ConfFeatureModel;
 import loongpluginsartool.editor.configfeaturemodeleditor.model.ConfFeature;
@@ -58,7 +58,7 @@ public class ConfigurableFeatureModelEditor extends GraphicalEditorWithPalette i
 	/**
 	 * TODO: 加入对 从 recommend feature list中抓取的 控制
 	 */
-	public static final String ID = LoongPlugin.PLUGIN_ID+".SARTool.mConfigFeatureModelEditor";
+	public static final String ID = LoongPlugin.PLUGIN_ID+".FMRTool.mConfigFeatureModelEditor";
 	
 	public ImageDescriptor FEATURE_DESCRIPTION;
 	public ImageDescriptor FEATURECONNECTION_DESCRIPTION;
@@ -71,7 +71,7 @@ public class ConfigurableFeatureModelEditor extends GraphicalEditorWithPalette i
 		return instance;
 	}
 	public ConfigurableFeatureModelEditor() {
-		Bundle bundle = Platform.getBundle(LoongPluginSARTool.PLUGIN_ID);
+		Bundle bundle = Platform.getBundle(LoongPluginFMRTool.PLUGIN_ID);
 		URL fullPathString = BundleUtility.find(bundle,"icons/feature.jpg");
 		FEATURE_DESCRIPTION = ImageDescriptor.createFromURL(fullPathString);
 		URL fullConnectionPathString = BundleUtility.find(bundle,"icons/arrow.gif");

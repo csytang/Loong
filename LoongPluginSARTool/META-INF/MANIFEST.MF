@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: LoongPluginSARTool
-Bundle-SymbolicName: LoongPlugin.SARTool;singleton:=true
+Bundle-Name: LoongPluginFMRTool
+Bundle-SymbolicName: LoongPlugin.FMRTool;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: loongpluginsartool.LoongPluginSARTool
+Bundle-Activator: loongpluginfmrtool.LoongPluginFMRTool
 Require-Bundle: org.eclipse.ui.editors;bundle-version="3.8.200",
  org.eclipse.jdt.core;bundle-version="3.10.2",
  org.eclipse.jdt.ui;bundle-version="3.10.2",

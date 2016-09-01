@@ -1,4 +1,4 @@
-package loongpluginsartool;
+package loongpluginfmrtool;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -7,18 +7,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class LoongPluginSARTool extends AbstractUIPlugin {
+public class LoongPluginFMRTool extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "LoongPlugin.SARTool"; //$NON-NLS-1$
 
 	// The shared instance
-	private static LoongPluginSARTool plugin;
+	private static LoongPluginFMRTool plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public LoongPluginSARTool() {
+	public LoongPluginFMRTool() {
 	}
 
 	/*
@@ -44,7 +44,7 @@ public class LoongPluginSARTool extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static LoongPluginSARTool getDefault() {
+	public static LoongPluginFMRTool getDefault() {
 		return plugin;
 	}
 

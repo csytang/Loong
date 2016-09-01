@@ -131,17 +131,6 @@ public class JavaProjectSARecovery implements IObjectActionDelegate{
 			e.printStackTrace();
 		}
 	    
-	    // 3. pop-up a menu to guide user to drag project to view
-	    Display.getCurrent().syncExec(new Runnable(){
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				MessageDialog.openInformation(shell, "Loong Plugin System-SARTool",
-				"To create a recommend list for feature name, you can simply drag the project or some packages into the recommend feature list view.");
-			}
-	    	
-	    });
 	    
 	    // sync with the system for program db buit
 	    try {
@@ -151,9 +140,7 @@ public class JavaProjectSARecovery implements IObjectActionDelegate{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    // 4. 
-	    JavaRecoverGen gen = new JavaRecoverGen(this.lDB);
-	    gen.BeginRecovery();
+	    
 	    
 	}
 

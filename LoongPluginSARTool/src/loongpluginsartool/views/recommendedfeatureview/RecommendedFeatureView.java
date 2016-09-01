@@ -96,7 +96,7 @@ import org.eclipse.swt.dnd.DragSource;
 
 public class RecommendedFeatureView extends ViewPart {
 
-	public static final String ID = LoongPlugin.PLUGIN_ID+".SARTool.recommendedFeatureList";
+	public static final String ID = LoongPlugin.PLUGIN_ID+".FMRTool.recommendedFeatureList";
 	private TreeViewer fViewer;
 	
 	private Tree tree;

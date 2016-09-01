@@ -127,11 +127,6 @@
                </objectState>
             </and>
          </visibility>
-         <action
-               class="loongplugin.popup.actions."
-               id="LoongPlugin.collectBenchmark"
-               label="Collect Information for Benchmark">
-         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"

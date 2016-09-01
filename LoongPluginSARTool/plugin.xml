@@ -7,25 +7,55 @@
       <objectContribution
             objectClass="org.eclipse.jdt.core.IJavaProject"
             id="LoongPluginSARTool.contribution">
+         <menu
+               id="LoongPlugin.FMRTool.FMRecoveryJ"
+               label="LoongFMR"
+               path="additions">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
          <action
                class="loongpluginsartool.popup.actions.JavaProjectSARecovery"
                enablesFor="1"
+               icon="icons/ConfigurationIcon.png"
+               id="LoongPlugin.FMRTool.architecturerecoveryjava"
+               label="Open Feature Configuration Editor"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.openFeatureNameRecommendationView"
+               icon="icons/recommend.png"
+               id="LoongPluginFMRTool.recommendName"
+               label="Open Feature Name Recommendation View"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.recoveryFeatureModel"
                icon="icons/recovery.png"
-               id="LoongPluginSARTool.architecturerecoveryjava"
-               label="Recover the architecture for this Java project"
-               menubarPath="LoongPlugin.menu/group1">
+               id="LoongPluginFMRTool.action3"
+               label="Recovery Feature Model"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
             id="LoongPluginSARTool.objectContributioncpp"
             objectClass="org.eclipse.cdt.core.model.ICProject">
+         <menu
+               id="LoongPlugin.FMRTool.FMRecoveryC"
+               label="LoongFMR"
+               path="additions">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
          <action
                class="loongpluginsartool.popup.actions.CPPProjectSARecovery"
                icon="icons/recovery.png"
                id="LoongPluginSARTool.architecturerecoverycpp"
-               label="Recover the architecture for this C/Cpp project"
-               menubarPath="LoongPlugin.menu/group1">
+               label="Open Feature Configuration Editor"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryC/group1">
          </action>
       </objectContribution>
    </extension>
@@ -37,7 +67,7 @@
             default="true"
             extensions="mconfig"
             icon="icons/mconfig.gif"
-            id="LoongPlugin.SARTool.mConfigFeatureModelEditor"
+            id="LoongPlugin.FMRTool.mConfigFeatureModelEditor"
             name="Configurable Feature Model Editor">
       </editor>
    </extension>
@@ -48,7 +78,7 @@
             category="LoongPlugin.viewcategory"
             class="loongpluginsartool.views.recommendedfeatureview.RecommendedFeatureView"
             icon="icons/recommend.png"
-            id="LoongPlugin.SARTool.recommendedFeatureList"
+            id="LoongPlugin.FMRTool.recommendedFeatureList"
             name="Recommended Feature List"
             restorable="true">
       </view>
