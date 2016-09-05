@@ -16,7 +16,7 @@
             </separator>
          </menu>
          <action
-               class="loongpluginsartool.popup.actions.JavaProjectSARecovery"
+               class="loongpluginfmrtool.popup.actions.openFeatureNameRecommendationView"
                enablesFor="1"
                icon="icons/ConfigurationIcon.png"
                id="LoongPlugin.FMRTool.architecturerecoveryjava"
@@ -63,7 +63,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="loongpluginfmrtool.editor.configfeaturemodeleditor.ui.ConfigurableFeatureModelEditor"
-            contributorClass="loongpluginsartool.editor.configfeaturemodeleditor.actions.DiagramActionBarContributor"
+            contributorClass="loongpluginfmrtool.editor.configfeaturemodeleditor.actions.DiagramActionBarContributor"
             default="true"
             extensions="mconfig"
             icon="icons/mconfig.gif"
@@ -86,6 +86,14 @@
             id="LoongPlugin.viewcategory"
             name="Loong">
       </category>
+      <view
+            category="LoongPlugin.viewcategory"
+            class="loongpluginfmrtool.views.moduleviews.ModuleViewPart"
+            icon="icons/module.png"
+            id="LoongPluginFMRTool.view1"
+            name="Modules with Configurations"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">

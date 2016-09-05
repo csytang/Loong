@@ -68,6 +68,10 @@ public class LoongImages {
 	// ---- Helper methods to access icons on the file system
 	// --------------------------------------
 
+	public static final String MODULE = "module.png";
+	public static final String EXECUTE = "run.png";
+
+	public static final String MACRO = "macro.ico";
 	
 
 	public static void setImageDescriptors(IAction action, String type) {

@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ApplicationObserverException;
-import loongpluginfmrtool.architecturerecovery.java.JavaRecoverGen;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -72,8 +71,7 @@ public class recoveryFeatureModel implements IObjectActionDelegate {
 			e.printStackTrace();
 		}
 		
-	    JavaRecoverGen gen = new JavaRecoverGen(this.lDB);
-	    gen.BeginRecovery();
+	    
 	}
 
 	@Override

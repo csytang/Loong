@@ -111,7 +111,7 @@ public class RecommendedFeatureView extends ViewPart {
 	
 	public static RecommendedFeatureView getInstance(){
 		if(instance==null)
-			new RecommendedFeatureView();
+			instance = new RecommendedFeatureView();
 		return instance;
 	}
 	
