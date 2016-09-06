@@ -3,6 +3,7 @@ package loongpluginfmrtool.views.moduleviews;
 import loongplugin.LoongImages;
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ApplicationObserverException;
+import loongpluginfmrtool.module.ModuleBuilder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -17,6 +18,7 @@ import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -24,6 +26,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IActionBars;
@@ -167,40 +171,20 @@ public class ModuleViewPart extends ViewPart {
 				ModuleViewPart.lDB = ApplicationObserver.getInstance();
 				WorkspaceJob op = null;
 				if(!lDB.isInitialized()){
-					if(lDB.getInitializedProject()!=selectedProject){
-						op = new WorkspaceJob("CreateDatabaseAction") {
-
-							@Override
-							public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-								// TODO Auto-generated method stub
-								try {
-									// get instance and init the database
-									lDB = ApplicationObserver.getInstance();
-									lDB.initialize(selectedProject, monitor);
-
-								} catch (ApplicationObserverException lException) {
-									lException.printStackTrace();
-								}
-								
-								return Status.OK_STATUS;
-						}};
-						op.setUser(true);
-						op.schedule();	
-					}
-				
-					// 等待ProgramDB  构建完成 
-					try {
-				    	if(op!=null)
-				    		op.join();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					Display.getCurrent().syncExec(new Runnable(){
+						
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							Shell shell = getSite().getShell();
+							MessageDialog.openInformation(shell, "Loong Plugin System-FMRTool",
+							"To create #ifdef-body block, please create the program database first with the pop-up menuitem.");
+						}
+				    	
+				    });
+				}else{
+					ModuleBuilder instance  = ModuleBuilder.getInstance(selectedProject,ModuleViewPart.lDB);
 				}
-				
-				ModuleBuilder instance  = ModuleBuilder.getInstance(selectedProject);
-				
-				
 			}
 			
 		};
