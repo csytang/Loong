@@ -1,5 +1,6 @@
 package loongplugin.popup.actions;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
@@ -13,7 +14,11 @@ import loongplugin.recommendation.RecommendationContextCollection;
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.model.LElement;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.action.IAction;
@@ -29,6 +34,7 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 	 * Parse the project and create the source database for selected project
 	 */
 	private IStructuredSelection aSelection;
+	private IProject aProject;
 	public AnnotateFeatures() {
 		// TODO Auto-generated constructor stub
 		
@@ -38,11 +44,11 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 	public void run(IAction action) {
 		// TODO Auto-generated method stub
 		// 1. check all features seeds are selected and annotated with colors
-		
+		aProject = getSelectedProject();
 		// 检查是否构建的 program database 
 		ApplicationObserver lDB = ApplicationObserver.getInstance();
 		// 检查是否 选定 feature mining strategy
-		if(!lDB.isInitialized()){
+		if(!lDB.isInitialized(aProject)){
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error", "ProgramDB has not been built!");
 			return;
 		}
@@ -95,9 +101,24 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 	public void annotatedfeatureToNode(ICompilationUnit unit,CompilationUnitColorManager colormanager,ASTNode node,Feature feature){
 		
 		colormanager.beginBatch();
-			colormanager.addColor(node, feature);
-			feature.addASTNodeToFeature(unit,node);
+		colormanager.addColor(node, feature);
+		feature.addASTNodeToFeature(unit,node);
 		colormanager.endBatch();
 		
+	}
+	
+	private IProject getSelectedProject() {
+		IProject lReturn = null;
+		Iterator i = aSelection.iterator();
+		if (i.hasNext()) {
+			Object lNext = i.next();
+			if (lNext instanceof IResource) {
+				lReturn = ((IResource) lNext).getProject();
+			} else if (lNext instanceof IJavaElement) {
+				IJavaProject lProject = ((IJavaElement) lNext).getJavaProject();
+				lReturn = lProject.getProject();
+			}
+		}
+		return lReturn;
 	}
 }

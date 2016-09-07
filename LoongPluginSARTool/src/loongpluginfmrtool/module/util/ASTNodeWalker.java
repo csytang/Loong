@@ -26,4 +26,20 @@ public class ASTNodeWalker {
 		return results;
 	}
 	
+	public static Set<ASTNode> allWalker(ASTNode node){
+		final Set<ASTNode> results = new HashSet<ASTNode>();
+		node.accept(new ASTVisitor(){
+
+			@Override
+			public void preVisit(ASTNode node) {
+				// TODO Auto-generated method stub
+				results.add(node);
+				super.preVisit(node);
+			}
+
+			
+			
+		});
+		return results;
+	}
 }

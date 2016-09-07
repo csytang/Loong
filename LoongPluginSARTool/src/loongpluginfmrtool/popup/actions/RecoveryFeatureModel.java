@@ -2,32 +2,34 @@ package loongpluginfmrtool.popup.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IFile;
+import loongplugin.source.database.ApplicationObserver;
+import loongplugin.source.database.ApplicationObserverException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 
-public class openFeatureNameRecommendationView implements IObjectActionDelegate{
+public class RecoveryFeatureModel implements IObjectActionDelegate {
 
-	private IProject aProject;
 	private IStructuredSelection aSelection;
+	private IProject aProject;
 	private Shell shell;
 	private IWorkbenchPart part;
+	private ApplicationObserver lDB;
 	
-	public openFeatureNameRecommendationView() {
+	public RecoveryFeatureModel() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -35,29 +37,40 @@ public class openFeatureNameRecommendationView implements IObjectActionDelegate{
 	public void run(IAction action) {
 		// TODO Auto-generated method stub
 		aProject = getSelectedProject();
+		WorkspaceJob op = null;
+		// ProgramDB 没有被初始化
+		if(!this.lDB.isInitialized(aProject)){
+			if(lDB.getInitializedProject()!=aProject){
+				op = new WorkspaceJob("CreateDatabaseAction") {
+
+					@Override
+					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+						// TODO Auto-generated method stub
+						try {
+							// get instance and init the database
+							lDB = ApplicationObserver.getInstance();
+							lDB.initialize(aProject, monitor);
+
+						} catch (ApplicationObserverException lException) {
+							lException.printStackTrace();
+						}
+						
+						return Status.OK_STATUS;
+				}};
+				op.setUser(true);
+				op.schedule();	
+			}
+		}
 		
-		IFile tempfeaturemodelfile = aProject.getFile("configfeaturemodel.mconfig");
-		
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-	    try {
-			IDE.openEditor(page, tempfeaturemodelfile);
-		} catch (PartInitException e) {
+		// 等待ProgramDB  构建完成 
+		try {
+	    	if(op!=null)
+	    		op.join();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
-	    // 3. pop-up a menu to guide user to drag project to view
-	    Display.getCurrent().syncExec(new Runnable(){
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				MessageDialog.openInformation(shell, "Loong Plugin System-FMRTool",
-				"To create a recommend list for feature name, you can simply drag the project or some packages into the recommend feature list view.");
-			}
-	    	
-	    });
-	    
+		
 	    
 	}
 
@@ -74,7 +87,7 @@ public class openFeatureNameRecommendationView implements IObjectActionDelegate{
 		this.part = targetPart;
 		shell = targetPart.getSite().getShell();
 	}
-
+	
 	private IProject getSelectedProject() {
 		IProject lReturn = null;
 		Iterator i = aSelection.iterator();
@@ -89,4 +102,5 @@ public class openFeatureNameRecommendationView implements IObjectActionDelegate{
 		}
 		return lReturn;
 	}
+
 }

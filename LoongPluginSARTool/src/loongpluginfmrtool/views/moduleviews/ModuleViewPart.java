@@ -1,17 +1,14 @@
 package loongpluginfmrtool.views.moduleviews;
 
-import loongplugin.LoongImages;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import loongplugin.source.database.ApplicationObserver;
-import loongplugin.source.database.ApplicationObserverException;
 import loongpluginfmrtool.module.ModuleBuilder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
@@ -22,7 +19,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.widgets.Composite;
@@ -38,6 +41,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 public class ModuleViewPart extends ViewPart {
 /**
@@ -59,8 +63,6 @@ public class ModuleViewPart extends ViewPart {
 	private String[]columnNames={"properties","value"};
 	private IProject selectedProject=null;
 	public static ModuleViewPart instance;
-	private static ApplicationObserver lDB;
-	
 	public static ModuleViewPart getInstance(){
 		if(instance==null)
 			instance = new ModuleViewPart();
@@ -115,8 +117,8 @@ public class ModuleViewPart extends ViewPart {
 		// TODO Auto-generated method stub
 		createTree(parent);
 		createTableViewer();
-		createActions();
-		contributeToMenu();
+		
+		
 	}
 	
 	private void createTree(Composite parent) {
@@ -156,47 +158,13 @@ public class ModuleViewPart extends ViewPart {
 	private void createTableViewer() {
 		fViewer = new TreeViewer(tree);
 		fViewer.setColumnProperties(columnNames);
-	}
-	
-	
-	
-	
-	private void createActions(){
-		generateAction = new Action("generate #def-link modules"){
 		
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				// ProgramDB 没有被初始化
-				ModuleViewPart.lDB = ApplicationObserver.getInstance();
-				WorkspaceJob op = null;
-				if(!lDB.isInitialized()){
-					Display.getCurrent().syncExec(new Runnable(){
-						
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							Shell shell = getSite().getShell();
-							MessageDialog.openInformation(shell, "Loong Plugin System-FMRTool",
-							"To create #ifdef-body block, please create the program database first with the pop-up menuitem.");
-						}
-				    	
-				    });
-				}else{
-					ModuleBuilder instance  = ModuleBuilder.getInstance(selectedProject,ModuleViewPart.lDB);
-				}
-			}
-			
-		};
-		generateAction.setToolTipText("generate #def-link modules"); //$NON-NLS-1$
-		generateAction.setEnabled(true);
-		LoongImages.setImageDescriptors(generateAction, LoongImages.MACRO);
+		
 	}
 	
-	private void contributeToMenu(){
-		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
-		mgr.add(generateAction);
-	}
+	
+	
+	
 
 	@Override
 	public void setFocus() {
@@ -204,4 +172,6 @@ public class ModuleViewPart extends ViewPart {
 		fViewer.getControl().setFocus();
 	}
 
+	
+	
 }

@@ -1,24 +1,37 @@
 package loongpluginfmrtool.module;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.IBinding;
 
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
+import loongpluginfmrtool.module.util.ASTSubBindingFinder;
 
 public class Module {
 	private LElement dominate;
 	private int moduleIndex=0;
 	private Set<LElement> module_Body = new HashSet<LElement>();
+	private Set<Import> imports = new HashSet<Import>();
+	private Set<LElement> allelements = new HashSet<LElement>();
 	private LFlyweightElementFactory LElementFactory;
 	private ASTNode dominateASTNode;
-	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory){
+	private ModuleBuilder abuilder;
+	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
 		this.dominate = element;
 		this.moduleIndex = index;
 		this.LElementFactory = pElementFactory;
+		this.abuilder = mbuilder;
 		this.dominateASTNode = element.getASTNode();
+		Set<ASTNode> allnodes = ASTNodeWalker.allWalker(dominateASTNode);
+		for(ASTNode node:allnodes){
+			LElement subelement = LElementFactory.getElement(node);
+			abuilder.addLElementModuleMapping(subelement, this);
+			allelements.add(subelement);
+		};
 	}
 	
 	/**
@@ -45,7 +58,39 @@ public class Module {
 	private void resolveimport() {
 		// TODO Auto-generated method stub
 		// obtain all LElement that referenced in this element and removed all defined in this
-		
+		if(dominateASTNode!=null){
+			
+			// Process bindings
+			Map<ASTNode,IBinding> allastnodebindings = ASTSubBindingFinder.astBindingFinder(dominateASTNode);
+			
+			for(Map.Entry<ASTNode, IBinding>entry:allastnodebindings.entrySet()){
+				IBinding binding = entry.getValue();
+				LElement bindelement = LElementFactory.getElement(binding);
+				
+				if(!allelements.contains(bindelement)){
+					// build an import
+					LElement useelement = LElementFactory.getElement(entry.getKey());
+					ImportType importtype = ImportType.NONE;
+					switch(binding.getKind()){
+						case IBinding.TYPE:{
+							importtype = ImportType.CLASS_INSTANCE;
+							break;
+						}
+						case IBinding.METHOD:{
+							importtype = ImportType.METHOD;
+							break;
+						}
+						case IBinding.VARIABLE:{
+							importtype = ImportType.CLASS_FIELD;
+							break;
+						}
+					}
+					Module usemodule = abuilder.getModuleByLElement(useelement);
+					Import mimport = new Import(useelement,bindelement,this,usemodule,importtype); 
+					this.imports.add(mimport);
+				}
+			}
+		}
 		
 	}
 

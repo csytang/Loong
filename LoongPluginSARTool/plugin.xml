@@ -16,7 +16,7 @@
             </separator>
          </menu>
          <action
-               class="loongpluginfmrtool.popup.actions.openFeatureNameRecommendationView"
+               class="loongpluginfmrtool.popup.actions.OpenFeatureNameRecommendationView"
                enablesFor="1"
                icon="icons/ConfigurationIcon.png"
                id="LoongPlugin.FMRTool.architecturerecoveryjava"
@@ -24,17 +24,24 @@
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
          <action
-               class="loongpluginfmrtool.popup.actions.openFeatureNameRecommendationView"
+               class="loongpluginfmrtool.popup.actions.OpenFeatureNameRecommendationView"
                icon="icons/recommend.png"
                id="LoongPluginFMRTool.recommendName"
                label="Open Feature Name Recommendation View"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
          <action
-               class="loongpluginfmrtool.popup.actions.recoveryFeatureModel"
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModel"
                icon="icons/recovery.png"
                id="LoongPluginFMRTool.action3"
                label="Recovery Feature Model"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.BuildModules"
+               icon="icons/macro.ico"
+               id="LoongPluginFMRTool.modulebuilder"
+               label="Build #ifdef modules"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
       </objectContribution>

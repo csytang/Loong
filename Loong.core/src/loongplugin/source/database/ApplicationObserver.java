@@ -285,8 +285,11 @@ public class ApplicationObserver extends Observable{
 		return selectedProject;
 	}
 
-	public boolean isInitialized(){
-		return hasbeenInialized;
+	public boolean isInitialized(IProject project){
+		if(project==selectedProject)
+			return hasbeenInialized;
+		else
+			return false;
 	}
 	
 

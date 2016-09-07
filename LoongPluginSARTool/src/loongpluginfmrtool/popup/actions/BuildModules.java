@@ -3,33 +3,31 @@ package loongpluginfmrtool.popup.actions;
 import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
-import loongplugin.source.database.ApplicationObserverException;
+import loongpluginfmrtool.module.ModuleBuilder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class recoveryFeatureModel implements IObjectActionDelegate {
+public class BuildModules implements IObjectActionDelegate{
 
-	private IStructuredSelection aSelection;
 	private IProject aProject;
+	private IStructuredSelection aSelection;
 	private Shell shell;
 	private IWorkbenchPart part;
 	private ApplicationObserver lDB;
+	private ModuleBuilder mbuilder;
 	
-	public recoveryFeatureModel() {
+	public BuildModules() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -37,41 +35,23 @@ public class recoveryFeatureModel implements IObjectActionDelegate {
 	public void run(IAction action) {
 		// TODO Auto-generated method stub
 		aProject = getSelectedProject();
-		WorkspaceJob op = null;
-		// ProgramDB 没有被初始化
-		if(!this.lDB.isInitialized()){
-			if(lDB.getInitializedProject()!=aProject){
-				op = new WorkspaceJob("CreateDatabaseAction") {
-
-					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						// TODO Auto-generated method stub
-						try {
-							// get instance and init the database
-							lDB = ApplicationObserver.getInstance();
-							lDB.initialize(aProject, monitor);
-
-						} catch (ApplicationObserverException lException) {
-							lException.printStackTrace();
-						}
-						
-						return Status.OK_STATUS;
-				}};
-				op.setUser(true);
-				op.schedule();	
-			}
+		lDB = ApplicationObserver.getInstance();
+		if(lDB.isInitialized(aProject)){
+			mbuilder = ModuleBuilder.getInstance(aProject, lDB);
+			mbuilder.init();
 		}
-		
-		// 等待ProgramDB  构建完成 
-		try {
-	    	if(op!=null)
-	    		op.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		else{
+			Display.getCurrent().syncExec(new Runnable(){
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					MessageDialog.openInformation(shell, "Loong Plugin System-FMRTool",
+					"Please create the programDB first.");
+				}
+		    	
+		    });
 		}
-		
-	    
 	}
 
 	@Override
@@ -87,7 +67,7 @@ public class recoveryFeatureModel implements IObjectActionDelegate {
 		this.part = targetPart;
 		shell = targetPart.getSite().getShell();
 	}
-	
+
 	private IProject getSelectedProject() {
 		IProject lReturn = null;
 		Iterator i = aSelection.iterator();
@@ -102,5 +82,5 @@ public class recoveryFeatureModel implements IObjectActionDelegate {
 		}
 		return lReturn;
 	}
-
+	
 }
