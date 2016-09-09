@@ -76,6 +76,8 @@ public class LElement {
 		}
 	}
 	
+	
+
 	private LElement findDeclarationForFieldorVariable(LFlyweightElementFactory LElementFactory, SimpleName nameNode) {
 		// TODO Auto-generated method stub
 		IBinding binding = nameNode.resolveBinding();
