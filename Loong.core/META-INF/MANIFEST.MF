@@ -4,7 +4,7 @@ Bundle-Name: Loong
 Bundle-SymbolicName: LoongPlugin;singleton:=true
 Bundle-Version: 1.1.0
 Bundle-Activator: loongplugin.LoongPlugin
-Bundle-Vendor: Chris Y. Tang, with The Hong Kong Polytechnic University
+Bundle-Vendor: org.chrisyttang
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  org.eclipse.jface.text,

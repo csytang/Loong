@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.dom.IBinding;
 
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
+import loongpluginfmrtool.module.action.ModuleAction;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 import loongpluginfmrtool.module.util.ASTSubBindingFinder;
 
@@ -20,6 +21,7 @@ public class Module {
 	private LFlyweightElementFactory LElementFactory;
 	private ASTNode dominateASTNode;
 	private ModuleBuilder abuilder;
+	private ModuleAction amoduleaction;
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
 		this.dominate = element;
 		this.moduleIndex = index;
@@ -31,7 +33,7 @@ public class Module {
 			LElement subelement = LElementFactory.getElement(node);
 			abuilder.addLElementModuleMapping(subelement, this);
 			allelements.add(subelement);
-		};
+		}
 	}
 	
 	/**
@@ -45,13 +47,29 @@ public class Module {
 		resolvebody();
 		
 		// resolve configurations
-		
+		resolveconfiguration();
 		
 		// resolve configuration options
-		
+		computeconfigurationOptions();
 		
 		// resolve variability
+		resolvevariability();
 		
+	}
+	
+	private void resolveconfiguration(){
+		
+		
+		
+		
+	}
+	
+	private void computeconfigurationOptions(){
+		
+		
+	}
+	
+	private void resolvevariability(){
 		
 	}
 	

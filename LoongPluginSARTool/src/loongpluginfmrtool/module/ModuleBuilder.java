@@ -69,7 +69,7 @@ public class ModuleBuilder {
 		int module_index = 0;
 		for(LElement element:this.pd.getAllElements()){
 			pProgress.subTask("Process element:"+element.getCompilationUnitName());
-			if(element.getCategory()==LICategories.CLASS){
+			if(element.getCategory().equals(LICategories.COMPILATION_UNIT)){
 				// initialize a module
 				Module module = new Module(element,module_index,this.LElementFactory,this);
 				indexToModule.put(module_index, module);

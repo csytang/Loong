@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="javax.json.jar"/>
 	<classpathentry kind="lib" path="kxml2-2.3.0.jar"/>
 	<classpathentry kind="lib" path="kxml2-min-2.3.0.jar"/>
+	<classpathentry kind="lib" path="grappa1_2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
