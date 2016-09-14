@@ -76,6 +76,7 @@ public class AccessRelationBuilder {
 	private Map<String, LElement> importMap;
 	private CompilationUnitColorManager sourceColorManager;
 	
+	private boolean puremod =false;
 	private class LocalContextElement {
 		private ASTNode node;
 
@@ -121,6 +122,12 @@ public class AccessRelationBuilder {
 		reset();
 		update(ast);
 	}
+	public void buildRelations(ICompilationUnit lCU){
+		puremod = true;
+		CompilationUnit ast = JDTParserWrapper.parseCompilationUnit(lCU);
+		reset();
+		update(ast);
+	}
 
 	private void update(ASTNode node) {
 		// TODO Auto-generated method stub
@@ -128,12 +135,24 @@ public class AccessRelationBuilder {
 
 			private void addElement(LElement element, Set<Feature> colors) {
 				aDB.addElement(element);
-				for (Feature color : colors)
-					LElementColorManager.addElementToColor(color, element);
+				if(puremod){
+					for (Feature color : colors)
+						LElementColorManager.addElementToColor(color, element);
+				}
 			}
 
 			private Set<Feature> getColor(ASTNode node) {
-				return sourceColorManager.getColors(node);
+				if(!puremod){
+					return sourceColorManager.getColors(node);
+				}else{
+					try {
+						throw new Exception("in pure mod not color information is available(from: AccessRelationBuilder)");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return null;
+				}
 			}
 
 			// COMPILATION UNIT CONTEXT//

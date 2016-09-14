@@ -1,4 +1,4 @@
-package loongpluginfmrtool.module;
+package loongpluginfmrtool.module.model;
 
 public enum ConfigRelation {
 	IMPLIES,

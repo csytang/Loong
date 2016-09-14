@@ -84,7 +84,6 @@ public class LElementColorManager{
 					}
 				}
 						// check end
-				System.out.println("P106");
 				Set<Feature> relatedFeatures = feature2relatedFeatures.get(selectedFeature);
 				if (relatedFeatures == null) {
 					relatedFeatures = new HashSet<Feature>();
@@ -93,7 +92,6 @@ public class LElementColorManager{
 						System.out.println("Put:"+selectedFeature.getName()+" related to "+feature.getName());
 					}
 				}
-				System.out.println("P115");
 				relatedFeatures.add(curFeature);
 				System.out.println("    --> SELECTED:"+ selectedFeature.getName());
 			}

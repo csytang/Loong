@@ -62,6 +62,8 @@ public class ApplicationDeclareandRelationBuilder {
 		curParamIndex = -1;
 	}
 	
+	
+
 	public void createElementsAndDeclareRelations() {
 		// TODO Auto-generated method stub
 		CompilationUnit ast = JDTParserWrapper.parseCompilationUnit(alCU);
@@ -88,12 +90,17 @@ public class ApplicationDeclareandRelationBuilder {
 
 			private void addElement(LElement element,Set<Feature> colors) {
 				aDB.addElement(element);
+				
 				for (Feature color : colors)
-					aelementcolormanager.addElementToColor(color, element);
+						aelementcolormanager.addElementToColor(color, element);
+				
 			}
 			
 			private Set<Feature> getColor(ASTNode node) {
+				
 				return acolorManager.getColors(node);
+				
+				
 			}
 
 			@Override

@@ -53,7 +53,6 @@ public class ApplicationObserver extends Observable{
     private LFlyweightElementFactory elementFactory;
     private Map<Integer, ICompilationUnit> compUnitMap;
     private boolean hasbeenInialized = false;
-    
 	private ApplicationObserver() {
 		AOB = null;
 		selectedProject = null;
@@ -94,6 +93,8 @@ public class ApplicationObserver extends Observable{
 	 *            Whether to calculate overriding relationships between methods
 	 *            and to use these in the calculation of CALLS and CALLS_BY
 	 *            relations.
+	 * @param puremod
+	 * 			  if puremod is true, feature information is not required
 	 * @throws ApplicationObserverException 
 	 * @throws ApplicationControllerException
 	 *             If the method cannot complete correctly
@@ -109,6 +110,7 @@ public class ApplicationObserver extends Observable{
 		elementFactory = new LFlyweightElementFactory();
 		
 		elementColorManager = new LElementColorManager(this);
+		
 		aAnalyzer = new Analyzer(aDB);
 		
 		// Collect all target classes
@@ -151,9 +153,11 @@ public class ApplicationObserver extends Observable{
     	for( ICompilationUnit lCU : lTargets )
     	{
     		pProgress.subTask("Creating relations in "+lCU.getElementName());
+    		
     		CLRAnnotatedSourceFile annotatedsourcefile = getCLRAnnotatedSourceFile(lCU);
     		
     		relationBuilder.buildRelations(lCU,annotatedsourcefile,elementColorManager);
+    		
     		if( pProgress != null ) 
           		pProgress.worked(2);
     	}

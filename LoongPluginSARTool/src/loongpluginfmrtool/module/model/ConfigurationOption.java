@@ -1,4 +1,4 @@
-package loongpluginfmrtool.module;
+package loongpluginfmrtool.module.model;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package loongpluginfmrtool.module;
+package loongpluginfmrtool.module.model;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.dom.IBinding;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongpluginfmrtool.module.action.ModuleAction;
+import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 import loongpluginfmrtool.module.util.ASTSubBindingFinder;
 
@@ -126,6 +127,11 @@ public class Module {
 	
 	public LElement getDominateElement(){
 		return dominate;
+	}
+
+	public LFlyweightElementFactory getelementfactory() {
+		// TODO Auto-generated method stub
+		return LElementFactory;
 	}
 	
 }

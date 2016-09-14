@@ -3,7 +3,7 @@ package loongpluginfmrtool.popup.actions;
 import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
-import loongpluginfmrtool.module.ModuleBuilder;
+import loongpluginfmrtool.module.builder.ModuleBuilder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

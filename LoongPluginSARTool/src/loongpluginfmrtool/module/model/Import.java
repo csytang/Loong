@@ -1,4 +1,4 @@
-package loongpluginfmrtool.module;
+package loongpluginfmrtool.module.model;
 
 import loongplugin.source.database.model.LElement;
 public class Import {

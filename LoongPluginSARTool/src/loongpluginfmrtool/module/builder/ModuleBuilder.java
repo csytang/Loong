@@ -1,4 +1,4 @@
-package loongpluginfmrtool.module;
+package loongpluginfmrtool.module.builder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +18,7 @@ import loongplugin.source.database.ProgramDatabase;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LICategories;
+import loongpluginfmrtool.module.model.Module;
 
 public class ModuleBuilder {
 	
