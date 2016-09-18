@@ -1,5 +1,7 @@
 package loongpluginfmrtool.module.model;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +11,7 @@ import org.eclipse.jdt.core.dom.IBinding;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongpluginfmrtool.module.action.ModuleAction;
+import loongpluginfmrtool.module.builder.InternalConfBuilder;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 import loongpluginfmrtool.module.util.ASTSubBindingFinder;
@@ -23,6 +26,8 @@ public class Module {
 	private ASTNode dominateASTNode;
 	private ModuleBuilder abuilder;
 	private ModuleAction amoduleaction;
+	private InternalConfBuilder contflowbuilder;
+	private List<ConfigurationOption> configoptions;
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
 		this.dominate = element;
 		this.moduleIndex = index;
@@ -35,6 +40,8 @@ public class Module {
 			abuilder.addLElementModuleMapping(subelement, this);
 			allelements.add(subelement);
 		}
+		this.contflowbuilder = new InternalConfBuilder(this);
+		this.configoptions = new LinkedList<ConfigurationOption>();
 	}
 	
 	/**
@@ -58,14 +65,13 @@ public class Module {
 		
 	}
 	
-	private void resolveconfiguration(){
-		
-		
-		
+	private void computeconfigurationOptions(){
+		this.contflowbuilder.build();
+		this.contflowbuilder.computconfigurationoption();
 		
 	}
 	
-	private void computeconfigurationOptions(){
+	private void resolveconfiguration(){
 		
 		
 	}
