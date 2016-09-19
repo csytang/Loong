@@ -5,39 +5,58 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.jdt.core.dom.Expression;
 
-import loongplugin.source.database.model.LElement;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.Statement;
 
 public class ConfigurationOption {
 	public Expression aconfigOption;
-	private Map<ConfigRelation,ConfigurationOption> aconfigOpToRelation;
-	private Set<LElement>controledLElements;
+	private Map<ConfigurationOption,ConfigRelation> aconfigOpToRelation;
+	private Set<Statement>select_statement = new HashSet<Statement>();
+	private Set<Statement>unselect_statement = new HashSet<Statement>();
+	private Set<ASTNode>affected_astnodes = new HashSet<ASTNode>();
 	public ConfigurationOption(Expression pconfigOption){
 		this.aconfigOption = pconfigOption;
-		this.aconfigOpToRelation = new HashMap<ConfigRelation,ConfigurationOption>();
-		this.controledLElements = new HashSet<LElement>();
+		this.aconfigOpToRelation = new HashMap<ConfigurationOption,ConfigRelation>();
 	}
+	
 	public void addConfiguration(ConfigurationOption option,ConfigRelation relation){
-		aconfigOpToRelation.put(relation,option);
+		aconfigOpToRelation.put(option,relation);
 	}
-	public void setControledLElement(LElement element){
-		controledLElements.clear();
-		controledLElements.add(element);
+	
+	public void addEnable_Statements(Statement element){
+		select_statement.add(element);
+		// 也计入到影响的 astnode部分
+		affected_astnodes.add(element);
 	}
-	public void addControledLElement(LElement newelement){
-		controledLElements.add(newelement);
+	
+	public void addAffected_ASTNode(ASTNode node){
+		affected_astnodes.add(node);
 	}
-	public void addControledLElement(Collection<LElement> newelements){
-		controledLElements.addAll(newelements);
+	
+	public void addDisable_Statements(Statement element){
+		unselect_statement.add(element);
+		// 也计入到影响的 astnode部分
+		affected_astnodes.add(element);
 	}
-	/*
+	
 	public ConfigRelation getConfigRelation(ConfigurationOption config){
 		if(this.aconfigOpToRelation.containsKey(config)){
 			return this.aconfigOpToRelation.get(config);
 		}else{
 			return ConfigRelation.UNRELATE;
 		}
-	}*/
+	}
+
+	public Expression getExpression() {
+		// TODO Auto-generated method stub
+		return aconfigOption;
+	}
+
+	public Set<ASTNode> getAffectedASTNodes() {
+		// TODO Auto-generated method stub
+		return affected_astnodes;
+	}
 	
 }

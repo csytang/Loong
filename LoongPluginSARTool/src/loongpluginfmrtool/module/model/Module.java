@@ -54,30 +54,15 @@ public class Module {
 		// resolve body
 		resolvebody();
 		
-		// resolve configurations
-		resolveconfiguration();
-		
-		// resolve configuration options
-		computeconfigurationOptions();
 		
 		// resolve variability
 		resolvevariability();
 		
 	}
 	
-	private void computeconfigurationOptions(){
-		this.contflowbuilder.build();
-		this.contflowbuilder.computconfigurationoption();
-		
-	}
-	
-	private void resolveconfiguration(){
-		
-		
-	}
 	
 	private void resolvevariability(){
-		
+		this.contflowbuilder.parse();
 	}
 	
 	private void resolveimport() {

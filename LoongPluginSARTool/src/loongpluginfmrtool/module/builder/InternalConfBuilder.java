@@ -1,16 +1,23 @@
 package loongpluginfmrtool.module.builder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
+import loongplugin.source.database.model.LRelation;
+import loongpluginfmrtool.module.model.ConfigurationOption;
 import loongpluginfmrtool.module.model.Module;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 
@@ -19,36 +26,131 @@ public class InternalConfBuilder {
 	private Set<LElement> method_elements = new HashSet<LElement>();
 	private ASTNode moduleastnode;
 	private LFlyweightElementFactory LElementFactory = null;
+	private Map<LElement,Set<ConfigurationOption>> method_configurations = new HashMap<LElement,Set<ConfigurationOption>>();
+	private Map<ConfigurationOption,LElement>configuration_method = new HashMap<ConfigurationOption,LElement>();
+	
 	public InternalConfBuilder(Module pmodule){
 		this.module = pmodule;
 		this.moduleastnode = this.module.getDominateElement().getASTNode();
 		this.LElementFactory = this.module.getelementfactory();
 	}
-	public void build(){
+	public void parse(){
 		// 1. process to a collection of method
 		obtainMethodInside();
 		
 		// 2. build the control flow graph for each method
-		processMethodControlflowGraph();
+		processMethodCongBuilder();
 
+		// 3. extend the step2 with reference controlled
+		collectdatadependencyincofiguration();
+		
+		// DEBUG
+		printconfig();
+		// FINISH
+		
+		// 4. extract internal variability
+		collectinternalConfigRelations();
 	}
 	
-	public void computconfigurationoption(){
-
-		// 3. extract the all possible configuration options
-		
-		extractconfigurationOptions();
-		// 4. compute the impacts generated from these configuration options
 	
+	
+	public void printconfig(){
+		for(Map.Entry<LElement,Set<ConfigurationOption>>entry:method_configurations.entrySet()){
+			LElement method = entry.getKey();
+			System.out.println("----------------------------------");
+			MethodDeclaration methoddecl = (MethodDeclaration)method.getASTNode();
+			System.out.println("Method:"+methoddecl.getName());
+			Set<ConfigurationOption> configs = entry.getValue();
+			for(ConfigurationOption option:configs){
+				System.out.println("\t Option:\t "+option.getExpression().toString());
+				for(ASTNode node:option.getAffectedASTNodes()){
+					System.out.println("\t \t:: "+node.toString());
+				}
+			}
+			System.out.println("----------------------------------");
+			
+		}
+	}
+	
+	private void collectinternalConfigRelations() {
+		// TODO Auto-generated method stub
+		for(Map.Entry<LElement,Set<ConfigurationOption>>entry:method_configurations.entrySet()){
+			LElement method = entry.getKey();
+			Set<ConfigurationOption> configs = entry.getValue();
+			for(ConfigurationOption option:configs){
+				configuration_method.put(option, method);
+			}
+		}
 		
+		// check the relations and store
+		// Internal checking
+		internalChecking();
+		
+		// External checking
+		externalChecking();
 		
 	}
 	
-	protected void extractconfigurationOptions(){
-		
+	private void internalChecking(){
+		for(Map.Entry<LElement,Set<ConfigurationOption>>entry:method_configurations.entrySet()){
+			LElement method = entry.getKey();
+			Set<ConfigurationOption> configs = entry.getValue();
+			List<ConfigurationOption> config_list = new ArrayList<ConfigurationOption>(configs);
+			for(int i = 0;i < config_list.size();i++){
+				ConfigurationOption config1 = config_list.get(i);
+				for(int j = i+1;j < config_list.size();j++){
+					ConfigurationOption config2 = config_list.get(j);
+					
+				}
+			}
+		}
+	}
+	
+	private void externalChecking(){
 		
 	}
 	
+	
+	/**
+	 * collect the data flow information and extend the controllable region for 
+	 * 
+	 */
+	private void collectdatadependencyincofiguration() {
+		// TODO Auto-generated method stub
+		//
+		for(Map.Entry<LElement,Set<ConfigurationOption>>entry:method_configurations.entrySet()){
+			LElement method = entry.getKey();
+			Set<ConfigurationOption> configuraitons = entry.getValue();
+			
+			for(ConfigurationOption option:configuraitons){
+				Expression conditionalExp = option.getExpression();
+				
+				// get the variable and field used
+				VariableFieldVisitor varvisitor = new VariableFieldVisitor();
+				conditionalExp.accept(varvisitor);
+				Set<IVariableBinding>variableBindings = varvisitor.getVariableBindings();
+				Set<LElement> variableelemnts = new HashSet<LElement>();
+				if(variableBindings!=null &&
+						!variableBindings.isEmpty()){
+					
+					// extend the bindings with their usage and references
+					for(IVariableBinding binding:variableBindings){
+						LElement element = LElementFactory.getElement(binding);
+						variableelemnts.add(element);
+					}
+					
+					// check all elements
+					for(LElement element:variableelemnts){
+						ASTNode node = element.getASTNode();
+						option.addAffected_ASTNode(node);
+					}
+				}
+			}
+			
+			
+		}
+		
+	}
 	/**
 	 * get all method declared in this module
 	 */
@@ -69,10 +171,14 @@ public class InternalConfBuilder {
 	/**
 	 * create the control flow graph for all methods declared
 	 */
-	protected void processMethodControlflowGraph(){
+	protected void processMethodCongBuilder(){
 		for(LElement method:this.method_elements){
 			MethodDeclaration methoddecl_astnode = (MethodDeclaration)method.getASTNode();
-			
+			CongVisitor confvisitor = new CongVisitor();
+			methoddecl_astnode.accept(confvisitor);
+			Set<ConfigurationOption> configurationoption_set = confvisitor.getConfigurationOptions();
+			if(!configurationoption_set.isEmpty())
+				method_configurations.put(method, configurationoption_set);
 		}
 	}
 }
