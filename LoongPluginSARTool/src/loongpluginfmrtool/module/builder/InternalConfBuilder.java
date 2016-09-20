@@ -203,7 +203,8 @@ public class InternalConfBuilder {
 					// extend the bindings with their usage and references
 					for(IVariableBinding binding:variableBindings){
 						LElement element = LElementFactory.getElement(binding);
-						variableelemnts.add(element);
+						if(element!=null)
+							variableelemnts.add(element);
 					}
 					
 					// check all elements
@@ -241,7 +242,7 @@ public class InternalConfBuilder {
 	protected void processMethodCongBuilder(){
 		for(LElement method:this.method_elements){
 			MethodDeclaration methoddecl_astnode = (MethodDeclaration)method.getASTNode();
-			CongVisitor confvisitor = new CongVisitor();
+			CongVisitor confvisitor = new CongVisitor(module);
 			methoddecl_astnode.accept(confvisitor);
 			Set<ConfigurationOption> configurationoption_set = confvisitor.getConfigurationOptions();
 			if(!configurationoption_set.isEmpty())

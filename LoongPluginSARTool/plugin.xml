@@ -6,7 +6,7 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.jdt.core.IJavaProject"
-            id="LoongPluginSARTool.contribution">
+            id="LoongPluginFMRTool.contribution">
          <menu
                id="LoongPlugin.FMRTool.FMRecoveryJ"
                label="LoongFMR"
@@ -47,7 +47,7 @@
       </objectContribution>
       <objectContribution
             adaptable="false"
-            id="LoongPluginSARTool.objectContributioncpp"
+            id="LoongPluginFMRTool.objectContributioncpp"
             objectClass="org.eclipse.cdt.core.model.ICProject">
          <menu
                id="LoongPlugin.FMRTool.FMRecoveryC"

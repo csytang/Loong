@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
 
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
@@ -20,25 +22,30 @@ import loongpluginfmrtool.module.util.ASTSubBindingFinder;
 public class Module {
 	private LElement dominate;
 	private int moduleIndex=0;
-	private Set<LElement> module_Body = new HashSet<LElement>();
+	private Set<LElement> allmethods = new HashSet<LElement>();
 	private Set<Import> imports = new HashSet<Import>();
 	private Set<LElement> allelements = new HashSet<LElement>();
-	private LFlyweightElementFactory LElementFactory;
+	private LFlyweightElementFactory lElementfactory;
 	private ASTNode dominateASTNode;
 	private ModuleBuilder abuilder;
 	private InternalConfBuilder contflowbuilder;
 	private ExternalConfBuilder externalconfbuilder;
 	private Map<LElement,Set<ConfigurationOption>> method_configurations = new HashMap<LElement,Set<ConfigurationOption>>();
-	private Map<ConfigurationOption,LElement>configuration_method = new HashMap<ConfigurationOption,LElement>();
+	private Map<ConfigurationOption,LElement> configuration_method = new HashMap<ConfigurationOption,LElement>();
+	private Map<ConfigurationOption,Set<ASTNode>>external_enable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
+	private Map<ConfigurationOption,Set<ASTNode>>external_disable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
+	
+	
+	
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
 		this.dominate = element;
 		this.moduleIndex = index;
-		this.LElementFactory = pElementFactory;
+		this.lElementfactory = pElementFactory;
 		this.abuilder = mbuilder;
 		this.dominateASTNode = element.getASTNode();
 		Set<ASTNode> allnodes = ASTNodeWalker.allWalker(dominateASTNode);
 		for(ASTNode node:allnodes){
-			LElement subelement = LElementFactory.getElement(node);
+			LElement subelement = lElementfactory.getElement(node);
 			abuilder.addLElementModuleMapping(subelement, this);
 			allelements.add(subelement);
 		}
@@ -62,8 +69,10 @@ public class Module {
 	}
 	
 	public void externalvariability(){
-		externalconfbuilder = new ExternalConfBuilder(this);
+		System.out.println("----------EXTERNAL-------------");
+		externalconfbuilder = new ExternalConfBuilder(this,lElementfactory);
 		externalconfbuilder.parse();
+		System.out.println("------------------------------");
 	}
 	
 	
@@ -91,11 +100,11 @@ public class Module {
 			
 			for(Map.Entry<ASTNode, IBinding>entry:allastnodebindings.entrySet()){
 				IBinding binding = entry.getValue();
-				LElement bindelement = LElementFactory.getElement(binding);
+				LElement bindelement = lElementfactory.getElement(binding);
 				
 				if(!allelements.contains(bindelement)){
 					// build an import
-					LElement useelement = LElementFactory.getElement(entry.getKey());
+					LElement useelement = lElementfactory.getElement(entry.getKey());
 					ImportType importtype = ImportType.NONE;
 					switch(binding.getKind()){
 						case IBinding.TYPE:{
@@ -120,14 +129,18 @@ public class Module {
 		
 	}
 
+	public Set<LElement> getallMethods(){
+		return allmethods;
+	}
 	private void resolvebody(){
 		// find the method body inside the class
 		if(dominateASTNode!=null){
 			Set<ASTNode> methodASTNodes = ASTNodeWalker.methodWalker(dominateASTNode);
 			for(ASTNode method:methodASTNodes){
-				LElement methodelement = LElementFactory.getElement(method);
+				MethodDeclaration methoddecl = (MethodDeclaration)method;
+				LElement methodelement = lElementfactory.getElement(methoddecl.resolveBinding());
 				if(methodelement!=null)
-					module_Body.add(methodelement);
+					allmethods.add(methodelement);
 			}
 		}
 	}
@@ -138,7 +151,47 @@ public class Module {
 
 	public LFlyweightElementFactory getelementfactory() {
 		// TODO Auto-generated method stub
-		return LElementFactory;
+		return lElementfactory;
+	}
+	
+	
+	public void addExternalEnableConfigurationControl(ConfigurationOption config,Set<ASTNode> undercontrolled){
+		if(this.external_enable_cong_control.containsKey(config)){
+			Set<ASTNode> allastnodes = this.external_enable_cong_control.get(config);
+			allastnodes.addAll(undercontrolled);
+			this.external_enable_cong_control.put(config, allastnodes);
+		}else
+			this.external_enable_cong_control.put(config, undercontrolled);
+	}
+	public void addExternalEnableConfigurationControl(ConfigurationOption config,ASTNode undercontrolled){
+		if(this.external_enable_cong_control.containsKey(config)){
+			Set<ASTNode> allastnodes = this.external_enable_cong_control.get(config);
+			allastnodes.add(undercontrolled);
+			this.external_enable_cong_control.put(config, allastnodes);
+		}else{
+			Set<ASTNode> allastnodes = new HashSet<ASTNode>();
+			allastnodes.add(undercontrolled);
+			this.external_enable_cong_control.put(config, allastnodes);
+		}
+	}
+	public void addExternalDisableConfigurationControl(ConfigurationOption config,Set<ASTNode> undercontrolled){
+		if(this.external_disable_cong_control.containsKey(config)){
+			Set<ASTNode> allastnodes = this.external_disable_cong_control.get(config);
+			allastnodes.addAll(undercontrolled);
+			this.external_disable_cong_control.put(config, allastnodes);
+		}else
+			this.external_disable_cong_control.put(config, undercontrolled);
+	}
+	public void addExternalDisableConfigurationControl(ConfigurationOption config,ASTNode undercontrolled){
+		if(this.external_disable_cong_control.containsKey(config)){
+			Set<ASTNode> allastnodes = this.external_disable_cong_control.get(config);
+			allastnodes.add(undercontrolled);
+			this.external_disable_cong_control.put(config, allastnodes);
+		}else{
+			Set<ASTNode> allastnodes = new HashSet<ASTNode>();
+			allastnodes.add(undercontrolled);
+			this.external_disable_cong_control.put(config, allastnodes);
+		}
 	}
 	
 }

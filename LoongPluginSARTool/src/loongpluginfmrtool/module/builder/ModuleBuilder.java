@@ -54,6 +54,12 @@ public class ModuleBuilder {
 		 job.schedule();
 		 
 		
+		 try {
+			job.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		 
 		 // Create and check cross module(external variability)
 		 WorkspaceJob externalcheckerjob=new WorkspaceJob("CheckVariabilityModule"){
@@ -88,11 +94,11 @@ public class ModuleBuilder {
 
 		for(Map.Entry<Integer, Module>entry:indexToModule.entrySet()){
 			Module module = entry.getValue();
-			
+			module.externalvariability();
 			
 			pProgress.worked(1);
 		}
-		
+		pProgress.done();
 	}
 	
 	public void buildModules(IProgressMonitor pProgress){

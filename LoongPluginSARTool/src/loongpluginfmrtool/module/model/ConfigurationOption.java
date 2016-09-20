@@ -1,6 +1,5 @@
 package loongpluginfmrtool.module.model;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,17 +11,19 @@ import org.eclipse.jdt.core.dom.Statement;
 
 public class ConfigurationOption {
 	public Expression aconfigOption;
-	private Map<ConfigurationOption,ConfigRelation> aconfigOpToRelation;
+	private Map<ConfigurationOption,ConfigRelation> internalconfigOpToRelation;
 	private Set<Statement>select_statement = new HashSet<Statement>();
 	private Set<Statement>unselect_statement = new HashSet<Statement>();
 	private Set<ASTNode>affected_astnodes = new HashSet<ASTNode>();
-	public ConfigurationOption(Expression pconfigOption){
+	private Module associatedmodule;
+	public ConfigurationOption(Expression pconfigOption,Module passociatedmodule){
 		this.aconfigOption = pconfigOption;
-		this.aconfigOpToRelation = new HashMap<ConfigurationOption,ConfigRelation>();
+		this.associatedmodule = passociatedmodule;
+		this.internalconfigOpToRelation = new HashMap<ConfigurationOption,ConfigRelation>();
 	}
 	
 	public void addConfiguration(ConfigurationOption option,ConfigRelation relation){
-		aconfigOpToRelation.put(option,relation);
+		internalconfigOpToRelation.put(option,relation);
 	}
 	
 	public void addEnable_Statements(Statement element){
@@ -42,15 +43,15 @@ public class ConfigurationOption {
 	}
 	
 	public ConfigRelation getConfigRelation(ConfigurationOption config){
-		if(this.aconfigOpToRelation.containsKey(config)){
-			return this.aconfigOpToRelation.get(config);
+		if(this.internalconfigOpToRelation.containsKey(config)){
+			return this.internalconfigOpToRelation.get(config);
 		}else{
 			return ConfigRelation.UNRELATE;
 		}
 	}
 	
 	public void addConfigRelation(ConfigurationOption config,ConfigRelation relation){
-		this.aconfigOpToRelation.put(config, relation);
+		this.internalconfigOpToRelation.put(config, relation);
 	}
 	
 	public Set<Statement> getEnable_Statements(){
@@ -71,4 +72,7 @@ public class ConfigurationOption {
 		return affected_astnodes;
 	}
 	
+	public Module getAssociatedModule(){
+		return associatedmodule;
+	}
 }
