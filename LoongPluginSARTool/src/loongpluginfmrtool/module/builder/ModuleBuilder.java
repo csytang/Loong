@@ -76,7 +76,13 @@ public class ModuleBuilder {
 		externalcheckerjob.setUser(true);
 		externalcheckerjob.setPriority(Job.INTERACTIVE);
 		externalcheckerjob.schedule();
-		 
+		try {
+			externalcheckerjob.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		 
 	}
 	

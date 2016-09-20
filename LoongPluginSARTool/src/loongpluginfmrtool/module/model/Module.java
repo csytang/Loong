@@ -34,7 +34,7 @@ public class Module {
 	private Map<ConfigurationOption,LElement> configuration_method = new HashMap<ConfigurationOption,LElement>();
 	private Map<ConfigurationOption,Set<ASTNode>>external_enable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Map<ConfigurationOption,Set<ASTNode>>external_disable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
-	
+	private Set<ConfigurationOption> configurations;
 	
 	
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
@@ -194,4 +194,24 @@ public class Module {
 		}
 	}
 	
+	public Set<ASTNode> getExternalEnableConfigurationControl(ConfigurationOption config){
+		if(external_enable_cong_control.containsKey(config)){
+			return external_enable_cong_control.get(config);
+		}else
+			return new HashSet<ASTNode>();
+	}
+	
+	public Set<ASTNode> getExternalDisableConfigurationControl(ConfigurationOption config){
+		if(external_disable_cong_control.containsKey(config)){
+			return external_disable_cong_control.get(config);
+		}else
+			return new HashSet<ASTNode>();
+	}
+	
+	public Set<ConfigurationOption> getAllConfigurationOptions(){
+		if(configurations==null){
+			configurations = configuration_method.keySet();
+		}
+		return configurations;
+	}
 }

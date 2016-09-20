@@ -173,9 +173,6 @@ public class InternalConfBuilder {
 		}
 		return false;
 	}
-	private void externalChecking(){
-		
-	}
 	
 	
 	/**

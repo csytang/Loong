@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
@@ -22,6 +23,7 @@ import org.eclipse.jdt.core.dom.Type;
 
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
+import loongpluginfmrtool.module.model.ConfigRelation;
 import loongpluginfmrtool.module.model.ConfigurationOption;
 import loongpluginfmrtool.module.model.Module;
 
@@ -67,7 +69,57 @@ public class ExternalConfBuilder {
 			}
 		}
 		// extracting variability
+		// Enable mod
+		for(Map.Entry<ConfigurationOption,List<Module>>entry:cong_link_modules.entrySet()){
+			ConfigurationOption option = entry.getKey();
+			List<Module>related_modules = entry.getValue();
+			for(Module module:related_modules){
+				Set<ASTNode> remote_affected = module.getExternalEnableConfigurationControl(option);
+				if(remote_affected.isEmpty())
+					continue;
+				Set<ConfigurationOption> remote_configurations = module.getAllConfigurationOptions();
+				for(ConfigurationOption remote_option:remote_configurations){
+					Expression remotecondition = remote_option.getExpression();
+					if(isContains(remote_affected,remotecondition)){
+						option.addConfigRelation(remote_option, ConfigRelation.CONTAINS);
+					}
+				}
+			}
+			
+		}
 		
+		// Disable mod
+		for(Map.Entry<ConfigurationOption,List<Module>>entry:cong_unlink_modules.entrySet()){
+			ConfigurationOption option = entry.getKey();
+			List<Module>related_modules = entry.getValue();
+			for(Module module:related_modules){
+				Set<ASTNode> remote_affected = module.getExternalEnableConfigurationControl(option);
+				if(remote_affected.isEmpty())
+					continue;
+				Set<ConfigurationOption> remote_configurations = module.getAllConfigurationOptions();
+				for(ConfigurationOption remote_option:remote_configurations){
+					Expression remotecondition = remote_option.getExpression();
+					if(isContains(remote_affected,remotecondition)){
+						option.addConfigRelation(remote_option, ConfigRelation.EXECLUDE);
+					}
+				}
+			}
+			
+		}
+		
+	}
+	
+	private boolean isContains(Set<ASTNode> region,ASTNode condition){
+		int condstart = condition.getStartPosition();
+		int condend = condstart+condition.getLength();
+		for(ASTNode node:region){
+			int startposition = node.getStartPosition();
+			int endposition = node.getLength()+startposition;
+			if(startposition<=condstart && endposition>=condend){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	protected List<Module> directToOtherModules(Set<Statement> statements){
@@ -90,13 +142,14 @@ public class ExternalConfBuilder {
 		}
 		
 		private void addToEnableConfigurationControl(ASTNode node,Module remote_module){
-			module.addExternalEnableConfigurationControl(config, node);
+			
 			if(cong_link_modules.containsKey(config)){
 				List<Module> modules = cong_link_modules.get(config);
-				if(!modules.contains(remote_module)){
-					modules.add(remote_module);
-					cong_link_modules.put(config, modules);
-				}
+				
+				modules.add(remote_module);
+				remote_module.addExternalEnableConfigurationControl(config, node);
+				cong_link_modules.put(config, modules);
+				
 			}else{
 				List<Module> modules = new LinkedList<Module>();
 				modules.add(remote_module);
@@ -104,13 +157,13 @@ public class ExternalConfBuilder {
 			}
 		}
 		private void addToDisableConfigurationControl(ASTNode node,Module remote_module){
-			module.addExternalDisableConfigurationControl(config, node);
 			if(cong_unlink_modules.containsKey(config)){
 				List<Module> modules = cong_unlink_modules.get(config);
-				if(!modules.contains(remote_module)){
-					modules.add(remote_module);
-					cong_unlink_modules.put(config, modules);
-				}
+				
+				modules.add(remote_module);
+				remote_module.addExternalDisableConfigurationControl(config, node);
+				cong_unlink_modules.put(config, modules);
+				
 			}else{
 				List<Module> modules = new LinkedList<Module>();
 				modules.add(remote_module);
