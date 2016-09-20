@@ -1,4 +1,5 @@
 package loongpluginfmrtool.module.model;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.eclipse.jdt.core.dom.IBinding;
 
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
-import loongpluginfmrtool.module.action.ModuleAction;
+import loongpluginfmrtool.module.builder.ExternalConfBuilder;
 import loongpluginfmrtool.module.builder.InternalConfBuilder;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
@@ -25,9 +26,10 @@ public class Module {
 	private LFlyweightElementFactory LElementFactory;
 	private ASTNode dominateASTNode;
 	private ModuleBuilder abuilder;
-	private ModuleAction amoduleaction;
 	private InternalConfBuilder contflowbuilder;
-	private List<ConfigurationOption> configoptions;
+	private ExternalConfBuilder externalconfbuilder;
+	private Map<LElement,Set<ConfigurationOption>> method_configurations = new HashMap<LElement,Set<ConfigurationOption>>();
+	private Map<ConfigurationOption,LElement>configuration_method = new HashMap<ConfigurationOption,LElement>();
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
 		this.dominate = element;
 		this.moduleIndex = index;
@@ -41,7 +43,7 @@ public class Module {
 			allelements.add(subelement);
 		}
 		this.contflowbuilder = new InternalConfBuilder(this);
-		this.configoptions = new LinkedList<ConfigurationOption>();
+		
 	}
 	
 	/**
@@ -54,15 +56,29 @@ public class Module {
 		// resolve body
 		resolvebody();
 		
-		
 		// resolve variability
 		resolvevariability();
 		
 	}
 	
+	public void externalvariability(){
+		externalconfbuilder = new ExternalConfBuilder(this);
+		externalconfbuilder.parse();
+	}
+	
 	
 	private void resolvevariability(){
 		this.contflowbuilder.parse();
+		this.method_configurations = this.contflowbuilder.getMethod_To_Configuration();
+		this.configuration_method = this.contflowbuilder.getConfiguration_To_Method();
+	}
+	
+	public Map<LElement,Set<ConfigurationOption>> getMethod_To_Configuration(){
+		return this.method_configurations;
+	}
+	
+	public Map<ConfigurationOption,LElement> getConfiguration_To_Method(){
+		return this.configuration_method;
 	}
 	
 	private void resolveimport() {

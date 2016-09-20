@@ -12,11 +12,13 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LRelation;
+import loongpluginfmrtool.module.model.ConfigRelation;
 import loongpluginfmrtool.module.model.ConfigurationOption;
 import loongpluginfmrtool.module.model.Module;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
@@ -86,9 +88,14 @@ public class InternalConfBuilder {
 		// Internal checking
 		internalChecking();
 		
-		// External checking
-		externalChecking();
-		
+	}
+	
+	public Map<LElement,Set<ConfigurationOption>> getMethod_To_Configuration(){
+		return method_configurations;
+	}
+	
+	public Map<ConfigurationOption,LElement> getConfiguration_To_Method(){
+		return configuration_method;
 	}
 	
 	private void internalChecking(){
@@ -98,14 +105,74 @@ public class InternalConfBuilder {
 			List<ConfigurationOption> config_list = new ArrayList<ConfigurationOption>(configs);
 			for(int i = 0;i < config_list.size();i++){
 				ConfigurationOption config1 = config_list.get(i);
+				Set<Statement>enable_statements_config1 = config1.getEnable_Statements();
+				Set<Statement>disable_statements_config1 = config1.getDisable_Statements();
 				for(int j = i+1;j < config_list.size();j++){
 					ConfigurationOption config2 = config_list.get(j);
+					Set<Statement>enable_statements_config2 = config2.getEnable_Statements();
+					Set<Statement>disable_statements_config2 = config2.getDisable_Statements();
+					/*
+					 *  区域包含 config1的影响区域是否 包含 config2的 expression
+					 *  如果有 这是 imples
+					 */
+					boolean config1_contains_config2 = isContains(enable_statements_config1,config2.getExpression());
+					boolean config2_contains_config1 = isContains(enable_statements_config2,config1.getExpression());
+					boolean isContain_relation = config1_contains_config2||config2_contains_config1;
+					if(isContain_relation){
+						if(config1_contains_config2){
+							config1.addConfigRelation(config2, ConfigRelation.CONTAINS);
+						}else{
+							config2.addConfigRelation(config1, ConfigRelation.CONTAINS);
+						}
+						continue;
+					}
+					/**
+					 * mutually excluded
+					 */
+					boolean config1_excluded_config2 = isExclude(disable_statements_config1,config2.getExpression());
+					boolean config2_excluded_config1 = isExclude(disable_statements_config2,config1.getExpression());
+					boolean isMutuallyExclude = config1_excluded_config2||config2_excluded_config1;
+					if(isMutuallyExclude){
+						config1.addConfigRelation(config2, ConfigRelation.EXECLUDE);
+						config2.addConfigRelation(config1, ConfigRelation.EXECLUDE);
+					}
+					
 					
 				}
 			}
 		}
 	}
 	
+	
+	private boolean isExclude(Set<Statement> disable_Statements,
+			Expression condition) {
+		// TODO Auto-generated method stub
+		if(disable_Statements.isEmpty()){
+			return false;
+		}
+		int condstart = condition.getStartPosition();
+		int condend = condstart+condition.getLength();
+		for(ASTNode node:disable_Statements){
+			int startposition = node.getStartPosition();
+			int endposition = node.getLength()+startposition;
+			if(startposition<=condstart && endposition>=condend){
+				return true;
+			}
+		}
+		return false;
+	}
+	private boolean isContains(Set<Statement> region,ASTNode condition){
+		int condstart = condition.getStartPosition();
+		int condend = condstart+condition.getLength();
+		for(ASTNode node:region){
+			int startposition = node.getStartPosition();
+			int endposition = node.getLength()+startposition;
+			if(startposition<=condstart && endposition>=condend){
+				return true;
+			}
+		}
+		return false;
+	}
 	private void externalChecking(){
 		
 	}

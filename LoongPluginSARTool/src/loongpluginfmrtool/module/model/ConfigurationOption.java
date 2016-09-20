@@ -48,6 +48,18 @@ public class ConfigurationOption {
 			return ConfigRelation.UNRELATE;
 		}
 	}
+	
+	public void addConfigRelation(ConfigurationOption config,ConfigRelation relation){
+		this.aconfigOpToRelation.put(config, relation);
+	}
+	
+	public Set<Statement> getEnable_Statements(){
+		return select_statement;
+	}
+	
+	public Set<Statement> getDisable_Statements(){
+		return unselect_statement;
+	}
 
 	public Expression getExpression() {
 		// TODO Auto-generated method stub

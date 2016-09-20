@@ -53,6 +53,25 @@ public class ModuleBuilder {
 		 job.setPriority(Job.INTERACTIVE);
 		 job.schedule();
 		 
+		
+		 
+		 // Create and check cross module(external variability)
+		 WorkspaceJob externalcheckerjob=new WorkspaceJob("CheckVariabilityModule"){
+			    @Override 
+			    public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			    	variabilityModules(monitor);
+			    	return Status.OK_STATUS;
+			    }
+
+				
+		};
+		
+		externalcheckerjob.setRule(root);
+		externalcheckerjob.setUser(true);
+		externalcheckerjob.setPriority(Job.INTERACTIVE);
+		externalcheckerjob.schedule();
+		 
+		 
 	}
 	
 	public Module getModuleByIndex(int index){
@@ -61,7 +80,20 @@ public class ModuleBuilder {
 		}else
 			return null;
 	}
-	
+	public void variabilityModules(IProgressMonitor pProgress){
+		if(pProgress != null){ 
+			int size = indexToModule.size();
+    		pProgress.beginTask("Extract variability", size);
+    	}
+
+		for(Map.Entry<Integer, Module>entry:indexToModule.entrySet()){
+			Module module = entry.getValue();
+			
+			
+			pProgress.worked(1);
+		}
+		
+	}
 	
 	public void buildModules(IProgressMonitor pProgress){
 		if(pProgress != null){ 
