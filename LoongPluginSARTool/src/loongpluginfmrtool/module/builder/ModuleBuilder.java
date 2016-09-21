@@ -117,6 +117,7 @@ public class ModuleBuilder {
 			if(element.getCategory().equals(LICategories.COMPILATION_UNIT)){
 				// initialize a module
 				Module module = new Module(element,module_index,this.LElementFactory,this);
+				elementToModule.put(element, module);
 				indexToModule.put(module_index, module);
 				// over the index
 				module_index++;
@@ -135,9 +136,7 @@ public class ModuleBuilder {
 	}
 	
 	
-	public void addLElementModuleMapping(LElement element,Module module){
-		elementToModule.put(element, module);
-	}
+	
 	public Module getModuleByLElement(LElement useelement) {
 		// TODO Auto-generated method stub
 		if(useelement!=null)

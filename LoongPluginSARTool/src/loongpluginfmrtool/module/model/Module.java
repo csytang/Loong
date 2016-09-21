@@ -7,9 +7,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
@@ -24,7 +27,7 @@ public class Module {
 	private int moduleIndex=0;
 	private Set<LElement> allmethods = new HashSet<LElement>();
 	private Set<Import> imports = new HashSet<Import>();
-	private Set<LElement> allelements = new HashSet<LElement>();
+	
 	private LFlyweightElementFactory lElementfactory;
 	private ASTNode dominateASTNode;
 	private ModuleBuilder abuilder;
@@ -42,13 +45,7 @@ public class Module {
 		this.moduleIndex = index;
 		this.lElementfactory = pElementFactory;
 		this.abuilder = mbuilder;
-		this.dominateASTNode = element.getASTNode();
-		Set<ASTNode> allnodes = ASTNodeWalker.allWalker(dominateASTNode);
-		for(ASTNode node:allnodes){
-			LElement subelement = lElementfactory.getElement(node);
-			abuilder.addLElementModuleMapping(subelement, this);
-			allelements.add(subelement);
-		}
+		this.dominateASTNode = element.getASTNode();		
 		this.contflowbuilder = new InternalConfBuilder(this);
 		
 	}
@@ -102,7 +99,7 @@ public class Module {
 				IBinding binding = entry.getValue();
 				LElement bindelement = lElementfactory.getElement(binding);
 				
-				if(!allelements.contains(bindelement)){
+				if(bindelement!=null){
 					// build an import
 					LElement useelement = lElementfactory.getElement(entry.getKey());
 					ImportType importtype = ImportType.NONE;
@@ -138,7 +135,11 @@ public class Module {
 			Set<ASTNode> methodASTNodes = ASTNodeWalker.methodWalker(dominateASTNode);
 			for(ASTNode method:methodASTNodes){
 				MethodDeclaration methoddecl = (MethodDeclaration)method;
-				LElement methodelement = lElementfactory.getElement(methoddecl.resolveBinding());
+				IMethodBinding binding = methoddecl.resolveBinding();
+				if(binding==null){
+					System.out.println("Cannot find");
+				}
+				LElement methodelement = lElementfactory.getElement(binding);
 				if(methodelement!=null)
 					allmethods.add(methodelement);
 			}
@@ -213,5 +214,13 @@ public class Module {
 			configurations = configuration_method.keySet();
 		}
 		return configurations;
+	}
+
+	public String getDisplayName() {
+		// TODO Auto-generated method stub
+		CompilationUnit unit = (CompilationUnit)dominateASTNode;
+		List types = unit.types();    
+		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class  
+		return typeDec.getName().toString();
 	}
 }

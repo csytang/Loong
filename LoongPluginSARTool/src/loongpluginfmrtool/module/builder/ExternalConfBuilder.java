@@ -37,6 +37,7 @@ public class ExternalConfBuilder {
 	private Map<ConfigurationOption,List<Module>>cong_link_modules = new HashMap<ConfigurationOption,List<Module>>();
 	private Map<ConfigurationOption,List<Module>>cong_unlink_modules = new HashMap<ConfigurationOption,List<Module>>();
 	private LFlyweightElementFactory LElementFactory;
+	private boolean debug = true;
 	
 	public ExternalConfBuilder(Module pmodule,LFlyweightElementFactory pLElementFactory){
 		this.module = pmodule;
@@ -54,17 +55,8 @@ public class ExternalConfBuilder {
 				for(ConfigurationOption option:configurations){
 					Set<Statement> enablestatements = option.getEnable_Statements();
 					Set<Statement> disablestatements = option.getDisable_Statements();
-					List<Module> enable_external_modules = directToOtherModules(enablestatements);
-					if(!enable_external_modules.isEmpty()){
-						cong_link_modules.put(option, enable_external_modules);						
-					}
-					
-					if(disablestatements!=null){
-						List<Module> disable_external_modules = directToOtherModules(disablestatements);
-						if(!disable_external_modules.isEmpty()){
-							cong_unlink_modules.put(option, disable_external_modules);
-						}
-					}
+					directToOtherModules(enablestatements,option,true);
+					directToOtherModules(disablestatements,option,false);
 				}
 			}
 		}
@@ -122,15 +114,11 @@ public class ExternalConfBuilder {
 		return false;
 	}
 	
-	protected List<Module> directToOtherModules(Set<Statement> statements){
-		List<Module> externals = new LinkedList<Module>();
-		if(statements==null){
-			return externals;
-		}else if(statements.isEmpty()){
-			return externals;
+	protected void directToOtherModules(Set<Statement> statements,ConfigurationOption pconfig,boolean pisEnable){
+		MethodInvocationVisitor visitor = new MethodInvocationVisitor(pconfig,pisEnable);
+		for(Statement statement:statements){
+			statement.accept(visitor);
 		}
-		
-		return externals;
 	}
 	
 	class MethodInvocationVisitor extends ASTVisitor{
@@ -145,14 +133,13 @@ public class ExternalConfBuilder {
 			
 			if(cong_link_modules.containsKey(config)){
 				List<Module> modules = cong_link_modules.get(config);
-				
 				modules.add(remote_module);
 				remote_module.addExternalEnableConfigurationControl(config, node);
 				cong_link_modules.put(config, modules);
-				
 			}else{
 				List<Module> modules = new LinkedList<Module>();
 				modules.add(remote_module);
+				remote_module.addExternalEnableConfigurationControl(config, node);
 				cong_link_modules.put(config, modules);
 			}
 		}
@@ -167,6 +154,7 @@ public class ExternalConfBuilder {
 			}else{
 				List<Module> modules = new LinkedList<Module>();
 				modules.add(remote_module);
+				remote_module.addExternalDisableConfigurationControl(config, node);
 				cong_unlink_modules.put(config, modules);
 			}
 		}
@@ -177,11 +165,15 @@ public class ExternalConfBuilder {
 			Type instance_type = node.getType();
 			ITypeBinding typebinding = instance_type.resolveBinding();
 			LElement declelement = LElementFactory.getElement(typebinding);
-			Module remote_module = ModuleBuilder.instance.getModuleByLElement(declelement);
-			if(isEnable){
-				addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
-			}else{
-				addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+			if(declelement!=null){
+				CompilationUnit compilation_unit = declelement.getCompilationUnit();
+				LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
+				Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
+				if(isEnable){
+					addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
+				}else{
+					addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+				}
 			}
 			return super.visit(node);
 		}
@@ -192,15 +184,18 @@ public class ExternalConfBuilder {
 			// TODO Auto-generated method stub
 			IMethodBinding method = node.resolveMethodBinding();
 			LElement declelement = LElementFactory.getElement(method);
-			CompilationUnit compilation_unit = declelement.getCompilationUnit();
-			LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
-			Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
-			if(isEnable){
-				addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
-			}else{
-				addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+			if(declelement!=null){
+				CompilationUnit compilation_unit = declelement.getCompilationUnit();
+				LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
+				if(compilation_unit_element!=null){
+					Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
+					if(isEnable){
+						addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
+					}else{
+						addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+					}
+				}
 			}
-			
 			return super.visit(node);
 		}
 
@@ -209,16 +204,18 @@ public class ExternalConfBuilder {
 			// TODO Auto-generated method stub
 			IMethodBinding method = node.resolveConstructorBinding();
 			LElement declelement = LElementFactory.getElement(method);
-			CompilationUnit compilation_unit = declelement.getCompilationUnit();
-			LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
-			Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
+			if(declelement!=null){
+				CompilationUnit compilation_unit = declelement.getCompilationUnit();
+				LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
 			
-			if(isEnable){
-				addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
-			}else{
-				addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+				Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
+				
+				if(isEnable){
+					addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
+				}else{
+					addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+				}
 			}
-			
 			return super.visit(node);
 		}
 
@@ -227,16 +224,17 @@ public class ExternalConfBuilder {
 			// TODO Auto-generated method stub
 			IMethodBinding method = node.resolveMethodBinding();
 			LElement declelement = LElementFactory.getElement(method);
-			CompilationUnit compilation_unit = declelement.getCompilationUnit();
-			LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
-			Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
-			
-			if(isEnable){
-				addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
-			}else{
-				addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+			if(declelement!=null){
+				CompilationUnit compilation_unit = declelement.getCompilationUnit();
+				LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
+				Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
+				
+				if(isEnable){
+					addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
+				}else{
+					addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+				}
 			}
-			
 			return super.visit(node);
 		}
 		

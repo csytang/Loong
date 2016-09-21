@@ -75,4 +75,12 @@ public class ConfigurationOption {
 	public Module getAssociatedModule(){
 		return associatedmodule;
 	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return aconfigOption.toString();
+	}
+	
+	
 }
