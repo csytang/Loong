@@ -4,6 +4,8 @@ import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
+import loongpluginfmrtool.views.moduleviews.ModuleViewPart;
+import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +28,8 @@ public class BuildModules implements IObjectActionDelegate{
 	private IWorkbenchPart part;
 	private ApplicationObserver lDB;
 	private ModuleBuilder mbuilder;
-	
+	private ModuleModelChangeListener listener;
+	private ModuleViewPart viewpart;
 	public BuildModules() {
 		// TODO Auto-generated constructor stub
 	}
@@ -37,6 +40,7 @@ public class BuildModules implements IObjectActionDelegate{
 		aProject = getSelectedProject();
 		lDB = ApplicationObserver.getInstance();
 		if(lDB.isInitialized(aProject)){
+			
 			mbuilder = ModuleBuilder.getInstance(aProject, lDB);
 			mbuilder.init();
 		}

@@ -1,14 +1,19 @@
 package loongpluginfmrtool.module.model;
 
 import loongplugin.source.database.model.LElement;
-public class Import {
+public class Import extends ModuleComponent{
 	 
 	private LElement ause;
 	private LElement adef;
 	private Module auseModule;
 	private Module adefModule;
 	private ImportType aimporttype;
-	public Import(LElement puse,LElement pdef,Module puseMo,Module pdefMo,ImportType pimporttype){
+	
+	public Import(Module module){
+		super(module);
+	}
+	public Import(LElement puse,LElement pdef,Module pdefMo,Module puseMo,ImportType pimporttype){
+		super(pdefMo);
 		this.ause = puse;
 		this.adef = pdef;
 		this.auseModule = puseMo;
@@ -35,7 +40,9 @@ public class Import {
 		return aimporttype;
 	}
 	
-	
+	public String getImportDisplayName(){
+		return "Import"+this.auseModule.getDisplayName();
+	}
 	
 	
 	 

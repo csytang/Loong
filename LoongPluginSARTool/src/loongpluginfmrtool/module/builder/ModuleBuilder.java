@@ -1,6 +1,8 @@
 package loongpluginfmrtool.module.builder;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
@@ -12,6 +14,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
@@ -19,6 +23,11 @@ import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LICategories;
 import loongpluginfmrtool.module.model.Module;
+import loongpluginfmrtool.views.moduleviews.IModuleModelChangeListener;
+import loongpluginfmrtool.views.moduleviews.ModuleModel;
+import loongpluginfmrtool.views.moduleviews.ModuleViewPart;
+import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
+import loongpluginfmrtool.views.moduleviews.moduleModelChangedEvent;
 
 public class ModuleBuilder {
 	
@@ -29,6 +38,8 @@ public class ModuleBuilder {
 	final private ProgramDatabase pd;
 	private LFlyweightElementFactory LElementFactory;
 	private static Map<LElement,Module> elementToModule = new HashMap<LElement,Module>();
+	private List<IModuleModelChangeListener>listeners = new LinkedList<IModuleModelChangeListener>();
+	private ModuleModel amodel = new ModuleModel();
 	public static ModuleBuilder getInstance(IProject selectedProject,ApplicationObserver pDB){
 		instance = new ModuleBuilder(selectedProject,pDB);
 		return instance;
@@ -40,6 +51,15 @@ public class ModuleBuilder {
 		this.pd = pDB.getProgramDatabase();
 	}
 	public void init(){
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ModuleViewPart.ID);
+		} catch (PartInitException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		ModuleViewPart view_instance = ModuleViewPart.getInstance();
+		listeners.add(view_instance.getModuleListener());
+		
 		final IContainer root=ResourcesPlugin.getWorkspace().getRoot();
 		WorkspaceJob job=new WorkspaceJob("CreateModule"){
 		    @Override 
@@ -83,9 +103,16 @@ public class ModuleBuilder {
 			e.printStackTrace();
 		}
 		
-		 
+		notifyModuleListener(); 
 	}
 	
+	private void notifyModuleListener() {
+		// TODO Auto-generated method stub
+		moduleModelChangedEvent event = new moduleModelChangedEvent(this,amodel);
+		for(IModuleModelChangeListener listener:listeners){
+			listener.moduleModelChanged(event);
+		}
+	}
 	public Module getModuleByIndex(int index){
 		if(indexToModule.containsKey(index)){
 			return indexToModule.get(index);
@@ -116,9 +143,10 @@ public class ModuleBuilder {
 			pProgress.subTask("Process element:"+element.getCompilationUnitName());
 			if(element.getCategory().equals(LICategories.COMPILATION_UNIT)){
 				// initialize a module
-				Module module = new Module(element,module_index,this.LElementFactory,this);
+				Module module = new Module(element,module_index,this.LElementFactory,this,amodel);
 				elementToModule.put(element, module);
 				indexToModule.put(module_index, module);
+				amodel.addModule(module);
 				// over the index
 				module_index++;
 			}

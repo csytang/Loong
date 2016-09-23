@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import loongplugin.LoongPlugin;
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 
@@ -12,8 +13,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -57,12 +56,14 @@ public class ModuleViewPart extends ViewPart {
  *  -Scope of Affected.
  */
 	
-	private Action generateAction; 
+	private ModuleModel moduleModel = new ModuleModel();
 	private TreeViewer fViewer;	
 	private Tree tree;
 	private String[]columnNames={"properties","value"};
 	private IProject selectedProject=null;
 	public static ModuleViewPart instance;
+	private ModuleModelChangeListener listener;
+	public static final String ID = LoongPlugin.PLUGIN_ID+".FMRTool.ModuleView";
 	public static ModuleViewPart getInstance(){
 		if(instance==null)
 			instance = new ModuleViewPart();
@@ -84,7 +85,11 @@ public class ModuleViewPart extends ViewPart {
 				selectedProject = editorinput.getFile().getProject();
 			}
 		}
-		
+		listener = new ModuleModelChangeListener();
+	}
+	
+	public ModuleModelChangeListener getModuleListener(){
+		return listener;
 	}
 	
 	private IProject getSelectedProject() {
@@ -158,8 +163,10 @@ public class ModuleViewPart extends ViewPart {
 	private void createTableViewer() {
 		fViewer = new TreeViewer(tree);
 		fViewer.setColumnProperties(columnNames);
-		
-		
+		fViewer.setLabelProvider(new ModuleLabelProvider());
+		fViewer.setContentProvider(new ModuleContentProvider());
+		fViewer.setInput(moduleModel);
+		fViewer.expandAll();
 	}
 	
 	
@@ -172,6 +179,32 @@ public class ModuleViewPart extends ViewPart {
 		fViewer.getControl().setFocus();
 	}
 
+	private void redraw(){
+		
+		tree.setRedraw(false);
+		fViewer.setInput(moduleModel);
+		fViewer.expandAll();
+		tree.setRedraw(true);
+		
+	}
 	
-	
+	public class ModuleModelChangeListener implements IModuleModelChangeListener{
+
+		@Override
+		public void moduleModelChanged(moduleModelChangedEvent event) {
+			// TODO Auto-generated method stub
+			moduleModel = event.getModuleModel();
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						redraw();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});	
+		}
+		
+	}
 }

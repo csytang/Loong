@@ -72,7 +72,7 @@ public class LoongImages {
 	public static final String EXECUTE = "run.png";
 
 	public static final String MACRO = "macro.ico";
-	
+	public static final String IMPORT = "import.png";
 
 	public static void setImageDescriptors(IAction action, String type) {
 		ImageDescriptor id = create("d", type); //$NON-NLS-1$

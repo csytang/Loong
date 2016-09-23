@@ -1,4 +1,5 @@
 package loongpluginfmrtool.module.model;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,13 +22,14 @@ import loongpluginfmrtool.module.builder.InternalConfBuilder;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 import loongpluginfmrtool.module.util.ASTSubBindingFinder;
+import loongpluginfmrtool.views.moduleviews.ModuleModel;
 
-public class Module {
+public class Module implements Serializable {
 	private LElement dominate;
 	private int moduleIndex=0;
 	private Set<LElement> allmethods = new HashSet<LElement>();
 	private Set<Import> imports = new HashSet<Import>();
-	
+	private Set<ModuleComponent> components = new HashSet<ModuleComponent>();
 	private LFlyweightElementFactory lElementfactory;
 	private ASTNode dominateASTNode;
 	private ModuleBuilder abuilder;
@@ -38,16 +40,16 @@ public class Module {
 	private Map<ConfigurationOption,Set<ASTNode>>external_enable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Map<ConfigurationOption,Set<ASTNode>>external_disable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Set<ConfigurationOption> configurations;
+	private ModuleModel model;
 	
-	
-	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder){
+	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder,ModuleModel pmodel){
 		this.dominate = element;
 		this.moduleIndex = index;
 		this.lElementfactory = pElementFactory;
 		this.abuilder = mbuilder;
 		this.dominateASTNode = element.getASTNode();		
 		this.contflowbuilder = new InternalConfBuilder(this);
-		
+		this.model = pmodel;
 	}
 	
 	/**
@@ -63,13 +65,14 @@ public class Module {
 		// resolve variability
 		resolvevariability();
 		
+		configurations =  getAllConfigurationOptions();
+		components.addAll(configurations);
+		
 	}
 	
 	public void externalvariability(){
-		System.out.println("----------EXTERNAL-------------");
 		externalconfbuilder = new ExternalConfBuilder(this,lElementfactory);
 		externalconfbuilder.parse();
-		System.out.println("------------------------------");
 	}
 	
 	
@@ -118,8 +121,17 @@ public class Module {
 						}
 					}
 					Module usemodule = abuilder.getModuleByLElement(useelement);
-					Import mimport = new Import(useelement,bindelement,this,usemodule,importtype); 
-					this.imports.add(mimport);
+					if(usemodule!=null){
+						if(usemodule.equals(this)){
+							continue;
+						}else if(importtype!=ImportType.NONE){
+							Import mimport = new Import(useelement,bindelement,this,usemodule,importtype);
+							this.imports.add(mimport);
+							this.components.add(mimport);
+						}
+					}
+					 
+					
 				}
 			}
 		}
@@ -223,4 +235,48 @@ public class Module {
 		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class  
 		return typeDec.getName().toString();
 	}
+	
+	public String getModuleName(){
+		CompilationUnit unit = (CompilationUnit)dominateASTNode;
+		List types = unit.types();    
+		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class  
+		return "Module:"+typeDec.getName().toString();
+	}
+
+	public Set<ModuleComponent> getComponents() {
+		// TODO Auto-generated method stub
+		return components;
+	}
+
+	public ModuleModel getParent() {
+		// TODO Auto-generated method stub
+		return model;
+	}
+
+	public String getId() {
+		// TODO Auto-generated method stub
+		return moduleIndex+"";
+	}
+
+	public CompilationUnit getCompilationUnit() {
+		// TODO Auto-generated method stub
+		return this.dominate.getCompilationUnit();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if(!(obj instanceof Module)){
+			return false;
+		}else{
+			Module module_obj = (Module)obj;
+			if(module_obj.moduleIndex==this.moduleIndex)
+				return true;
+			else
+				return false;
+		}
+		
+	}
+	
+	
 }

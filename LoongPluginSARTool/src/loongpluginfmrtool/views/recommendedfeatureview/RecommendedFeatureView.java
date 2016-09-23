@@ -152,8 +152,6 @@ public class RecommendedFeatureView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		createTree(parent);
 		createTableViewer();
-		
-		
 	}
 	
 	

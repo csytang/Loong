@@ -97,7 +97,7 @@
             category="LoongPlugin.viewcategory"
             class="loongpluginfmrtool.views.moduleviews.ModuleViewPart"
             icon="icons/module.png"
-            id="LoongPluginFMRTool.view1"
+            id="LoongPlugin.FMRTool.ModuleView"
             name="Modules with Configurations"
             restorable="true">
       </view>
