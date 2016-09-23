@@ -28,7 +28,6 @@ public class Module implements Serializable {
 	private LElement dominate;
 	private int moduleIndex=0;
 	private Set<LElement> allmethods = new HashSet<LElement>();
-	private Set<Import> imports = new HashSet<Import>();
 	private Set<ModuleComponent> components = new HashSet<ModuleComponent>();
 	private LFlyweightElementFactory lElementfactory;
 	private ASTNode dominateASTNode;
@@ -56,8 +55,7 @@ public class Module implements Serializable {
 	 * initialize this module
 	 */
 	public void initialize(){
-		// resolve import
-		resolveimport();
+		
 		
 		// resolve body
 		resolvebody();
@@ -90,54 +88,7 @@ public class Module implements Serializable {
 		return this.configuration_method;
 	}
 	
-	private void resolveimport() {
-		// TODO Auto-generated method stub
-		// obtain all LElement that referenced in this element and removed all defined in this
-		if(dominateASTNode!=null){
-			
-			// Process bindings
-			Map<ASTNode,IBinding> allastnodebindings = ASTSubBindingFinder.astBindingFinder(dominateASTNode);
-			
-			for(Map.Entry<ASTNode, IBinding>entry:allastnodebindings.entrySet()){
-				IBinding binding = entry.getValue();
-				LElement bindelement = lElementfactory.getElement(binding);
-				
-				if(bindelement!=null){
-					// build an import
-					LElement useelement = lElementfactory.getElement(entry.getKey());
-					ImportType importtype = ImportType.NONE;
-					switch(binding.getKind()){
-						case IBinding.TYPE:{
-							importtype = ImportType.CLASS_INSTANCE;
-							break;
-						}
-						case IBinding.METHOD:{
-							importtype = ImportType.METHOD;
-							break;
-						}
-						case IBinding.VARIABLE:{
-							importtype = ImportType.CLASS_FIELD;
-							break;
-						}
-					}
-					Module usemodule = abuilder.getModuleByLElement(useelement);
-					if(usemodule!=null){
-						if(usemodule.equals(this)){
-							continue;
-						}else if(importtype!=ImportType.NONE){
-							Import mimport = new Import(useelement,bindelement,this,usemodule,importtype);
-							this.imports.add(mimport);
-							this.components.add(mimport);
-						}
-					}
-					 
-					
-				}
-			}
-		}
-		
-	}
-
+	
 	public Set<LElement> getallMethods(){
 		return allmethods;
 	}

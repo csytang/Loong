@@ -73,7 +73,8 @@ public class LoongImages {
 
 	public static final String MACRO = "macro.ico";
 	public static final String IMPORT = "import.png";
-
+	public static final String LINK_INTERNAL = "link-internal.png";
+	public static final String LINK_EXTERNAL = "link-external.png";
 	public static void setImageDescriptors(IAction action, String type) {
 		ImageDescriptor id = create("d", type); //$NON-NLS-1$
 		if (id != null)

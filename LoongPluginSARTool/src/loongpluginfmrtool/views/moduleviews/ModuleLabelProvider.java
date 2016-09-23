@@ -2,7 +2,7 @@ package loongpluginfmrtool.views.moduleviews;
 
 import loongplugin.LoongImages;
 import loongpluginfmrtool.module.model.ConfigurationOption;
-import loongpluginfmrtool.module.model.Import;
+import loongpluginfmrtool.module.model.ConfigurationRelationLink;
 import loongpluginfmrtool.module.model.Module;
 import loongpluginfmrtool.module.model.ModuleComponent;
 import loongpluginfmrtool.views.recommendedfeatureview.ASTNodeWrapper;
@@ -60,12 +60,20 @@ public class ModuleLabelProvider implements ITableLabelProvider{
 				return LoongImages.getImage(LoongImages.MODULE);
 			}else if(element instanceof ModuleComponent){
 				ModuleComponent module_component = (ModuleComponent)element;
-				if(module_component instanceof Import){
-					return LoongImages.getImage(LoongImages.IMPORT);
-				}else if(module_component instanceof ConfigurationOption){
+				if(module_component instanceof ConfigurationOption){
 					return LoongImages.getImage(LoongImages.MACRO);
 				}else				
 					return null;
+			}else if(element instanceof ConfigurationRelationLink){
+				ConfigurationRelationLink configrelation_element = (ConfigurationRelationLink)element;
+				Module source = configrelation_element.getSourceConfigurationOption().getAssociatedModule();
+				Module target = configrelation_element.getTargetConfigurationOption().getAssociatedModule();
+				if(source.equals(target)){
+					return LoongImages.getImage(LoongImages.LINK_INTERNAL);
+				}else{
+					return LoongImages.getImage(LoongImages.LINK_EXTERNAL);
+				}
+				
 			}
 		}
 	}
@@ -82,13 +90,14 @@ public class ModuleLabelProvider implements ITableLabelProvider{
 					return module.getId();
 				}else if(element instanceof ModuleComponent){
 					ModuleComponent module_component = (ModuleComponent)element;
-					if(module_component instanceof Import){
-						Import import_module_component = (Import)module_component;
-						return import_module_component.getImportDisplayName();
-					}else if(module_component instanceof ConfigurationOption){
+					if(module_component instanceof ConfigurationOption){
 						ConfigurationOption configuration_module_component = (ConfigurationOption)module_component;
 						return configuration_module_component.toString();
 					}
+				}else if(element instanceof ConfigurationRelationLink){
+					ConfigurationRelationLink confg_relation = (ConfigurationRelationLink)element;
+					String configurationexpstr = confg_relation.getTargetConfigurationOption().getExpression().toString();
+					return configurationexpstr;
 				}
 			}
 			case 1:{
@@ -96,13 +105,47 @@ public class ModuleLabelProvider implements ITableLabelProvider{
 					return ((Module)element).getModuleName();
 				}else if(element instanceof ModuleComponent){
 					ModuleComponent module_component = (ModuleComponent)element;
-					if(module_component instanceof Import){
-						Import import_module_component = (Import)module_component;
-						return import_module_component.getImportType().name();
-					}else if(module_component instanceof ConfigurationOption){
+					if(module_component instanceof ConfigurationOption){
 						ConfigurationOption configuration_module_component = (ConfigurationOption)module_component;
 						return configuration_module_component.getAffectedASTNodesRange();
 					}
+				}else if(element instanceof ConfigurationRelationLink){
+					ConfigurationRelationLink confg_relation = (ConfigurationRelationLink)element;
+					return confg_relation.getRelation().name();
+				}
+			}
+			case 2:{
+				if(element instanceof Module){
+					return "";
+				}else if(element instanceof ModuleComponent){
+					return "";
+				}else if(element instanceof ConfigurationRelationLink){
+					ConfigurationRelationLink confg_relation = (ConfigurationRelationLink)element;
+					String module_str = confg_relation.getTargetConfigurationOption().getParent().getDisplayName();
+					return "-->["+module_str+"]";
+				}
+			}
+			case 3:{
+				if(element instanceof Module){
+					return "";
+				}else if(element instanceof ModuleComponent){
+					ModuleComponent module_element = (ModuleComponent)element;
+					if(module_element instanceof ConfigurationOption){
+						ConfigurationOption configuration_module_component = (ConfigurationOption)module_element;
+						int internal = configuration_module_component.getInternalVariability();
+						return internal+"";
+					}
+				}else if(element instanceof ConfigurationRelationLink){					
+					return "";
+				}
+			}
+			case 4:{
+				if(element instanceof Module){
+					return "";
+				}else if(element instanceof ModuleComponent){
+					return "";
+				}else if(element instanceof ConfigurationRelationLink){
+					return "";
 				}
 			}
 		}

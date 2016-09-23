@@ -1,5 +1,6 @@
 package loongpluginfmrtool.module.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,12 +15,15 @@ import org.eclipse.jdt.core.dom.Statement;
 
 public class ConfigurationOption extends ModuleComponent{
 	public Expression aconfigOption;
-	private Map<ConfigurationOption,ConfigRelation> internalconfigOpToRelation;
+	//private Map<ConfigurationOption,ConfigRelation> internalconfigOpToRelation;
+	private Set<ConfigurationRelationLink> confg_relationlik;
 	private Set<Statement>select_statement = new HashSet<Statement>();
 	private Set<Statement>unselect_statement = new HashSet<Statement>();
 	private Set<ASTNode>affected_astnodes = new HashSet<ASTNode>();
 	private Module associatedmodule;
 	private CompilationUnit unit;
+	private int internalVariabilityCount = 0;
+	private int externalVariabilityCount = 0;
 	public ConfigurationOption(Module passociatedmodule){
 		super(passociatedmodule);
 		unit = passociatedmodule.getCompilationUnit();
@@ -28,12 +32,13 @@ public class ConfigurationOption extends ModuleComponent{
 		super(passociatedmodule);
 		this.aconfigOption = pconfigOption;
 		this.associatedmodule = passociatedmodule;
-		this.internalconfigOpToRelation = new HashMap<ConfigurationOption,ConfigRelation>();
+		this.confg_relationlik = new HashSet<ConfigurationRelationLink>();
 		unit = passociatedmodule.getCompilationUnit();
 	}
 	
-	public void addConfiguration(ConfigurationOption option,ConfigRelation relation){
-		internalconfigOpToRelation.put(option,relation);
+	public void addConfigurationRelation(ConfigurationOption option,ConfigRelation relation){
+		ConfigurationRelationLink link = new ConfigurationRelationLink(this,option,relation);
+		confg_relationlik.add(link);
 	}
 	
 	public void addEnable_Statements(Statement element){
@@ -52,17 +57,6 @@ public class ConfigurationOption extends ModuleComponent{
 		affected_astnodes.add(element);
 	}
 	
-	public ConfigRelation getConfigRelation(ConfigurationOption config){
-		if(this.internalconfigOpToRelation.containsKey(config)){
-			return this.internalconfigOpToRelation.get(config);
-		}else{
-			return ConfigRelation.UNRELATE;
-		}
-	}
-	
-	public void addConfigRelation(ConfigurationOption config,ConfigRelation relation){
-		this.internalconfigOpToRelation.put(config, relation);
-	}
 	
 	public Set<Statement> getEnable_Statements(){
 		return select_statement;
@@ -147,6 +141,35 @@ public class ConfigurationOption extends ModuleComponent{
 		unselected+="]";
 		
 		return selected+unselected;
+	}
+	
+	public Set<ConfigurationRelationLink> getinks(){
+		return confg_relationlik;
+	}
+	
+	public void computeVariability(){
+		for(ConfigurationRelationLink link:confg_relationlik){
+			Module remote_module = link.getTargetConfigurationOption().getAssociatedModule();
+			if(remote_module.equals(associatedmodule)){
+				this.internalVariabilityCount++;
+			}else{
+				this.externalVariabilityCount++;
+			}
+		}
+	}
+	
+	public int getInternalVariability(){
+		return this.internalVariabilityCount;
+	}
+	
+	public int getExternalVariability(){
+		return this.externalVariabilityCount;
+	}
+	@Override
+	public Object[] getChildren() {
+		// TODO Auto-generated method stub
+		List<ConfigurationRelationLink>arraylist = new ArrayList<ConfigurationRelationLink>(confg_relationlik);
+		return arraylist.toArray();
 	}
 	
 	

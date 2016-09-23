@@ -73,7 +73,7 @@ public class ExternalConfBuilder {
 				for(ConfigurationOption remote_option:remote_configurations){
 					Expression remotecondition = remote_option.getExpression();
 					if(isContains(remote_affected,remotecondition)){
-						option.addConfigRelation(remote_option, ConfigRelation.CONTAINS);
+						option.addConfigurationRelation(remote_option, ConfigRelation.CONTAINS);
 					}
 				}
 			}
@@ -92,7 +92,7 @@ public class ExternalConfBuilder {
 				for(ConfigurationOption remote_option:remote_configurations){
 					Expression remotecondition = remote_option.getExpression();
 					if(isContains(remote_affected,remotecondition)){
-						option.addConfigRelation(remote_option, ConfigRelation.EXECLUDE);
+						option.addConfigurationRelation(remote_option, ConfigRelation.EXECLUDE);
 					}
 				}
 			}

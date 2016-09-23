@@ -17,11 +17,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import loongplugin.featureconfiguration.Configuration;
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LICategories;
+import loongpluginfmrtool.module.model.ConfigurationOption;
 import loongpluginfmrtool.module.model.Module;
 import loongpluginfmrtool.views.moduleviews.IModuleModelChangeListener;
 import loongpluginfmrtool.views.moduleviews.ModuleModel;
@@ -103,10 +105,10 @@ public class ModuleBuilder {
 			e.printStackTrace();
 		}
 		
-		notifyModuleListener(); 
+		
 	}
 	
-	private void notifyModuleListener() {
+	public void notifyModuleListener() {
 		// TODO Auto-generated method stub
 		moduleModelChangedEvent event = new moduleModelChangedEvent(this,amodel);
 		for(IModuleModelChangeListener listener:listeners){
@@ -172,4 +174,27 @@ public class ModuleBuilder {
 		else
 			return null;
 	}
+	
+	protected void computeVariabilityLevel(){
+		for(Module module:amodel.getModules()){
+			for(ConfigurationOption config:module.getAllConfigurationOptions()){
+				config.computeVariability();
+			}
+		}
+		
+	}
+	
+	protected void computeOverallVariabilityLevel(){
+		
+		
+	}
+	public void computeStatistic() {
+		// TODO Auto-generated method stub
+		
+		computeVariabilityLevel();
+		
+		computeOverallVariabilityLevel();
+	}
+	
+	
 }

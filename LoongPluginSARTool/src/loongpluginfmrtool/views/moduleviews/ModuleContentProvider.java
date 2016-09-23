@@ -1,5 +1,6 @@
 package loongpluginfmrtool.views.moduleviews;
 
+import loongpluginfmrtool.module.model.ConfigurationRelationLink;
 import loongpluginfmrtool.module.model.Module;
 import loongpluginfmrtool.module.model.ModuleComponent;
 
@@ -36,6 +37,9 @@ public class ModuleContentProvider implements ITreeContentProvider{
 			Module m_parent_element = (Module)parentElement;
 			return m_parent_element.getComponents().toArray();
 		}else if(parentElement instanceof ModuleComponent){
+			ModuleComponent mc_parent_element = (ModuleComponent)parentElement;
+			return mc_parent_element.getChildren();
+		}else if(parentElement instanceof ConfigurationRelationLink){
 			return null;
 		}
 		return null;
@@ -44,7 +48,10 @@ public class ModuleContentProvider implements ITreeContentProvider{
 	@Override
 	public Object getParent(Object element) {
 		// TODO Auto-generated method stub
-		if(element instanceof ModuleComponent){
+		if(element instanceof ConfigurationRelationLink){
+			ConfigurationRelationLink config_link_elemnet = (ConfigurationRelationLink)element;
+			return config_link_elemnet.getParent();
+		}else if(element instanceof ModuleComponent){
 			ModuleComponent module_element = (ModuleComponent)element;
 			return module_element.getParent();
 		}else if(element instanceof Module){
@@ -66,6 +73,9 @@ public class ModuleContentProvider implements ITreeContentProvider{
 			Module m_parent_element = (Module)element;
 			return m_parent_element.getComponents().size()>0;
 		}else if(element instanceof ModuleComponent){
+			ModuleComponent m_conf_element = (ModuleComponent)element;
+			return m_conf_element.getChildren().length>0;
+		}else if(element instanceof ConfigurationRelationLink){
 			return false;
 		}
 		return false;

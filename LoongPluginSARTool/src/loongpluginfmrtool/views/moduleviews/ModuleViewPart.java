@@ -59,7 +59,7 @@ public class ModuleViewPart extends ViewPart {
 	private ModuleModel moduleModel = new ModuleModel();
 	private TreeViewer fViewer;	
 	private Tree tree;
-	private String[]columnNames={"properties","value"};
+	private String[]columnNames={"name","attribute_1","attribute_2","attribute_3","attribute_4"};
 	private IProject selectedProject=null;
 	public static ModuleViewPart instance;
 	private ModuleModelChangeListener listener;
@@ -132,12 +132,21 @@ public class ModuleViewPart extends ViewPart {
 
 		TreeColumn column;
 		column = new TreeColumn(tree, SWT.LEFT);
-		column.setText("Module/Attributes");
+		column.setText("Module/Config");
 		column.setWidth(120);
 		column = new TreeColumn(tree, SWT.LEFT);
-		column.setText("Value");
-		column.setWidth(80);
-
+		column.setText("General");
+		column.setWidth(100);
+		column = new TreeColumn(tree, SWT.LEFT);
+		column.setText("Links To Module");
+		column.setWidth(100);
+		column = new TreeColumn(tree, SWT.LEFT);
+		column.setText("InVarLevel(#)");
+		column.setWidth(100);
+		column = new TreeColumn(tree, SWT.LEFT);
+		column.setText("ExVarLevel(#)");
+		column.setWidth(100);
+		
 		// Pack the columns
 	    for (int i = 0, n = tree.getColumnCount(); i < n; i++) {
 	    	tree.getColumn(i).pack();

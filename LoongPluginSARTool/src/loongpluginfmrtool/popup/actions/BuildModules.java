@@ -43,6 +43,8 @@ public class BuildModules implements IObjectActionDelegate{
 			
 			mbuilder = ModuleBuilder.getInstance(aProject, lDB);
 			mbuilder.init();
+			mbuilder.computeStatistic();
+			mbuilder.notifyModuleListener(); 
 		}
 		else{
 			Display.getCurrent().syncExec(new Runnable(){

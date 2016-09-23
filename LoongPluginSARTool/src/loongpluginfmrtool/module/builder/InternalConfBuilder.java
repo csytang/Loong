@@ -120,9 +120,9 @@ public class InternalConfBuilder {
 					boolean isContain_relation = config1_contains_config2||config2_contains_config1;
 					if(isContain_relation){
 						if(config1_contains_config2){
-							config1.addConfigRelation(config2, ConfigRelation.CONTAINS);
+							config1.addConfigurationRelation(config2, ConfigRelation.CONTAINS);
 						}else{
-							config2.addConfigRelation(config1, ConfigRelation.CONTAINS);
+							config2.addConfigurationRelation(config1, ConfigRelation.CONTAINS);
 						}
 						continue;
 					}
@@ -133,8 +133,8 @@ public class InternalConfBuilder {
 					boolean config2_excluded_config1 = isExclude(disable_statements_config2,config1.getExpression());
 					boolean isMutuallyExclude = config1_excluded_config2||config2_excluded_config1;
 					if(isMutuallyExclude){
-						config1.addConfigRelation(config2, ConfigRelation.EXECLUDE);
-						config2.addConfigRelation(config1, ConfigRelation.EXECLUDE);
+						config1.addConfigurationRelation(config2, ConfigRelation.EXECLUDE);
+						config2.addConfigurationRelation(config1, ConfigRelation.EXECLUDE);
 					}
 					
 					
