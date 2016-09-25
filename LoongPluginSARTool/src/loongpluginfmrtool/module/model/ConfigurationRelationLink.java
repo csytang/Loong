@@ -21,4 +21,12 @@ public class ConfigurationRelationLink {
 	public ConfigurationOption getParent(){
 		return asource;
 	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		String link = asource.toString()+"\t-->\t"+atarget.toString();
+		return link;
+	}
+	
+	
 }

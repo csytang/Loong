@@ -143,7 +143,26 @@ public class ModuleLabelProvider implements ITableLabelProvider{
 				if(element instanceof Module){
 					return "";
 				}else if(element instanceof ModuleComponent){
+					ModuleComponent module_element = (ModuleComponent)element;
+					if(module_element instanceof ConfigurationOption){
+						ConfigurationOption configuration_module_component = (ConfigurationOption)module_element;
+						int external = configuration_module_component.getExternalVariability();
+						return external+"";
+					}
+				}else if(element instanceof ConfigurationRelationLink){
 					return "";
+				}
+			}
+			case 5:{
+				if(element instanceof Module){
+					return "";
+				}else if(element instanceof ModuleComponent){
+					ModuleComponent module_element = (ModuleComponent)element;
+					if(module_element instanceof ConfigurationOption){
+						ConfigurationOption configuration_module_component = (ConfigurationOption)module_element;
+						int overall = configuration_module_component.getOverallVariability();
+						return overall+"";
+					}
 				}else if(element instanceof ConfigurationRelationLink){
 					return "";
 				}

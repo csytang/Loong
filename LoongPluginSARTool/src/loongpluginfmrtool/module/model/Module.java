@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
@@ -15,6 +19,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongpluginfmrtool.module.builder.ExternalConfBuilder;
@@ -227,6 +232,16 @@ public class Module implements Serializable {
 				return false;
 		}
 		
+	}
+
+	public IFile getIFile() {
+		// TODO Auto-generated method stub
+		IFile file = null;
+		CompilationUnit unit = this.dominate.getCompilationUnit();
+		ICompilationUnit iunit = (ICompilationUnit) unit.getJavaElement();
+		IPath path = iunit.getPath();
+		file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		return file;
 	}
 	
 	

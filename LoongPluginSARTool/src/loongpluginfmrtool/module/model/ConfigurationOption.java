@@ -24,6 +24,8 @@ public class ConfigurationOption extends ModuleComponent{
 	private CompilationUnit unit;
 	private int internalVariabilityCount = 0;
 	private int externalVariabilityCount = 0;
+	private int overallVariabilityCount = 0;
+	private boolean overallVariabilityisCount = false;
 	public ConfigurationOption(Module passociatedmodule){
 		super(passociatedmodule);
 		unit = passociatedmodule.getCompilationUnit();
@@ -34,6 +36,15 @@ public class ConfigurationOption extends ModuleComponent{
 		this.associatedmodule = passociatedmodule;
 		this.confg_relationlik = new HashSet<ConfigurationRelationLink>();
 		unit = passociatedmodule.getCompilationUnit();
+	}
+	
+	public void setOverallVariabilityCount(int value){
+		this.overallVariabilityCount = value;
+		this.overallVariabilityisCount = true;
+	}
+	
+	public boolean isOverallVariabilitySet(){
+		return this.overallVariabilityisCount;
 	}
 	
 	public void addConfigurationRelation(ConfigurationOption option,ConfigRelation relation){
@@ -143,7 +154,7 @@ public class ConfigurationOption extends ModuleComponent{
 		return selected+unselected;
 	}
 	
-	public Set<ConfigurationRelationLink> getinks(){
+	public Set<ConfigurationRelationLink> getlinks(){
 		return confg_relationlik;
 	}
 	
@@ -165,11 +176,35 @@ public class ConfigurationOption extends ModuleComponent{
 	public int getExternalVariability(){
 		return this.externalVariabilityCount;
 	}
+	
+	
 	@Override
 	public Object[] getChildren() {
 		// TODO Auto-generated method stub
 		List<ConfigurationRelationLink>arraylist = new ArrayList<ConfigurationRelationLink>(confg_relationlik);
 		return arraylist.toArray();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if(obj instanceof ConfigurationOption){
+			ConfigurationOption cong_obj = (ConfigurationOption)obj;
+			if(cong_obj.getAssociatedModule().equals(associatedmodule)){
+				if(cong_obj.getExpression().equals(aconfigOption)){
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				return false;
+			}
+		}else
+			return false;
+		
+	}
+	public int getOverallVariability() {
+		// TODO Auto-generated method stub
+		return overallVariabilityCount;
 	}
 	
 	

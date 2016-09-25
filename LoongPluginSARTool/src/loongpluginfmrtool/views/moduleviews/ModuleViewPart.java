@@ -5,16 +5,26 @@ import java.util.Iterator;
 import java.util.List;
 
 import loongplugin.LoongPlugin;
+import loongplugin.editor.CLREditor;
 import loongplugin.source.database.ApplicationObserver;
+import loongplugin.views.astview.EditorUtility;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
+import loongpluginfmrtool.module.model.ConfigurationOption;
+import loongpluginfmrtool.module.model.ConfigurationRelationLink;
+import loongpluginfmrtool.module.model.Module;
+import loongpluginfmrtool.module.model.ModuleComponent;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -37,9 +47,14 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 public class ModuleViewPart extends ViewPart {
@@ -59,7 +74,7 @@ public class ModuleViewPart extends ViewPart {
 	private ModuleModel moduleModel = new ModuleModel();
 	private TreeViewer fViewer;	
 	private Tree tree;
-	private String[]columnNames={"name","attribute_1","attribute_2","attribute_3","attribute_4"};
+	private String[]columnNames={"name","attribute_1","attribute_2","attribute_3","attribute_4","attribute_5"};
 	private IProject selectedProject=null;
 	public static ModuleViewPart instance;
 	private ModuleModelChangeListener listener;
@@ -122,10 +137,65 @@ public class ModuleViewPart extends ViewPart {
 		// TODO Auto-generated method stub
 		createTree(parent);
 		createTableViewer();
-		
-		
+		addTableCellClick();
 	}
 	
+	private void addTableCellClick() {
+		// TODO Auto-generated method stub
+		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+		    @Override
+		    public void doubleClick(DoubleClickEvent event) {
+		        IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+		        Object selectedObject = selection.getFirstElement();
+		        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		        IWorkbenchPage page = window.getActivePage();
+		        if(selectedObject instanceof Module){
+		        	Module module = (Module)selectedObject;
+		        	IFile file = module.getIFile();
+		        	try {
+						IDE.openEditor(page, file, CLREditor.ID);
+					} catch (PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }else if(selectedObject instanceof ModuleComponent){
+		        	ModuleComponent moduleComponent = (ModuleComponent)selectedObject;
+		        	if(moduleComponent instanceof ConfigurationOption){
+		        		ConfigurationOption option = (ConfigurationOption)moduleComponent;
+		        		Module module = option.getParent();
+		        		Expression expression = option.getExpression();
+		        		IFile file = module.getIFile();
+		        		try {
+		        			IEditorPart editpart = IDE.openEditor(page, file, CLREditor.ID);
+		        			EditorUtility.selectInEditor((ITextEditor)editpart, expression.getStartPosition(), expression.getLength());
+						} catch (PartInitException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		        	}
+		        	
+		        }else if(selectedObject instanceof ConfigurationRelationLink){
+		        	ConfigurationRelationLink link = (ConfigurationRelationLink)selectedObject;
+		        	
+	        		ConfigurationOption target_option = link.getTargetConfigurationOption();
+	        		Module target_module = target_option.getParent();
+	        		Expression target_expression = target_option.getExpression();
+	        		IFile target_file = target_module.getIFile();
+	        		try {
+	        			IEditorPart editpart = IDE.openEditor(page, target_file, CLREditor.ID);
+	        			EditorUtility.selectInEditor((ITextEditor)editpart, target_expression.getStartPosition(), target_expression.getLength());
+					} catch (PartInitException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	        		
+		        }else{
+		        	return;
+		        }
+		    }
+		});
+	}
+
 	private void createTree(Composite parent) {
 		tree = new Tree(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tree.setHeaderVisible(true);
@@ -146,7 +216,9 @@ public class ModuleViewPart extends ViewPart {
 		column = new TreeColumn(tree, SWT.LEFT);
 		column.setText("ExVarLevel(#)");
 		column.setWidth(100);
-		
+		column = new TreeColumn(tree, SWT.LEFT);
+		column.setText("OverallVarLevel(#)");
+		column.setWidth(100);
 		// Pack the columns
 	    for (int i = 0, n = tree.getColumnCount(); i < n; i++) {
 	    	tree.getColumn(i).pack();

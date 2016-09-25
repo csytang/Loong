@@ -74,7 +74,7 @@ public class CLREditor extends CompilationUnitEditor {
 	private CLRJavaSourceViewer viewer;
 	private Collection<? extends Feature>allfeatures;
 	private IProject selectedProject;
-	
+	public static String ID = LoongPlugin.PLUGIN_ID+".clreditor";
 	
 	private void installCodeColoring() {
 		if (fCodeColorManager == null) {

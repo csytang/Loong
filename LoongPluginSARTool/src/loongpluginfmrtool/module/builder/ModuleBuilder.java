@@ -1,9 +1,11 @@
 package loongpluginfmrtool.module.builder;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -24,6 +26,7 @@ import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LICategories;
 import loongpluginfmrtool.module.model.ConfigurationOption;
+import loongpluginfmrtool.module.model.ConfigurationRelationLink;
 import loongpluginfmrtool.module.model.Module;
 import loongpluginfmrtool.views.moduleviews.IModuleModelChangeListener;
 import loongpluginfmrtool.views.moduleviews.ModuleModel;
@@ -42,6 +45,7 @@ public class ModuleBuilder {
 	private static Map<LElement,Module> elementToModule = new HashMap<LElement,Module>();
 	private List<IModuleModelChangeListener>listeners = new LinkedList<IModuleModelChangeListener>();
 	private ModuleModel amodel = new ModuleModel();
+	private Set<Module>allmodules = new HashSet<Module>();
 	public static ModuleBuilder getInstance(IProject selectedProject,ApplicationObserver pDB){
 		instance = new ModuleBuilder(selectedProject,pDB);
 		return instance;
@@ -147,6 +151,7 @@ public class ModuleBuilder {
 				// initialize a module
 				Module module = new Module(element,module_index,this.LElementFactory,this,amodel);
 				elementToModule.put(element, module);
+				allmodules.add(module);
 				indexToModule.put(module_index, module);
 				amodel.addModule(module);
 				// over the index
@@ -184,10 +189,106 @@ public class ModuleBuilder {
 		
 	}
 	
+	/**
+	 * this function will compute the over all variability level that 
+	 * represent the degree that a configuration can decide the program execution.
+	 */
 	protected void computeOverallVariabilityLevel(){
+		// 获得所有configuration option
+		Set<ConfigurationOption>allconfigurationOptions = new HashSet<ConfigurationOption>();
+		for(Module module:allmodules){
+			allconfigurationOptions.addAll(module.getAllConfigurationOptions());
+		}
 		
-		
+		// 做第二件事 將所有的configuration option都拷貝到一個 list中
+		while(!allconfigurationOptions.isEmpty()){
+			Set<ConfigurationOption>needToRemove = new HashSet<ConfigurationOption>();
+			for(ConfigurationOption option:allconfigurationOptions){
+				if(option.getlinks().size()==0){
+					option.setOverallVariabilityCount(1);
+					needToRemove.add(option);
+				}else{
+					Set<ConfigurationRelationLink> links = option.getlinks();
+					Set<ConfigurationOption>alreadyset = new HashSet<ConfigurationOption>();
+					boolean canset = true;
+					int value = 0;
+					for(ConfigurationRelationLink link:links){
+						ConfigurationOption target = link.getTargetConfigurationOption();
+						if(target.isOverallVariabilitySet()){
+							if(!alreadyset.contains(target)){
+								value+=target.getOverallVariability();
+								alreadyset.add(target);
+							}
+						}else if(target.equals(option)){
+							if(!alreadyset.contains(target)){
+								alreadyset.add(target);
+							}
+						}else{
+							canset = false;
+							break;
+						}
+					}
+					alreadyset.clear();
+					if(canset){
+						option.setOverallVariabilityCount(value);
+						needToRemove.add(option);
+					}
+				}
+			}
+			if(!needToRemove.isEmpty()){
+				allconfigurationOptions.removeAll(needToRemove);
+			}else{
+				// 这里出现死锁 单独处理
+				break;
+			}
+		}
+		while(!allconfigurationOptions.isEmpty()){
+			Set<ConfigurationOption>needToRemove = new HashSet<ConfigurationOption>();
+			for(ConfigurationOption option:allconfigurationOptions){
+				Set<ConfigurationRelationLink> links = option.getlinks();
+				Set<ConfigurationOption>alreadyset = new HashSet<ConfigurationOption>();
+				boolean canset = true;
+				int value = 0;
+				for(ConfigurationRelationLink link:links){
+					ConfigurationOption target = link.getTargetConfigurationOption();
+					if(target.isOverallVariabilitySet()){
+						if(!alreadyset.contains(target)){
+							value+=target.getOverallVariability();
+							alreadyset.add(target);
+						}
+					}else if(target.equals(option)){
+						if(!alreadyset.contains(target)){
+							alreadyset.add(target);
+						}
+					}else if(allconfigurationOptions.contains(target)){
+						if(!alreadyset.contains(target)){
+							alreadyset.add(target);
+						}
+					}else{
+						canset = false;
+						break;
+					}
+				}
+				alreadyset.clear();
+				if(canset){
+					option.setOverallVariabilityCount(value);
+					needToRemove.add(option);
+				}
+				
+			}
+			if(!needToRemove.isEmpty()){
+				allconfigurationOptions.removeAll(needToRemove);
+			}else{
+				try {
+					throw new Exception("new error in processing overall variability");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
+	
 	public void computeStatistic() {
 		// TODO Auto-generated method stub
 		
