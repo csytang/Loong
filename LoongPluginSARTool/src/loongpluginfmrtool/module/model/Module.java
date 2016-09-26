@@ -91,11 +91,12 @@ public class Module implements Serializable {
 	}
 	
 	/**
-	 * This function will extract all varability 
+	 * This function will extract all variability 
 	 * patterns from the configurations.
 	 */
 	public void extractVariability() {
 		// TODO Auto-generated method stub
+		this.variability.collect();
 		
 	}
 	

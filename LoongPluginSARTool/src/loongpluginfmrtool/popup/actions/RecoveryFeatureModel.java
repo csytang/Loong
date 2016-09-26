@@ -39,6 +39,7 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 		aProject = getSelectedProject();
 		WorkspaceJob op = null;
 		// ProgramDB 没有被初始化
+		lDB = ApplicationObserver.getInstance();
 		if(!this.lDB.isInitialized(aProject)){
 			if(lDB.getInitializedProject()!=aProject){
 				op = new WorkspaceJob("CreateDatabaseAction") {
@@ -71,7 +72,11 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 			e.printStackTrace();
 		}
 		
-	    
+	    // 加入一个可以选择的panel 来选择方法
+		
+		
+		
+		
 	}
 
 	@Override

@@ -39,6 +39,8 @@ public class BuildModules implements IObjectActionDelegate{
 		// TODO Auto-generated method stub
 		aProject = getSelectedProject();
 		lDB = ApplicationObserver.getInstance();
+		
+		
 		if(lDB.isInitialized(aProject)){
 			
 			mbuilder = ModuleBuilder.getInstance(aProject, lDB);

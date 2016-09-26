@@ -10,4 +10,9 @@ public class Variability {
 	public Variability(Module pmodule){
 		this.module = pmodule;
 	}
+	
+	protected void collect(){
+		
+	}
+	
 }
