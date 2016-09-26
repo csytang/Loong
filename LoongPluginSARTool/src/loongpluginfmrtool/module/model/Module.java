@@ -45,6 +45,9 @@ public class Module implements Serializable {
 	private Map<ConfigurationOption,Set<ASTNode>>external_disable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Set<ConfigurationOption> configurations;
 	private ModuleModel model;
+	private Variability variability;
+	private boolean isInternalVariabilityComputed = false;
+	private boolean isExternalVariabilityComputed = false;
 	
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder,ModuleModel pmodel){
 		this.dominate = element;
@@ -54,6 +57,7 @@ public class Module implements Serializable {
 		this.dominateASTNode = element.getASTNode();		
 		this.contflowbuilder = new InternalConfBuilder(this);
 		this.model = pmodel;
+		this.variability = new Variability(this);
 	}
 	
 	/**
@@ -66,24 +70,44 @@ public class Module implements Serializable {
 		resolvebody();
 		
 		// resolve variability
-		resolvevariability();
+		resolveInternalVariability();
 		
 		configurations =  getAllConfigurationOptions();
 		components.addAll(configurations);
 		
 	}
 	
-	public void externalvariability(){
-		externalconfbuilder = new ExternalConfBuilder(this,lElementfactory);
-		externalconfbuilder.parse();
-	}
-	
-	
-	private void resolvevariability(){
+	private void resolveInternalVariability(){
 		this.contflowbuilder.parse();
 		this.method_configurations = this.contflowbuilder.getMethod_To_Configuration();
 		this.configuration_method = this.contflowbuilder.getConfiguration_To_Method();
+		isInternalVariabilityComputed = true;
 	}
+	
+	public void resolveExternalVariability(){
+		externalconfbuilder = new ExternalConfBuilder(this,lElementfactory);
+		externalconfbuilder.parse();
+		isExternalVariabilityComputed = true;
+	}
+	
+	/**
+	 * This function will extract all varability 
+	 * patterns from the configurations.
+	 */
+	public void extractVariability() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public boolean isExternalVariabilityComputed(){
+		return isExternalVariabilityComputed;
+	}
+	
+	public boolean isInternalVariabilityComputed(){
+		return isInternalVariabilityComputed;
+	}
+	
+	
 	
 	public Map<LElement,Set<ConfigurationOption>> getMethod_To_Configuration(){
 		return this.method_configurations;
@@ -105,7 +129,11 @@ public class Module implements Serializable {
 				MethodDeclaration methoddecl = (MethodDeclaration)method;
 				IMethodBinding binding = methoddecl.resolveBinding();
 				if(binding==null){
-					System.out.println("Cannot find");
+					try{
+						throw new Exception("Cannot find the binding for"+methoddecl.getName().toString());
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 				LElement methodelement = lElementfactory.getElement(binding);
 				if(methodelement!=null)
@@ -243,6 +271,8 @@ public class Module implements Serializable {
 		file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		return file;
 	}
+	
+	
 	
 	
 }

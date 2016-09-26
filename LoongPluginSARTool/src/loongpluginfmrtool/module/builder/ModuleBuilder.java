@@ -80,7 +80,7 @@ public class ModuleBuilder {
 		 job.schedule();
 		 
 		
-		 try {
+		try {
 			job.join();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -128,13 +128,13 @@ public class ModuleBuilder {
 	public void variabilityModules(IProgressMonitor pProgress){
 		if(pProgress != null){ 
 			int size = indexToModule.size();
-    		pProgress.beginTask("Extract variability", size);
+    		pProgress.beginTask("Extract External Variability", size);
     	}
 
 		for(Map.Entry<Integer, Module>entry:indexToModule.entrySet()){
 			Module module = entry.getValue();
-			module.externalvariability();
-			
+			module.resolveExternalVariability();
+			module.extractVariability();
 			pProgress.worked(1);
 		}
 		pProgress.done();
@@ -142,7 +142,7 @@ public class ModuleBuilder {
 	
 	public void buildModules(IProgressMonitor pProgress){
 		if(pProgress != null){ 
-    		pProgress.beginTask("Building basic modules", this.pd.getAllElements().size()+3);
+    		pProgress.beginTask("Building basic modules & Internal Varability", this.pd.getAllElements().size()+3);
     	}
 		int module_index = 0;
 		for(LElement element:this.pd.getAllElements()){

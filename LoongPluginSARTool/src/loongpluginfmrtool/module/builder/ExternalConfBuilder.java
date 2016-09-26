@@ -54,12 +54,16 @@ public class ExternalConfBuilder {
 				Set<ConfigurationOption> configurations = method_configurations.get(method);
 				for(ConfigurationOption option:configurations){
 					Set<Statement> enablestatements = option.getEnable_Statements();
-					Set<Statement> disablestatements = option.getDisable_Statements();
 					directToOtherModules(enablestatements,option,true);
-					directToOtherModules(disablestatements,option,false);
+					
+					Set<Statement> disablestatements = option.getDisable_Statements();
+					if(!disablestatements.isEmpty())
+						directToOtherModules(disablestatements,option,false);
 				}
 			}
 		}
+		
+		
 		// extracting variability
 		// Enable mod
 		for(Map.Entry<ConfigurationOption,List<Module>>entry:cong_link_modules.entrySet()){
@@ -168,11 +172,15 @@ public class ExternalConfBuilder {
 			if(declelement!=null){
 				CompilationUnit compilation_unit = declelement.getCompilationUnit();
 				LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
-				Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
-				if(isEnable){
-					addToEnableConfigurationControl(declelement.getASTNode(),remote_module);
-				}else{
-					addToDisableConfigurationControl(declelement.getASTNode(),remote_module);
+				IMethodBinding method_binding = node.resolveConstructorBinding();
+				LElement method_element = LElementFactory.getElement(method_binding);
+				if(method_element!=null){
+					Module remote_module = ModuleBuilder.instance.getModuleByLElement(compilation_unit_element);
+					if(isEnable){
+						addToEnableConfigurationControl(method_element.getASTNode(),remote_module);
+					}else{
+						addToDisableConfigurationControl(method_element.getASTNode(),remote_module);
+					}
 				}
 			}
 			return super.visit(node);
@@ -204,7 +212,7 @@ public class ExternalConfBuilder {
 			// TODO Auto-generated method stub
 			IMethodBinding method = node.resolveConstructorBinding();
 			LElement declelement = LElementFactory.getElement(method);
-			if(declelement!=null){
+			if(declelement!=null&& method!=null){
 				CompilationUnit compilation_unit = declelement.getCompilationUnit();
 				LElement compilation_unit_element = LElementFactory.getElement(compilation_unit);
 			
