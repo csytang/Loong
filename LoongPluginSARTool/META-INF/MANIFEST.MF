@@ -26,4 +26,5 @@ Bundle-ClassPath: xstream-1.4.2.jar,
  kxml2-2.3.0.jar,
  kxml2-min-2.3.0.jar,
  xom-1.2.10-src.jar,
- xom.jar
+ xom.jar,
+ Bunch-3.5.jar

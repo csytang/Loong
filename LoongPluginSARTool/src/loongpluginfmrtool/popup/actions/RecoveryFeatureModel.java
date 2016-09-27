@@ -2,8 +2,10 @@ package loongpluginfmrtool.popup.actions;
 
 import java.util.Iterator;
 
+import loongplugin.dialog.MiningStrategyConfDialog;
 import loongplugin.source.database.ApplicationObserver;
-import loongplugin.source.database.ApplicationObserverException;
+import loongpluginfmrtool.toolbox.bunch.Bunch;
+import loongpluginfmrtool.ui.AlgorithmConfigurationUI;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -15,8 +17,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -36,47 +40,33 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 	@Override
 	public void run(IAction action) {
 		// TODO Auto-generated method stub
+		/*
 		aProject = getSelectedProject();
 		WorkspaceJob op = null;
 		// ProgramDB 没有被初始化
 		lDB = ApplicationObserver.getInstance();
 		if(!this.lDB.isInitialized(aProject)){
-			if(lDB.getInitializedProject()!=aProject){
-				op = new WorkspaceJob("CreateDatabaseAction") {
+			
+			Display.getCurrent().syncExec(new Runnable(){
 
-					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						// TODO Auto-generated method stub
-						try {
-							// get instance and init the database
-							lDB = ApplicationObserver.getInstance();
-							lDB.initialize(aProject, monitor);
-
-						} catch (ApplicationObserverException lException) {
-							lException.printStackTrace();
-						}
-						
-						return Status.OK_STATUS;
-				}};
-				op.setUser(true);
-				op.schedule();	
-			}
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					MessageDialog.openInformation(shell, "Loong Plugin System-FMRTool",
+					"Please create the programDB first.");
+				}
+		    	
+		    });
+			
+		}else{
+			 // 加入一个可以选择的panel 来选择方法
+			AlgorithmConfigurationUI.getDefault(shell);
+			AlgorithmConfigurationUI.getDefault().create();
+			AlgorithmConfigurationUI.getDefault().open();
 		}
 		
-		// 等待ProgramDB  构建完成 
-		try {
-	    	if(op!=null)
-	    		op.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	    // 加入一个可以选择的panel 来选择方法
-		
-		
-		
-		
+		*/
+		new  Bunch();
 	}
 
 	@Override

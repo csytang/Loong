@@ -1,7 +1,10 @@
 package loongpluginfmrtool.ui;
 
 
+import loongpluginfmrtool.toolbox.bunch.Bunch;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -10,6 +13,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -87,7 +91,27 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 		okbutton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Click");
+				switch(curr.name()){
+				case "BUNCH":{
+					
+					// TODO Auto-generated method stub
+					Bunch bunch = new Bunch();
+						
+					break;
+				}
+				case "VMS":{
+					break;
+				}
+				case "LIMBO":{
+					break;
+				}
+				case "ARC":{
+					break;
+				}
+				case "ACDC":{
+					break;
+				}
+				}
 			}
 		});
 		createButton(parent, IDialogConstants.CANCEL_ID,
