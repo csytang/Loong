@@ -88,10 +88,10 @@ public class ModuleBuilder {
 		}
 		 
 		 // Create and check cross module(external variability)
-		 WorkspaceJob externalcheckerjob=new WorkspaceJob("CheckVariabilityModule"){
+		 WorkspaceJob externalcheckerjob=new WorkspaceJob("CheckVariabilityModule & Dependency"){
 			    @Override 
 			    public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-			    	variabilityModules(monitor);
+			    	variabilityModules_buildDependency(monitor);
 			    	return Status.OK_STATUS;
 			    }
 
@@ -125,7 +125,7 @@ public class ModuleBuilder {
 		}else
 			return null;
 	}
-	public void variabilityModules(IProgressMonitor pProgress){
+	public void variabilityModules_buildDependency(IProgressMonitor pProgress){
 		if(pProgress != null){ 
 			int size = indexToModule.size();
     		pProgress.beginTask("Extract External Variability", size);
@@ -134,7 +134,9 @@ public class ModuleBuilder {
 		for(Map.Entry<Integer, Module>entry:indexToModule.entrySet()){
 			Module module = entry.getValue();
 			module.resolveExternalVariability();
+			module.resolveDependency();
 			module.extractVariability();
+			
 			pProgress.worked(1);
 		}
 		pProgress.done();
@@ -295,6 +297,10 @@ public class ModuleBuilder {
 		computeVariabilityLevel();
 		
 		computeOverallVariabilityLevel();
+	}
+	public Map<Integer, Module> getIndexToModule() {
+		// TODO Auto-generated method stub
+		return indexToModule;
 	}
 	
 	

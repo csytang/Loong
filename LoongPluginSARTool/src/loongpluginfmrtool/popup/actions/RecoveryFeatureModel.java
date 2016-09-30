@@ -2,18 +2,13 @@ package loongpluginfmrtool.popup.actions;
 
 import java.util.Iterator;
 
-import loongplugin.dialog.MiningStrategyConfDialog;
 import loongplugin.source.database.ApplicationObserver;
-import loongpluginfmrtool.toolbox.bunch.Bunch;
-import loongpluginfmrtool.ui.AlgorithmConfigurationUI;
-
+import loongpluginfmrtool.module.builder.ModuleBuilder;
+import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
+import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
@@ -32,6 +27,8 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 	private Shell shell;
 	private IWorkbenchPart part;
 	private ApplicationObserver lDB;
+	private ModuleBuilder mbuilder;
+	private ModuleModelChangeListener listener;
 	
 	public RecoveryFeatureModel() {
 		// TODO Auto-generated constructor stub
@@ -40,7 +37,7 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 	@Override
 	public void run(IAction action) {
 		// TODO Auto-generated method stub
-		/*
+		
 		aProject = getSelectedProject();
 		WorkspaceJob op = null;
 		// ProgramDB 没有被初始化
@@ -59,14 +56,18 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 		    });
 			
 		}else{
-			 // 加入一个可以选择的panel 来选择方法
-			AlgorithmConfigurationUI.getDefault(shell);
-			AlgorithmConfigurationUI.getDefault().create();
-			AlgorithmConfigurationUI.getDefault().open();
+			mbuilder = ModuleBuilder.getInstance(aProject, lDB);
+			mbuilder.init();
+			mbuilder.computeStatistic();
+			mbuilder.notifyModuleListener();
+			
+			// Build the dependency table
+			ModuleDependencyTable dependencytable = new ModuleDependencyTable(mbuilder);
+			dependencytable.buildTable();
 		}
 		
-		*/
-		new  Bunch();
+		
+		
 	}
 
 	@Override

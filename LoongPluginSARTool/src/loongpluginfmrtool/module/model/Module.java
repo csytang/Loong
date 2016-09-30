@@ -25,6 +25,7 @@ import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongpluginfmrtool.module.builder.ExternalConfBuilder;
 import loongpluginfmrtool.module.builder.InternalConfBuilder;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
+import loongpluginfmrtool.module.builder.ModuleDependencyBuilder;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 import loongpluginfmrtool.module.util.ASTSubBindingFinder;
 import loongpluginfmrtool.views.moduleviews.ModuleModel;
@@ -44,6 +45,8 @@ public class Module implements Serializable {
 	private Map<ConfigurationOption,Set<ASTNode>>external_enable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Map<ConfigurationOption,Set<ASTNode>>external_disable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Set<ConfigurationOption> configurations;
+	private Map<Module,Integer> depenendecies = new HashMap<Module,Integer>();
+	
 	private ModuleModel model;
 	private Variability variability;
 	private boolean isInternalVariabilityComputed = false;
@@ -271,6 +274,13 @@ public class Module implements Serializable {
 		IPath path = iunit.getPath();
 		file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		return file;
+	}
+
+	public void resolveDependency() {
+		// TODO Auto-generated method stub
+		ModuleDependencyBuilder dependencybuilder = new ModuleDependencyBuilder(this);
+		dependencybuilder.parse();
+		
 	}
 	
 	
