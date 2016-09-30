@@ -10,6 +10,7 @@ public class ModuleHelper {
 	private ModuleBuilder abuilder;
 	private double probability;
 	private Map<Integer, Module>indexToModule;
+	private double[][] normalizedtable;
 	private int size;
 	private ModuleDependencyTable table;
 	public ModuleHelper(Module pmodule,ModuleBuilder pbuilder){
@@ -22,6 +23,6 @@ public class ModuleHelper {
 		this.indexToModule = this.abuilder.getIndexToModule();
 		this.size = indexToModule.size();
 		this.probability = (double)1.0/this.size;
-		
+		this.normalizedtable = table.getNormalizedTable();
 	}
 }

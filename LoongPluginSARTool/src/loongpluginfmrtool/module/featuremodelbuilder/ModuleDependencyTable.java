@@ -10,10 +10,13 @@ public class ModuleDependencyTable {
 	private int totalsize;
 	private int[][] table;
 	private boolean debug = true;
+	private double[][] normalizedtable;
 	private Map<Integer,Module> indexToModule;
+	private boolean isNormalizedtableCompuated = false;
 	public ModuleDependencyTable(ModuleBuilder pbuilder){
 		builder = pbuilder;
 	}
+	
 	public void buildTable(){
 		indexToModule = builder.getIndexToModule();
 		totalsize = indexToModule.size();
@@ -32,6 +35,29 @@ public class ModuleDependencyTable {
 			printtable();
 		}
 	}
+	
+	public double[][] getNormalizedTable(){
+		
+		if(!isNormalizedtableCompuated){
+			normalizedtable = new double[totalsize][totalsize];
+			for(int i = 0;i < totalsize;i++){
+				int rowtotal = 0;
+				for(int j = 0;j < totalsize;j++){
+					rowtotal+=table[i][j];
+				}
+				for(int j = 0;j < totalsize;j++){
+					if(rowtotal==0||table[i][j]==0)
+						normalizedtable[i][j] = 0.0;
+					else
+						normalizedtable[i][j] = (double)table[i][j]/rowtotal;
+				}
+			}
+			isNormalizedtableCompuated = true;
+		}
+		return normalizedtable;
+	}
+	
+	
 	private void printtable() {
 		// TODO Auto-generated method stub
 		for(int i = 0;i < totalsize;i++){
