@@ -45,7 +45,7 @@ public class Module implements Serializable {
 	private Map<ConfigurationOption,Set<ASTNode>>external_enable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Map<ConfigurationOption,Set<ASTNode>>external_disable_cong_control = new HashMap<ConfigurationOption,Set<ASTNode>>();
 	private Set<ConfigurationOption> configurations;
-	private Map<Module,Integer> depenendecies = new HashMap<Module,Integer>();
+	private Map<Module,Integer> module_dependency = new HashMap<Module,Integer>();
 	
 	private ModuleModel model;
 	private Variability variability;
@@ -278,12 +278,18 @@ public class Module implements Serializable {
 
 	public void resolveDependency() {
 		// TODO Auto-generated method stub
-		ModuleDependencyBuilder dependencybuilder = new ModuleDependencyBuilder(this);
+		ModuleDependencyBuilder dependencybuilder = new ModuleDependencyBuilder(this,lElementfactory);
 		dependencybuilder.parse();
-		
+		this.module_dependency = dependencybuilder.getmoduleDependencyResult();
 	}
 	
-	
+	public int getTotalDependency(Module other){
+		int total = 0;
+		if(this.module_dependency.containsKey(other)){
+			total = this.module_dependency.get(other);
+		}
+		return total;
+	}
 	
 	
 }
