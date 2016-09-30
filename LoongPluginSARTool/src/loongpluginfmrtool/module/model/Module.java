@@ -26,6 +26,7 @@ import loongpluginfmrtool.module.builder.ExternalConfBuilder;
 import loongpluginfmrtool.module.builder.InternalConfBuilder;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.builder.ModuleDependencyBuilder;
+import loongpluginfmrtool.module.featuremodelbuilder.ModuleHelper;
 import loongpluginfmrtool.module.util.ASTNodeWalker;
 import loongpluginfmrtool.module.util.ASTSubBindingFinder;
 import loongpluginfmrtool.views.moduleviews.ModuleModel;
@@ -48,6 +49,7 @@ public class Module implements Serializable {
 	private Map<Module,Integer> module_dependency = new HashMap<Module,Integer>();
 	
 	private ModuleModel model;
+	private ModuleHelper helper = null;
 	private Variability variability;
 	private boolean isInternalVariabilityComputed = false;
 	private boolean isExternalVariabilityComputed = false;
@@ -78,6 +80,14 @@ public class Module implements Serializable {
 		configurations =  getAllConfigurationOptions();
 		components.addAll(configurations);
 		
+	}
+	
+	public void addModuleHelper(ModuleHelper phelper){
+		helper = phelper;
+	}
+	
+	public ModuleHelper getModuleHelper(){
+		return helper;
 	}
 	
 	private void resolveInternalVariability(){

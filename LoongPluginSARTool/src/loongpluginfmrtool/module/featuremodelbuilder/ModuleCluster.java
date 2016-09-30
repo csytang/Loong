@@ -1,8 +1,8 @@
 package loongpluginfmrtool.module.featuremodelbuilder;
 
-public class ModuleMerge {
+public class ModuleCluster {
 	
-	public ModuleMerge(){
+	public ModuleCluster(){
 		
 	}
 }

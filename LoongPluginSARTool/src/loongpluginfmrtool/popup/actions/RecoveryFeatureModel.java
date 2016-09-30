@@ -60,10 +60,8 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 			mbuilder.init();
 			mbuilder.computeStatistic();
 			mbuilder.notifyModuleListener();
+			mbuilder.buildModuleHelper();
 			
-			// Build the dependency table
-			ModuleDependencyTable dependencytable = new ModuleDependencyTable(mbuilder);
-			dependencytable.buildTable();
 		}
 		
 		
