@@ -25,6 +25,7 @@ import loongplugin.source.database.ProgramDatabase;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LICategories;
+import loongpluginfmrtool.module.featuremodelbuilder.InformationLossTable;
 import loongpluginfmrtool.module.featuremodelbuilder.KullbackLeiblerTable;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleHelper;
@@ -51,6 +52,7 @@ public class ModuleBuilder {
 	private Set<Module>allmodules = new HashSet<Module>();
 	private ModuleDependencyTable dependency_table;
 	private KullbackLeiblerTable kullback_leibler_table;
+	private InformationLossTable information_loss_table;
 	public static ModuleBuilder getInstance(IProject selectedProject,ApplicationObserver pDB){
 		instance = new ModuleBuilder(selectedProject,pDB);
 		return instance;
@@ -319,6 +321,8 @@ public class ModuleBuilder {
 			ModuleHelper helper = new ModuleHelper(module,this);
 			module.addModuleHelper(helper);
 		}
+		information_loss_table = new InformationLossTable(this);
+		information_loss_table.buildTable();
 	}
 	public ModuleDependencyTable getDependencyTable() {
 		// TODO Auto-generated method stub
