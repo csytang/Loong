@@ -25,6 +25,7 @@ import loongplugin.source.database.ProgramDatabase;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LFlyweightElementFactory;
 import loongplugin.source.database.model.LICategories;
+import loongpluginfmrtool.module.featuremodelbuilder.KullbackLeiblerTable;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleHelper;
 import loongpluginfmrtool.module.model.ConfigurationOption;
@@ -49,6 +50,7 @@ public class ModuleBuilder {
 	private ModuleModel amodel = new ModuleModel();
 	private Set<Module>allmodules = new HashSet<Module>();
 	private ModuleDependencyTable dependency_table;
+	private KullbackLeiblerTable kullback_leibler_table;
 	public static ModuleBuilder getInstance(IProject selectedProject,ApplicationObserver pDB){
 		instance = new ModuleBuilder(selectedProject,pDB);
 		return instance;
@@ -309,7 +311,8 @@ public class ModuleBuilder {
 		// TODO Auto-generated method stub
 		dependency_table = new ModuleDependencyTable(this);
 		dependency_table.buildTable();
-		
+		kullback_leibler_table = new KullbackLeiblerTable(this);
+		kullback_leibler_table.buildTable();
 		// build the module helper for each module
 		for(Map.Entry<Integer, Module>entry:indexToModule.entrySet()){
 			Module module = entry.getValue();
@@ -324,6 +327,14 @@ public class ModuleBuilder {
 			dependency_table.buildTable();
 		}
 		return dependency_table;
+	}
+	
+	public KullbackLeiblerTable getKullbackLeiblerTable(){
+		if(kullback_leibler_table==null){
+			kullback_leibler_table = new KullbackLeiblerTable(this);
+			kullback_leibler_table.buildTable();
+		}
+		return kullback_leibler_table;
 	}
 	
 	

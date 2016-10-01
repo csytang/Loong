@@ -9,7 +9,7 @@ public class ModuleDependencyTable {
 	private ModuleBuilder builder;
 	private int totalsize;
 	private int[][] table;
-	private boolean debug = true;
+	private boolean debug = false;
 	private double[][] normalizedtable;
 	private Map<Integer,Module> indexToModule;
 	private boolean isNormalizedtableCompuated = false;
@@ -48,8 +48,10 @@ public class ModuleDependencyTable {
 				for(int j = 0;j < totalsize;j++){
 					if(rowtotal==0||table[i][j]==0)
 						normalizedtable[i][j] = 0.0;
-					else
-						normalizedtable[i][j] = (double)table[i][j]/rowtotal;
+					else{
+						double double_table = ((double)table[i][j])/rowtotal;
+						normalizedtable[i][j]  = double_table;
+					}
 				}
 			}
 			isNormalizedtableCompuated = true;
