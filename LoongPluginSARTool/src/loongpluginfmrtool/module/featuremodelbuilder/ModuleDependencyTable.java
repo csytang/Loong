@@ -85,4 +85,9 @@ public class ModuleDependencyTable {
 			}
 		}
 	}
+
+	public int [][] getTable() {
+		// TODO Auto-generated method stub
+		return table;
+	}
 }

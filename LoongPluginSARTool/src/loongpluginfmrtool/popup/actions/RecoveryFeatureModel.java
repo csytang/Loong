@@ -5,7 +5,9 @@ import java.util.Iterator;
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
+import loongpluginfmrtool.ui.AlgorithmConfigurationUI;
 import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -62,6 +64,10 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 			mbuilder.notifyModuleListener();
 			mbuilder.buildModuleHelper();
 	//.out.println("Finish Module Helper");
+			
+			AlgorithmConfigurationUI instance = AlgorithmConfigurationUI.getDefault(shell,mbuilder);
+			instance.create();
+			instance.open();
 		}
 		
 		
