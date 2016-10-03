@@ -1,5 +1,6 @@
 package loongpluginfmrtool.toolbox.limbo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -203,60 +204,63 @@ public class LIMBO {
 		}
 	}
 	
+	
 	private boolean merge() {
 		// TODO Auto-generated method stub
-		boolean merge = false;
-		int index_1 = 0;
-		int index_2 = 0;
-		double min_information = MAXVALUE;
+		Map<ModuledFeature,LIMBOFeaturePair>needClustering = new HashMap<ModuledFeature,LIMBOFeaturePair>();
+		Set<LIMBOFeaturePair>modulefeatures = new HashSet<LIMBOFeaturePair>();
+		
+		
+		double minimalValue = MAXVALUE;
 		for(int i = 0;i < size;i++){
 			for(int j = i+1;j < size;j++){
-				if(min_information>information_loss_table_array[i][j]){
-					min_information = information_loss_table_array[i][j];
-					index_1 = i;
-					index_2 = j;
+				if(minimalValue>information_loss_table_array[i][j]){
+					minimalValue = information_loss_table_array[i][j];
 				}
 			}
 		}
-		// merge index_1 and index_2
-		ModuledFeature feature1 = indexToFeature.get(index_1);
-		ModuledFeature feature2 = indexToFeature.get(index_2);
-		assert feature1!=null;
-		assert feature2!=null;
-		double pro_module_1 = ((double)feature1.size())/feature1.size()+feature1.size();
-		double pro_module_2 = ((double)feature2.size())/feature2.size()+feature2.size();
-		double[] mergedkl_vector_module_1 = new double[size];
-		double[] mergedkl_vector_module_2 = new double[size];
-		double total_mergedkl_vector_module_1 = 0.0;
-		double total_mergedkl_vector_module_2 = 0.0;
+		if(minimalValue>threshold){
+			return false;
+		}
 		for(int i = 0;i < size;i++){
-			if(featuredependency_table_normalized_array[index_1][i]==0){
-				mergedkl_vector_module_1[i] = 0;
-			}else
-				mergedkl_vector_module_1[i] =  featuredependency_table_normalized_array[index_1][i];
-			total_mergedkl_vector_module_1+=mergedkl_vector_module_1[i];
-			if(featuredependency_table_normalized_array[index_2][i]==0){
-				mergedkl_vector_module_2[i] = 0;
-			}else
-				mergedkl_vector_module_2[i] =  featuredependency_table_normalized_array[index_2][i];
-			total_mergedkl_vector_module_2+=mergedkl_vector_module_2[i];
-		}
-		double proability = pro_module_1*total_mergedkl_vector_module_1+pro_module_2*total_mergedkl_vector_module_2;
-		if(proability<threshold){
-			feature1.mergeModuledFeature(feature2);
-			features.remove(feature2);
-			size = features.size();
-			featureinitupdate();
-			
-			if(size<=cluster){
-				merge = false;
-			}else{
-				merge = true;
+			for(int j = i+1;j < size;j++){
+				if(minimalValue==information_loss_table_array[i][j]){
+					ModuledFeature feature1 = indexToFeature.get(i);
+					ModuledFeature feature2 = indexToFeature.get(j);
+				
+					if(needClustering.containsKey(feature1)){
+						LIMBOFeaturePair pair = needClustering.get(feature1);
+						pair.addModuledFeature(feature2);
+						needClustering.put(feature2, pair);
+					}else if(needClustering.containsKey(feature2)){
+						LIMBOFeaturePair pair = needClustering.get(feature2);
+						pair.addModuledFeature(feature1);
+						needClustering.put(feature1, pair);
+					}else{
+						LIMBOFeaturePair pair = new LIMBOFeaturePair();
+						pair.addModuledFeature(feature2);
+						pair.addModuledFeature(feature1);
+						modulefeatures.add(pair);
+						needClustering.put(feature1, pair);
+						needClustering.put(feature2, pair);
+					}
+				}
 			}
-		}else{
-			merge = false;
 		}
-		return merge;
+		for(LIMBOFeaturePair mergepair:modulefeatures){
+			Set<ModuledFeature>pair_features =  mergepair.getModuledFeature();
+			ArrayList<ModuledFeature>pairlist = new ArrayList<ModuledFeature>(pair_features);
+			int size = pairlist.size();
+			ModuledFeature mainfeature = pairlist.get(0);
+			for(int i = 1;i <size;i++){
+				mainfeature.mergeModuledFeature(pairlist.get(i));
+				features.remove(pairlist.get(i));
+			}
+		}
+		size = features.size();
+		featureinitupdate();
+		
+		return true;
 	}
 
 	private void computeInformationLossTable() {
@@ -282,8 +286,8 @@ public class LIMBO {
 		double information_loss = 0.0;
 		ModuledFeature module_feature1 = indexToFeature.get(index_1);
 		ModuledFeature module_feature2 = indexToFeature.get(index_2);
-		double pro_module_1 = ((double)module_feature1.size())/module_feature1.size()+module_feature2.size();
-		double pro_module_2 = ((double)module_feature2.size())/module_feature1.size()+module_feature2.size();
+		double pro_module_1 = ((double)module_feature1.size())/(module_feature1.size()+module_feature2.size());
+		double pro_module_2 = ((double)module_feature2.size())/(module_feature1.size()+module_feature2.size());
 		double temp_1 = pro_module_1+pro_module_2;
 		double pro_module_ = temp_1;
 		assert Double.isNaN(pro_module_)==false;
