@@ -168,7 +168,7 @@ public class LIMBO {
 		
 		while(true){
 			boolean merged = merge();
-			if(!merged||features.size()<=1){
+			if(!merged||features.size()<=cluster){
 				break;
 			}else{
 				createDependencyTable();
