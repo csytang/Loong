@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.module.featuremodelbuilder.InformationLossTable;
-import loongpluginfmrtool.module.featuremodelbuilder.KullbackLeiblerTable;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.model.*;
 import loongpluginfmrtool.module.*;
@@ -17,31 +15,53 @@ public class LIMBO {
 	private Set<ModuledFeature> features = new HashSet<ModuledFeature>();
 	private ModuleBuilder builder;
 	private Map<Integer, Module>indexToModule = new HashMap<Integer, Module>();
+	private Map<Module, Integer>ModuleToIndex = new HashMap<Module, Integer>();
+	private Map<Integer, ModuledFeature> indexToFeature = new HashMap<Integer, ModuledFeature>();
+	
 	private double threshold;
 	private Set<Module>allmodules = new HashSet<Module>();
 	private double[][] kullback_leibler_table;
 	private ModuleDependencyTable dependency_table;
 	private double[][] information_loss_table_array;
-	private int[][] dependency_table_array;
-	private double[][] dependency_table_normalized_array;
+	private int[][] moduledependency_table;
+	private int[][] featuredependency_table_array;
+	private double[][] featuredependency_table_normalized_array;
 	private int size;
-	public LIMBO(ModuleBuilder pbuilder,double pthreshold){
+	private double MAXVALUE = 10000;
+	private int cluster;
+	private boolean debug = true;
+	public LIMBO(ModuleBuilder pbuilder,double pthreshold,int pcluster){
 		this.builder = pbuilder;
 		this.threshold = pthreshold;
+		this.cluster = pcluster;
 		this.indexToModule = this.builder.getIndexToModule();
-		this.size = this.indexToModule.size();
 		this.allmodules = new HashSet<Module>(this.indexToModule.values());
 		this.dependency_table = this.builder.getDependencyTable();
-		this.information_loss_table_array = new double[size][size];
-		this.dependency_table_array = this.dependency_table.getTable();
-		this.dependency_table_normalized_array = new double[size][size];
-		normalizedDependencyTable();
-		buildKullbackLeiblerTable();
+		initialize();
 		performClustering();
 	}
 	
+	protected void initialize(){
+		moduledependency_table = this.dependency_table.getTable();
+		for(Map.Entry<Integer, Module> entry:indexToModule.entrySet()){
+			int index = entry.getKey();
+			Module module = entry.getValue();
+			ModuledFeature module_feature = new ModuledFeature(module);
+			// add to set
+			features.add(module_feature);
+			// add the mapping
+			
+			ModuleToIndex.put(module, index);
+			
+			modulesToFeatures.put(module, module_feature);
+			indexToFeature.put(index,module_feature);
+		}
+	}
+	
+	
 	protected void buildKullbackLeiblerTable() {
 		// TODO Auto-generated method stub
+		kullback_leibler_table = new double[size][size];
 		for(int i = 0;i < this.size;i++){
 			for(int j = i;j < this.size;j++){
 				double kullbackleibler;
@@ -62,8 +82,8 @@ public class LIMBO {
 		int module_index2 = index_2;
 		
 		for(int j = 0;j < size;j++){
-			double value_index_1 = dependency_table_normalized_array[module_index1][j];
-			double value_index_2 = dependency_table_normalized_array[module_index2][j];
+			double value_index_1 = featuredependency_table_normalized_array[module_index1][j];
+			double value_index_2 = featuredependency_table_normalized_array[module_index2][j];
 			if(value_index_1==0||value_index_2==0){
 				continue;
 			}
@@ -78,24 +98,25 @@ public class LIMBO {
 	protected void normalizedDependencyTable() {
 		// TODO Auto-generated method stub
 		// normalize normal table
+		featuredependency_table_normalized_array = new double[size][size];
 		for(int i = 0;i < size;i++){
 			for(int j = 0;j < size;j++){
-				if(dependency_table_array[i][j]>0){
-					dependency_table_array[i][j]=1;
+				if(featuredependency_table_array[i][j]>0){
+					featuredependency_table_array[i][j]=1;
 				}
 			}
 		}
 		for(int i = 0;i < size;i++){
 			int rowtotal = 0;
 			for(int j = 0;j < size;j++){
-				rowtotal+=dependency_table_array[i][j];
+				rowtotal+=featuredependency_table_array[i][j];
 			}
 			for(int j = 0;j < size;j++){
-				if(dependency_table_array[i][j]==0)
-					dependency_table_normalized_array[i][j] = 0.0;
+				if(featuredependency_table_array[i][j]==0)
+					featuredependency_table_normalized_array[i][j] = 0.0;
 				else{
-					double double_table = ((double)dependency_table_array[i][j])/rowtotal;
-					dependency_table_normalized_array[i][j]  = double_table;
+					double double_table = ((double)featuredependency_table_array[i][j])/rowtotal;
+					featuredependency_table_normalized_array[i][j]  = double_table;
 				}
 			}
 		}
@@ -103,25 +124,139 @@ public class LIMBO {
 	}
 
 	protected void init(){
-		for(Module module:allmodules){
-			ModuledFeature module_feature = new ModuledFeature(module);
-			// add to set
-			features.add(module_feature);
-			// add the mapping
-			modulesToFeatures.put(module, module_feature);
-		}
+		
+		size = indexToFeature.size();
+		createDependencyTable();
+		normalizedDependencyTable();
+		buildKullbackLeiblerTable();
 	}
+	
+	protected void createDependencyTable(){
+		featuredependency_table_array = new int[size][size];
+		for(int i = 0;i < size;i++){
+			ModuledFeature feature_1 = indexToFeature.get(i);
+			for(int j = 0;j < size;j++){
+				ModuledFeature feature_2 = indexToFeature.get(j);
+				featuredependency_table_array[i][j] = computeDependencyBetweenFeatures(feature_1,feature_2);
+			}
+		}
+		
+	}
+	
+	
+	private int computeDependencyBetweenFeatures(ModuledFeature feature_1,
+			ModuledFeature feature_2) {
+		// TODO Auto-generated method stub
+		Set<Module>module_feature_1 = feature_1.getModules();
+		Set<Module>module_feature_2 = feature_2.getModules();
+		int dependency = 0;
+		for(Module module_1:module_feature_1){
+			int index1 = ModuleToIndex.get(module_1);
+			for(Module module_2:module_feature_2){
+				int index2 = ModuleToIndex.get(module_2);
+				dependency += moduledependency_table[index1][index2];
+			}
+		}
+		return dependency;
+	}
+
 	protected void performClustering(){
-		//STEP 1.
+		
 		init();
 		computeInformationLossTable();
-		//STEP 2.
 		
+		while(true){
+			boolean merged = merge();
+			if(!merged||features.size()<=1){
+				break;
+			}else{
+				createDependencyTable();
+				normalizedDependencyTable();
+				buildKullbackLeiblerTable();
+			}
+		}
+		if(debug){
+			print();
+		}
+	}
+
+	protected void print(){
+		System.out.println("Total clusters:"+features.size());
 		
-		//STEP 3.
+		for(Map.Entry<Integer, ModuledFeature>entry:indexToFeature.entrySet()){
+			System.out.println("\t index:"+entry.getKey());
+			ModuledFeature feature = entry.getValue();
+			System.out.println("\t feature contains:");
+			for(Module submodule:feature.getModules()){
+				System.out.println("\t \tModule:"+submodule.getDisplayName());
+			}
+		}
+	}
+	
+	protected void featureinitupdate(){
+		int index = 0;
+		indexToFeature.clear();
 		
-		//STEP 4.
-		
+		for(ModuledFeature feature:features){
+			indexToFeature.put(index,feature);
+			index++;
+		}
+	}
+	
+	private boolean merge() {
+		// TODO Auto-generated method stub
+		boolean merge = false;
+		int index_1 = 0;
+		int index_2 = 0;
+		double min_information = MAXVALUE;
+		for(int i = 0;i < size;i++){
+			for(int j = i+1;j < size;j++){
+				if(min_information>information_loss_table_array[i][j]){
+					min_information = information_loss_table_array[i][j];
+					index_1 = i;
+					index_2 = j;
+				}
+			}
+		}
+		// merge index_1 and index_2
+		ModuledFeature feature1 = indexToFeature.get(index_1);
+		ModuledFeature feature2 = indexToFeature.get(index_2);
+		assert feature1!=null;
+		assert feature2!=null;
+		double pro_module_1 = ((double)feature1.size())/feature1.size()+feature1.size();
+		double pro_module_2 = ((double)feature2.size())/feature2.size()+feature2.size();
+		double[] mergedkl_vector_module_1 = new double[size];
+		double[] mergedkl_vector_module_2 = new double[size];
+		double total_mergedkl_vector_module_1 = 0.0;
+		double total_mergedkl_vector_module_2 = 0.0;
+		for(int i = 0;i < size;i++){
+			if(featuredependency_table_normalized_array[index_1][i]==0){
+				mergedkl_vector_module_1[i] = 0;
+			}else
+				mergedkl_vector_module_1[i] =  featuredependency_table_normalized_array[index_1][i];
+			total_mergedkl_vector_module_1+=mergedkl_vector_module_1[i];
+			if(featuredependency_table_normalized_array[index_2][i]==0){
+				mergedkl_vector_module_2[i] = 0;
+			}else
+				mergedkl_vector_module_2[i] =  featuredependency_table_normalized_array[index_2][i];
+			total_mergedkl_vector_module_2+=mergedkl_vector_module_2[i];
+		}
+		double proability = pro_module_1*total_mergedkl_vector_module_1+pro_module_2*total_mergedkl_vector_module_2;
+		if(proability<threshold){
+			feature1.mergeModuledFeature(feature2);
+			features.remove(feature2);
+			size = features.size();
+			featureinitupdate();
+			
+			if(size<=cluster){
+				merge = false;
+			}else{
+				merge = true;
+			}
+		}else{
+			merge = false;
+		}
+		return merge;
 	}
 
 	private void computeInformationLossTable() {
@@ -133,11 +268,52 @@ public class LIMBO {
 				if(i==j){
 					information_loss_table_array[i][j] = 0;
 				}else{
-					
+					information_loss_table_array[i][j] = compute_Single_InformationLoss(i,j);
+					information_loss_table_array[j][i] = information_loss_table_array[i][j];
 				}
 			}
 			
 		}
 		
 	}
+	
+	
+	protected double compute_Single_InformationLoss(int index_1,int index_2){
+		double information_loss = 0.0;
+		ModuledFeature module_feature1 = indexToFeature.get(index_1);
+		ModuledFeature module_feature2 = indexToFeature.get(index_2);
+		double pro_module_1 = ((double)module_feature1.size())/module_feature1.size()+module_feature2.size();
+		double pro_module_2 = ((double)module_feature2.size())/module_feature1.size()+module_feature2.size();
+		double temp_1 = pro_module_1+pro_module_2;
+		double pro_module_ = temp_1;
+		assert Double.isNaN(pro_module_)==false;
+		double[] mergedkl_vector_module_1 = new double[size];
+		double[] mergedkl_vector_module_2 = new double[size];
+		double total_mergedkl_vector_module_1 = 0.0;
+		double total_mergedkl_vector_module_2 = 0.0;
+		// 计算 D-KL Kullback-Leibler divergence
+		for(int i = 0;i < size;i++){
+			
+			double p_bar_i = pro_module_1/pro_module_*featuredependency_table_normalized_array[index_1][i]+pro_module_2/pro_module_*featuredependency_table_normalized_array[index_2][i];
+			if(p_bar_i==0||featuredependency_table_normalized_array[index_1][i]==0){
+				mergedkl_vector_module_1[i] = 0;
+			}else
+				mergedkl_vector_module_1[i] =  featuredependency_table_normalized_array[index_1][i]*Math.log(featuredependency_table_normalized_array[index_1][i]/p_bar_i);
+			total_mergedkl_vector_module_1+=mergedkl_vector_module_1[i];
+			assert Double.isNaN(total_mergedkl_vector_module_1)==false;
+			if(p_bar_i==0||featuredependency_table_normalized_array[index_2][i]==0){
+				mergedkl_vector_module_2[i] = 0;
+			}else
+				mergedkl_vector_module_2[i] =  featuredependency_table_normalized_array[index_2][i]*Math.log(featuredependency_table_normalized_array[index_2][i]/p_bar_i);
+			total_mergedkl_vector_module_2+=mergedkl_vector_module_2[i];
+			assert Double.isNaN(total_mergedkl_vector_module_2)==false;
+		}
+		
+		double temp_2 = pro_module_1/pro_module_*total_mergedkl_vector_module_1+pro_module_2/pro_module_*total_mergedkl_vector_module_2;
+		assert Double.isNaN(temp_2)==false;
+		information_loss = temp_1*temp_2;
+		assert Double.isNaN(information_loss)==false;
+		return information_loss;
+	}
+	
 }

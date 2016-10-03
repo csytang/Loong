@@ -26,7 +26,6 @@ public class InformationLossTable {
 			for(int j=i;j < totalsize;j++){
 				if(j==i){
 					information_loss[i][j] = 0;
-					information_loss[j][i] = 0;
 				}else{
 					information_loss[i][j] = compute_Single_InformationLoss(i,j);
 					information_loss[j][i] = information_loss[i][j];

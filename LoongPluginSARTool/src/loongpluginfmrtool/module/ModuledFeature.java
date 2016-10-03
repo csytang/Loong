@@ -29,4 +29,8 @@ public class ModuledFeature {
 	public Set<Module> getModules(){
 		return this.modules;
 	}
+	public int size() {
+		// TODO Auto-generated method stub
+		return modules.size();
+	}
 }

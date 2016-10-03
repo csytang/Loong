@@ -103,7 +103,7 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 					break;
 				}
 				case "LIMBO":{
-					LIMBO limbo = new LIMBO(builder,0.05);
+					LIMBO limbo = new LIMBO(builder,0.05,10);
 					break;
 				}
 				case "ARC":{
