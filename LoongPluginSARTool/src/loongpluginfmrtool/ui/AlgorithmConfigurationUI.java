@@ -3,7 +3,7 @@ package loongpluginfmrtool.ui;
 
 
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.toolbox.bunch.BunchConfigurationDialog;
+import loongpluginfmrtool.toolbox.bunch.Bunch;
 import loongpluginfmrtool.toolbox.limbo.LIMBO;
 import loongpluginfmrtool.toolbox.limbo.LIMBOConfigurationDialog;
 
@@ -100,9 +100,7 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				switch(curr.name()){
 				case "BUNCH":{
-					BunchConfigurationDialog dialog = new BunchConfigurationDialog(builder,shell);
-					dialog.create();
-					dialog.open();
+					Bunch bunch = new Bunch();
 					break;
 				}
 				case "VMS":{
