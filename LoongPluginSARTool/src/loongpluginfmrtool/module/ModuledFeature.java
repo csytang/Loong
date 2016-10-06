@@ -8,11 +8,16 @@ import loongpluginfmrtool.module.model.Module;
 public class ModuledFeature {
 	private String featurename = "unknown";
 	private Set<Module>modules = new HashSet<Module>();
-	public ModuledFeature(){
-		
+	private int totalsize;
+	public ModuledFeature(int ptotalsize){
+		this.totalsize = ptotalsize;
 	}
-	public ModuledFeature(Module module){
+	public ModuledFeature(Module module,int ptotalsize){
 		this.modules.add(module);
+		this.totalsize = ptotalsize;
+	}
+	public double getProbability(){
+		return ((double)modules.size())/this.totalsize;
 	}
 	public boolean containModule(Module module){
 		return this.modules.contains(module);

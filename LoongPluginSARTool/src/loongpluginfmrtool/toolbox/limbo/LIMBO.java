@@ -19,7 +19,6 @@ public class LIMBO {
 	private Map<Module, Integer>ModuleToIndex = new HashMap<Module, Integer>();
 	private Map<Integer, ModuledFeature> indexToFeature = new HashMap<Integer, ModuledFeature>();
 	
-	private double threshold;
 	private Set<Module>allmodules = new HashSet<Module>();
 	private double[][] kullback_leibler_table;
 	private ModuleDependencyTable dependency_table;
@@ -28,16 +27,17 @@ public class LIMBO {
 	private int[][] featuredependency_table_array;
 	private double[][] featuredependency_table_normalized_array;
 	private int size;
+	private int totalsize;
 	private double MAXVALUE = 10000;
 	private int cluster;
 	private boolean debug = true;
-	public LIMBO(ModuleBuilder pbuilder,double pthreshold,int pcluster){
+	public LIMBO(ModuleBuilder pbuilder,int pcluster){
 		this.builder = pbuilder;
-		this.threshold = pthreshold;
 		this.cluster = pcluster;
 		this.indexToModule = this.builder.getIndexToModule();
 		this.allmodules = new HashSet<Module>(this.indexToModule.values());
 		this.dependency_table = this.builder.getDependencyTable();
+		this.totalsize = this.indexToModule.size();
 		initialize();
 		performClustering();
 	}
@@ -47,7 +47,7 @@ public class LIMBO {
 		for(Map.Entry<Integer, Module> entry:indexToModule.entrySet()){
 			int index = entry.getKey();
 			Module module = entry.getValue();
-			ModuledFeature module_feature = new ModuledFeature(module);
+			ModuledFeature module_feature = new ModuledFeature(module,totalsize);
 			// add to set
 			features.add(module_feature);
 			// add the mapping
@@ -174,6 +174,7 @@ public class LIMBO {
 				createDependencyTable();
 				normalizedDependencyTable();
 				buildKullbackLeiblerTable();
+				computeInformationLossTable();
 			}
 		}
 		if(debug){
@@ -209,22 +210,31 @@ public class LIMBO {
 		// TODO Auto-generated method stub
 		Map<ModuledFeature,LIMBOFeaturePair>needClustering = new HashMap<ModuledFeature,LIMBOFeaturePair>();
 		Set<LIMBOFeaturePair>modulefeatures = new HashSet<LIMBOFeaturePair>();
+		boolean canmerge = false;
+		int index1 = 0;
+		int index2 = 0;
 		
+		double minimalvalue = MAXVALUE;
 		
-		double minimalValue = MAXVALUE;
 		for(int i = 0;i < size;i++){
 			for(int j = i+1;j < size;j++){
-				if(minimalValue>information_loss_table_array[i][j]){
-					minimalValue = information_loss_table_array[i][j];
-				}
-			}
-		}
-		if(minimalValue>threshold){
-			return false;
-		}
-		for(int i = 0;i < size;i++){
-			for(int j = i+1;j < size;j++){
-				if(minimalValue==information_loss_table_array[i][j]){
+				if(minimalvalue>information_loss_table_array[i][j] && computeThreshold(i,j)>information_loss_table_array[i][j]){
+					minimalvalue = information_loss_table_array[i][j];
+					ModuledFeature feature1 = indexToFeature.get(i);
+					ModuledFeature feature2 = indexToFeature.get(j);
+					index1 = i;
+					index2 = j;
+					
+					needClustering.clear();
+					modulefeatures.clear();
+					LIMBOFeaturePair pair = new LIMBOFeaturePair();
+					pair.addModuledFeature(feature2);
+					pair.addModuledFeature(feature1);
+					modulefeatures.add(pair);
+					needClustering.put(feature1, pair);
+					needClustering.put(feature2, pair);
+					canmerge = true;
+				}else if(minimalvalue==information_loss_table_array[i][j] && computeThreshold(i,j)>information_loss_table_array[i][j]){
 					ModuledFeature feature1 = indexToFeature.get(i);
 					ModuledFeature feature2 = indexToFeature.get(j);
 				
@@ -244,9 +254,16 @@ public class LIMBO {
 						needClustering.put(feature1, pair);
 						needClustering.put(feature2, pair);
 					}
+					canmerge = true;
 				}
 			}
 		}
+		
+		
+		if(!canmerge){
+			return canmerge;
+		}
+		
 		for(LIMBOFeaturePair mergepair:modulefeatures){
 			Set<ModuledFeature>pair_features =  mergepair.getModuledFeature();
 			ArrayList<ModuledFeature>pairlist = new ArrayList<ModuledFeature>(pair_features);
@@ -261,6 +278,28 @@ public class LIMBO {
 		featureinitupdate();
 		
 		return true;
+	}
+
+	private double computeThreshold(int index_1, int index_2) {
+		// TODO Auto-generated method stub
+		ModuledFeature feature1 = indexToFeature.get(index_1);
+		ModuledFeature feature2 = indexToFeature.get(index_2);
+		double entropy_feature = 0.0;
+		double p = feature1.getProbability();
+		entropy_feature = -p*Math.log(p)*size;
+		double entropy_conditonal_feature = 0.0;
+		for(int i = 0;i < size;i++){
+			double temp = 0.0;
+			
+			double condition = featuredependency_table_normalized_array[i][index_2];
+			if(condition!=0)
+				temp+=(condition*Math.log(condition));
+			
+			temp*=p;
+			entropy_conditonal_feature+=-temp;
+		}
+		double threshold = entropy_feature-entropy_conditonal_feature;
+		return threshold;
 	}
 
 	private void computeInformationLossTable() {
@@ -286,10 +325,10 @@ public class LIMBO {
 		double information_loss = 0.0;
 		ModuledFeature module_feature1 = indexToFeature.get(index_1);
 		ModuledFeature module_feature2 = indexToFeature.get(index_2);
-		double pro_module_1 = ((double)module_feature1.size())/(module_feature1.size()+module_feature2.size());
-		double pro_module_2 = ((double)module_feature2.size())/(module_feature1.size()+module_feature2.size());
+		double pro_module_1 = module_feature1.getProbability();
+		double pro_module_2 = module_feature2.getProbability();
 		double temp_1 = pro_module_1+pro_module_2;
-		double pro_module_ = temp_1;
+		double pro_module_ = pro_module_1+pro_module_2;;
 		assert Double.isNaN(pro_module_)==false;
 		double[] mergedkl_vector_module_1 = new double[size];
 		double[] mergedkl_vector_module_2 = new double[size];
@@ -302,18 +341,20 @@ public class LIMBO {
 			if(p_bar_i==0||featuredependency_table_normalized_array[index_1][i]==0){
 				mergedkl_vector_module_1[i] = 0;
 			}else
-				mergedkl_vector_module_1[i] =  featuredependency_table_normalized_array[index_1][i]*Math.log(featuredependency_table_normalized_array[index_1][i]/p_bar_i);
-			total_mergedkl_vector_module_1+=mergedkl_vector_module_1[i];
+				mergedkl_vector_module_1[i] =  pro_module_1*Math.log(pro_module_1/p_bar_i);
+			if(!Double.isNaN(mergedkl_vector_module_1[i]))
+				total_mergedkl_vector_module_1+=mergedkl_vector_module_1[i];
 			assert Double.isNaN(total_mergedkl_vector_module_1)==false;
 			if(p_bar_i==0||featuredependency_table_normalized_array[index_2][i]==0){
 				mergedkl_vector_module_2[i] = 0;
 			}else
-				mergedkl_vector_module_2[i] =  featuredependency_table_normalized_array[index_2][i]*Math.log(featuredependency_table_normalized_array[index_2][i]/p_bar_i);
-			total_mergedkl_vector_module_2+=mergedkl_vector_module_2[i];
+				mergedkl_vector_module_2[i] =  pro_module_2*Math.log(pro_module_2/p_bar_i);
+			if(!Double.isNaN(mergedkl_vector_module_2[i]))
+				total_mergedkl_vector_module_2+=mergedkl_vector_module_2[i];
 			assert Double.isNaN(total_mergedkl_vector_module_2)==false;
 		}
-		
-		double temp_2 = pro_module_1/pro_module_*total_mergedkl_vector_module_1+pro_module_2/pro_module_*total_mergedkl_vector_module_2;
+		assert pro_module_!=0;
+		double temp_2 = (pro_module_1/pro_module_)*total_mergedkl_vector_module_1+(pro_module_2/pro_module_)*total_mergedkl_vector_module_2;
 		assert Double.isNaN(temp_2)==false;
 		information_loss = temp_1*temp_2;
 		assert Double.isNaN(information_loss)==false;

@@ -3,7 +3,9 @@ package loongpluginfmrtool.ui;
 
 
 import loongpluginfmrtool.module.builder.ModuleBuilder;
+import loongpluginfmrtool.toolbox.bunch.BunchConfigurationDialog;
 import loongpluginfmrtool.toolbox.limbo.LIMBO;
+import loongpluginfmrtool.toolbox.limbo.LIMBOConfigurationDialog;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,12 +30,14 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 	
 	private Algorithms curr = Algorithms.VMS;
 	private ModuleBuilder builder;
+	private Shell shell;
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
 	public AlgorithmConfigurationUI(Shell parentShell,ModuleBuilder mbuilder) {
 		super(parentShell);
+		this.shell = parentShell;
 		instance = this;
 		builder = mbuilder;
 		setShellStyle(SWT.BORDER | SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.RESIZE);
@@ -96,14 +100,18 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				switch(curr.name()){
 				case "BUNCH":{
-						
+					BunchConfigurationDialog dialog = new BunchConfigurationDialog(builder,shell);
+					dialog.create();
+					dialog.open();
 					break;
 				}
 				case "VMS":{
 					break;
 				}
 				case "LIMBO":{
-					LIMBO limbo = new LIMBO(builder,0.05,10);
+					LIMBOConfigurationDialog dialog = new LIMBOConfigurationDialog(builder,shell);
+					dialog.create();
+					dialog.open();
 					break;
 				}
 				case "ARC":{
