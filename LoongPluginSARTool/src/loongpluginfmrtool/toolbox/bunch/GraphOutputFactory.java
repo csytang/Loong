@@ -34,27 +34,20 @@ import loongpluginfmrtool.toolbox.bunch.GraphOutput;
  * @see loongpluginfmrtool.toolbox.bunch.GraphOutput
  * @see loongpluginfmrtool.toolbox.bunch.GenericFactory
  */
-public
-class GraphOutputFactory
-  extends GenericFactory
-{
+public class GraphOutputFactory extends GenericFactory {
 
-public String defaultOption = "Dotty";
-/**
- * Class constructor, defines the objects that the factory will be able
- * to create
- */
-public
-GraphOutputFactory()
-{
-  super();
-  setFactoryType("GraphOutput");
-  addItem("Dotty", "bunch.DotGraphOutput");
-  addItem("Text", "bunch.TXTGraphOutput");
-  addItem("GXL","bunch.gxl.io.GXLGraphOutput");
-  //addItem("Tom Sawyer", "bunch.TSGraphOutput");
-  //addItem("Text Tree","bunch.TXTTreeGraphOutput");
-}
+	public String defaultOption = "Texts";
+	/**
+	 * Class constructor, defines the objects that the factory will be able
+	 * to create
+	 */
+	public GraphOutputFactory() {
+		  super();
+		  setFactoryType("GraphOutput");
+		  addItem("Dotty", "loongpluginfmrtool.toolbox.bunch.DotGraphOutput");
+		  addItem("Text", "loongpluginfmrtool.toolbox.bunch.TXTGraphOutput");
+		  addItem("GXL","loongpluginfmrtool.toolbox.bunch.gxl.io.GXLGraphOutput");
+	}
 
 /**
  * Obtains the graph output generator corresponding to name passed as parameter.
@@ -64,15 +57,10 @@ GraphOutputFactory()
  * @param the name for the desired output generator
  * @return the graph output generator corresponding to the name
  */
-public
-GraphOutput
-getOutput(String name)
-{
-  return (GraphOutput)getItemInstance(name);
-}
-
-public String getDefaultMethod()
-{
-  return this.defaultOption;
-}
+	public GraphOutput getOutput(String name) {
+	  return (GraphOutput)getItemInstance(name);
+	}
+	public String getDefaultMethod(){
+		return this.defaultOption;
+	}
 }

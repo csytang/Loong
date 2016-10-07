@@ -120,18 +120,18 @@ public class StatsManager {
 
     public boolean dumpStatsLog()
     {
-      try
-      {
-          BufferedWriter writer = new BufferedWriter(new FileWriter(logFileNm));
-            writer.write("Total MQ Calculations:  " + mqCalculations + "\n");
-            writer.write("Simulated Annealing Overrides: " + simulatedAnnealingOverrides + "\n");
-          writer.close();
-      }
-      catch(Exception e)
-      {
-        System.out.println("Error creating the logfile at location: " + logFileNm);
-        return false;
-      }
-      return true;
+	      try
+	      {
+	          BufferedWriter writer = new BufferedWriter(new FileWriter(logFileNm));
+	            writer.write("Total MQ Calculations:  " + mqCalculations + "\n");
+	            writer.write("Simulated Annealing Overrides: " + simulatedAnnealingOverrides + "\n");
+	          writer.close();
+	      }
+	      catch(Exception e)
+	      {
+	        System.out.println("Error creating the logfile at location: " + logFileNm);
+	        return false;
+	      }
+	      return true;
     }
 }

@@ -38,9 +38,9 @@ ParserFactory()
 {
   super();
   setFactoryType("Parser");
-  addItem("dependency", "bunch.DependencyFileParser");
-  addItem("gxl", "bunch.gxl.parser.GXLGraphParser");
-  addItem("cluster", "bunch.ClusterFileParser");
+  addItem("dependency", "loongpluginfmrtool.toolbox.bunch.DependencyFileParser");
+  addItem("gxl", "loongpluginfmrtool.toolbox.bunch.gxl.parser.GXLGraphParser");
+  addItem("cluster", "loongpluginfmrtool.toolbox.bunch.ClusterFileParser");
 }
 
 public

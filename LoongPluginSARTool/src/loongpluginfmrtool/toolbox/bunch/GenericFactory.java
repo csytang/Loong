@@ -156,10 +156,10 @@ getItemInstance(String name)
 {
   String cls = null;
   if (name.toLowerCase().equals("default")) {
-    cls = "bunch.Default"+factoryType_d;
+	  cls = "loongpluginfmrtool.toolbox.bunch.Default"+factoryType_d;
   }
   else {
-    cls = (String)methodTable_d.get(name);
+	  cls = (String)methodTable_d.get(name);
   }
 
   Object obj = null;

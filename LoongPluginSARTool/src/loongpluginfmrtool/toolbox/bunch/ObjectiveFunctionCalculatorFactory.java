@@ -47,15 +47,15 @@ ObjectiveFunctionCalculatorFactory()
 {
   super();
   setFactoryType("ObjectiveFunctionCalculator");
-  addItem("Basic MQ Function", "bunch.BasicMQ");
-  addItem("Turbo MQ Function", "bunch.TurboMQ");
-  //addItem("Incremental MQ", "bunch.TurboMQIncr");
-  addItem("Incremental MQ Weighted", "bunch.TurboMQIncrW");
+  addItem("Basic MQ Function", "loongpluginfmrtool.toolbox.bunch.BasicMQ");
+  addItem("Turbo MQ Function", "loongpluginfmrtool.toolbox.bunch.TurboMQ");
+  //addItem("Incremental MQ", "loongpluginfmrtool.toolbox.bunch.TurboMQIncr");
+  addItem("Incremental MQ Weighted", "loongpluginfmrtool.toolbox.bunch.TurboMQIncrW");
 
-  addItem("bunch.BasicMQ", "bunch.BasicMQ");
-  addItem("bunch.TurboMQ", "bunch.TurboMQ");
-  addItem("bunch.ITurboMQ", "bunch.TurboMQIncrW");
-  addItem("bunch.TurboMQIncrW", "bunch.TurboMQIncrW");
+  addItem("bunch.BasicMQ", "loongpluginfmrtool.toolbox.bunch.BasicMQ");
+  addItem("bunch.TurboMQ", "loongpluginfmrtool.toolbox.bunch.TurboMQ");
+  addItem("bunch.ITurboMQ", "loongpluginfmrtool.toolbox.bunch.TurboMQIncrW");
+  addItem("bunch.TurboMQIncrW", "loongpluginfmrtool.toolbox.bunch.TurboMQIncrW");
 
   //addItem("Turbo MQ Squared", "bunch.TurboMQ2");
   //addItem("Experimental Weighted 2", "bunch.WeightedObjectiveFunctionCalculator2");

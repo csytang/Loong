@@ -14,6 +14,9 @@
             <separator
                   name="group1">
             </separator>
+            <separator
+                  name="group2">
+            </separator>
          </menu>
          <action
                class="loongpluginfmrtool.popup.actions.OpenFeatureNameRecommendationView"
@@ -43,6 +46,14 @@
                id="LoongPluginFMRTool.modulebuilder"
                label="Build #ifdef modules"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.CreateMDGFile"
+               icon="icons/mpgtoolbox.png"
+               id="LoongPluginFMRTool.bunchtool"
+               label="Generate Bunch MDG file for Project"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2"
+               style="push">
          </action>
       </objectContribution>
       <objectContribution

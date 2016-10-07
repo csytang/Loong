@@ -152,9 +152,7 @@ getParserFactory()
  * @see #setGraphOutputFactory(loongpluginfmrtool.toolbox.bunch.GraphOutputFactory)
  * @see loongpluginfmrtool.toolbox.bunch.GraphOutputFactory
  */
-public
-GraphOutputFactory
-getGraphOutputFactory()
+public GraphOutputFactory getGraphOutputFactory()
 {
   return outputFactory_d;
 }
@@ -166,9 +164,7 @@ getGraphOutputFactory()
  * @see #getGraphOutputFactory()
  * @see loongpluginfmrtool.toolbox.bunch.GraphOutputFactory
  */
-public
-void
-setGraphOutputFactory(GraphOutputFactory og)
+public void setGraphOutputFactory(GraphOutputFactory og)
 {
   outputFactory_d = og;
 }
