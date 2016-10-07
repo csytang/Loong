@@ -90,12 +90,13 @@ public class ACDC
 		return result.toString();
 	}
   
-  public static void main (String [] args)
+  public  ACDC (String [] args)
   {
     String run_name = "java acdc.ACDC";
     for (int i= 0; i<args.length; i++)
     {
-        if (args[i].equals("-6431")) run_name = "acdc";
+        if (args[i].equals("-6431")) 
+        	run_name = "acdc";
     }
     
     //if one of the given args is "-h", print Help message, then exit
