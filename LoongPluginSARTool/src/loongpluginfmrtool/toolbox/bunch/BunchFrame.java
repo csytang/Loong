@@ -1107,8 +1107,7 @@ clearGUIElements(boolean nextLevel)
  *
  * @param e the ActionEvent that triggered the method call
  */
-void
-selectOutputFileButton_d_actionPerformed(ActionEvent e)
+void selectOutputFileButton_d_actionPerformed(ActionEvent e)
 {
   fileSelector_d.setVisible(true);
   if (fileSelector_d.getFile() != null) {

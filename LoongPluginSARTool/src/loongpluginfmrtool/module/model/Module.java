@@ -240,6 +240,16 @@ public class Module implements Serializable {
 		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class  
 		return "Module:"+typeDec.getName().toString();
 	}
+	
+	public String getNameWithPackage(){
+		CompilationUnit unit = (CompilationUnit)dominateASTNode;
+		List types = unit.types();    
+		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class  
+		String packagename = unit.getPackage().getName().toString();
+		packagename=packagename+".";
+		packagename = packagename+typeDec.getName().toString();
+		return packagename;
+	}
 
 	public Set<ModuleComponent> getComponents() {
 		// TODO Auto-generated method stub

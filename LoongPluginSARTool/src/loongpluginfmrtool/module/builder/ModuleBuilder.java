@@ -43,7 +43,7 @@ public class ModuleBuilder {
 	public static ModuleBuilder instance;
 	private static IProject targetProject;
 	private Map<Integer,Module> indexToModule = new HashMap<Integer,Module>();
-	private ApplicationObserver lDB;
+	private static ApplicationObserver lDB;
 	final private ProgramDatabase pd;
 	private LFlyweightElementFactory LElementFactory;
 	private static Map<LElement,Module> elementToModule = new HashMap<LElement,Module>();
@@ -54,7 +54,11 @@ public class ModuleBuilder {
 	private KullbackLeiblerTable kullback_leibler_table;
 	private InformationLossTable information_loss_table;
 	public static ModuleBuilder getInstance(IProject selectedProject,ApplicationObserver pDB){
-		instance = new ModuleBuilder(selectedProject,pDB);
+		if(ModuleBuilder.targetProject==selectedProject && lDB == pDB){
+			
+		}else{
+			instance = new ModuleBuilder(selectedProject,pDB);
+		}
 		return instance;
 	}
 	public ModuleBuilder(IProject selectedProject,ApplicationObserver pDB){
@@ -63,6 +67,7 @@ public class ModuleBuilder {
 		this.LElementFactory = pDB.getLFlyweightElementFactory();
 		this.pd = pDB.getProgramDatabase();
 	}
+	
 	public void init(){
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ModuleViewPart.ID);
