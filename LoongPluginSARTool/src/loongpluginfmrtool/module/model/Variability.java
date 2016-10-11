@@ -86,9 +86,15 @@ public class Variability {
 		this.configurations.add(configuration);
 	}
 	
-	public boolean hasConflict(Variability variability){
+	public boolean hasConflict(Variability othervariability){
 		boolean conflict = false;
-		
+		for(Configuration config:configurations){
+			for(Configuration other_config:othervariability.configurations){
+				if(config.conflictwith(other_config)){
+					return true;
+				}
+			}
+		}
 		
 		return conflict;
 	}
