@@ -53,6 +53,7 @@ public class Module implements Serializable {
 	private Variability variability;
 	private boolean isInternalVariabilityComputed = false;
 	private boolean isExternalVariabilityComputed = false;
+	private ConfigurationOptionTree tree;
 	
 	public Module(LElement element,int index,LFlyweightElementFactory pElementFactory,ModuleBuilder mbuilder,ModuleModel pmodel){
 		this.dominate = element;
@@ -80,7 +81,7 @@ public class Module implements Serializable {
 		configurations =  getAllConfigurationOptions();
 		components.addAll(configurations);
 		
-		
+		this.tree = new ConfigurationOptionTree(this);
 		// compute Variability
 		computeVariability();
 	}
@@ -88,7 +89,7 @@ public class Module implements Serializable {
 	private void computeVariability() {
 		// TODO Auto-generated method stub
 		
-		this.variability.Collect();
+		this.variability.Collect(this.tree);
 	}
 	
 	

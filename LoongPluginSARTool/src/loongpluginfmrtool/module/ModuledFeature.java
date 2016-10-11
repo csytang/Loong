@@ -75,6 +75,11 @@ public class ModuledFeature {
 	}
 	
 	
+	public void mergeVariablity(){
+		
+	}
+	
+	
 	
 	public Set<Module> getModules(){
 		return this.modules;
