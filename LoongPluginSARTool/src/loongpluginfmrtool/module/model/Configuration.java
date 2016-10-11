@@ -61,9 +61,10 @@ public class Configuration {
 	private boolean hasOverLap(Set<Statement> enabledstatements,
 			Set<Statement> disabledstatements) {
 		// TODO Auto-generated method stub
-		boolean hasOverlap = false;
-		
-		
-		return hasOverlap;
+		for(Statement disstatment:disabledstatements){
+			if(enabledstatements.contains(disstatment))
+				return true;
+		}
+		return false;
 	}
 }
