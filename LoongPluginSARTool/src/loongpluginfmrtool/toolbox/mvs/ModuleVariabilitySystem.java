@@ -48,7 +48,7 @@ public class ModuleVariabilitySystem {
 		for(Map.Entry<Integer, Module> entry:indexToModule.entrySet()){
 			int index = entry.getKey();
 			Module module = entry.getValue();
-			ModuledFeature module_feature = new ModuledFeature(module,totalsize);
+			ModuledFeature module_feature = new ModuledFeature(module,totalsize,true);
 			// add to set
 			features.add(module_feature);
 			// add the mapping

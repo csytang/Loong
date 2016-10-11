@@ -16,10 +16,7 @@ public class ModuledFeature {
 	private Map<Module,Variability>moduletoVariability = new HashMap<Module,Variability>();
 	private Set<Module>temp_modules = new HashSet<Module>();
 	private Map<Module,Variability>temp_moduletoVariability = new HashMap<Module,Variability>();
-	
-	public ModuledFeature(int ptotalsize){
-		this.totalsize = ptotalsize;		
-	}
+	private boolean needvariability;
 	
 	public int getVariabilityCount(){
 		int totalvalidconfig = 0;
@@ -33,10 +30,13 @@ public class ModuledFeature {
 		return new HashSet<Variability> (moduletoVariability.values());
 	}
 	
-	public ModuledFeature(Module module,int ptotalsize){
+	public ModuledFeature(Module module,int ptotalsize,boolean pneedvariability){
 		this.modules.add(module);
 		this.totalsize = ptotalsize;
-		//updateVariability();
+		this.needvariability = pneedvariability;
+		if(this.needvariability){
+			updateVariability();
+		}
 	}
 	
 	protected void updateVariability(){
@@ -61,8 +61,10 @@ public class ModuledFeature {
 	public void mergeModuledFeature(ModuledFeature other){
 		this.modules.addAll(other.modules);
 		// also merge the variability
-		//updateVariability();
-		//removeInvalidConfigurations(moduletoVariability);
+		if(this.needvariability){
+			updateVariability();
+			removeInvalidConfigurations(moduletoVariability);
+		}
 	}
 	
 	public boolean hasVariabilityConflict(ModuledFeature other){
@@ -119,8 +121,9 @@ public class ModuledFeature {
 			Variability variability = module.getVariability();
 			temp_moduletoVariability.put(module, variability);
 		}
-		//removeInvalidConfigurations(temp_moduletoVariability);
-
+		if(this.needvariability){
+			removeInvalidConfigurations(temp_moduletoVariability);
+		}
 	}
 	
 	/**
