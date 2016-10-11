@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.dom.Statement;
 
 public class ConfigurationOption extends ModuleComponent{
 	public Expression aconfigOption;
-	//private Map<ConfigurationOption,ConfigRelation> internalconfigOpToRelation;
 	private Set<ConfigurationRelationLink> confg_relationlik;
 	private Set<Statement>select_statement = new HashSet<Statement>();
 	private Set<Statement>unselect_statement = new HashSet<Statement>();
@@ -26,6 +25,7 @@ public class ConfigurationOption extends ModuleComponent{
 	private int externalVariabilityCount = 0;
 	private int overallVariabilityCount = 0;
 	private boolean overallVariabilityisCount = false;
+
 	public ConfigurationOption(Module passociatedmodule){
 		super(passociatedmodule);
 		unit = passociatedmodule.getCompilationUnit();

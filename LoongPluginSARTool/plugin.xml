@@ -52,13 +52,13 @@
                icon="icons/mpgtoolbox.png"
                id="LoongPluginFMRTool.bunchtool"
                label="Generate MDG file (Bunch Toolbox)"
-               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2"
-               style="push">
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
          </action>
          <action
-               class="loongpluginfmrtool.Action4"
+               class="loongpluginfmrtool.popup.actions.CreateRSFFile"
                id="LoongPluginFMRTool.action4"
-               label="Generate RSF file (ACDC Toolbox)">
+               label="Generate RSF file (ACDC Toolbox)"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
          </action>
       </objectContribution>
       <objectContribution

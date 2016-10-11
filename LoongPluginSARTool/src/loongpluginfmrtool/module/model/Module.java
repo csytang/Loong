@@ -80,8 +80,19 @@ public class Module implements Serializable {
 		configurations =  getAllConfigurationOptions();
 		components.addAll(configurations);
 		
+		
+		// compute Variability
+		computeVariability();
 	}
 	
+	private void computeVariability() {
+		// TODO Auto-generated method stub
+		
+		this.variability.Collect();
+	}
+	
+	
+
 	public void addModuleHelper(ModuleHelper phelper){
 		helper = phelper;
 	}
@@ -103,15 +114,7 @@ public class Module implements Serializable {
 		isExternalVariabilityComputed = true;
 	}
 	
-	/**
-	 * This function will extract all variability 
-	 * patterns from the configurations.
-	 */
-	public void extractVariability() {
-		// TODO Auto-generated method stub
-		this.variability.collect();
-		
-	}
+	
 	
 	public boolean isExternalVariabilityComputed(){
 		return isExternalVariabilityComputed;
@@ -310,6 +313,13 @@ public class Module implements Serializable {
 		}
 		return total;
 	}
+
+	public Variability getVariability() {
+		// TODO Auto-generated method stub
+		return variability;
+	}
+
+	
 	
 	
 }

@@ -147,7 +147,6 @@ public class ModuleBuilder {
 			Module module = entry.getValue();
 			module.resolveExternalVariability();
 			module.resolveDependency();
-			module.extractVariability();
 			
 			pProgress.worked(1);
 		}
