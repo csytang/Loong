@@ -97,5 +97,10 @@ public class Variability {
 		// TODO Auto-generated method stub
 		return totalValidConfig;
 	}
+
+	public Module getModule() {
+		// TODO Auto-generated method stub
+		return module;
+	}
 	
 }

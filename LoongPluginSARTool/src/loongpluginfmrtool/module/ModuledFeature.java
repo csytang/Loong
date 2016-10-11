@@ -1,5 +1,6 @@
 package loongpluginfmrtool.module;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -61,6 +62,7 @@ public class ModuledFeature {
 		this.modules.addAll(other.modules);
 		// also merge the variability
 		updateVariability();
+		removeInvalidConfigurations(moduletoVariability);
 	}
 	
 	public boolean hasVariabilityConflict(ModuledFeature other){
@@ -74,12 +76,27 @@ public class ModuledFeature {
 		return false;
 	}
 	
-	
-	public void mergeVariablity(){
-		
+	/**
+	 * 删除掉 有冲突的variability configuration 
+	 * 删除中采取随机的政策
+	 * @param moduletoVariability
+	 */
+	protected void removeInvalidConfigurations(Map<Module,Variability>moduletoVariability){
+		ArrayList<Variability>variablityList = new ArrayList<Variability>(moduletoVariability.values());
+		for(int i = 0;i < variablityList.size();i++){
+			Variability variabiliti = variablityList.get(i);
+			if(!moduletoVariability.containsKey(variabiliti.getModule()))
+				continue;
+			for(int j = i+1;j < variablityList.size();i++){
+				Variability variabilityj = variablityList.get(j);
+				if(!moduletoVariability.containsKey(variabilityj.getModule()))
+					continue;
+				if(variabiliti.hasConflict(variabilityj)){
+					moduletoVariability.remove(variabilityj.getModule());
+				}
+			}
+		}
 	}
-	
-	
 	
 	public Set<Module> getModules(){
 		return this.modules;
@@ -102,6 +119,8 @@ public class ModuledFeature {
 			Variability variability = module.getVariability();
 			temp_moduletoVariability.put(module, variability);
 		}
+		removeInvalidConfigurations(temp_moduletoVariability);
+
 	}
 	
 	/**
