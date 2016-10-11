@@ -36,7 +36,7 @@ public class ModuledFeature {
 	public ModuledFeature(Module module,int ptotalsize){
 		this.modules.add(module);
 		this.totalsize = ptotalsize;
-		updateVariability();
+		//updateVariability();
 	}
 	
 	protected void updateVariability(){
@@ -61,8 +61,8 @@ public class ModuledFeature {
 	public void mergeModuledFeature(ModuledFeature other){
 		this.modules.addAll(other.modules);
 		// also merge the variability
-		updateVariability();
-		removeInvalidConfigurations(moduletoVariability);
+		//updateVariability();
+		//removeInvalidConfigurations(moduletoVariability);
 	}
 	
 	public boolean hasVariabilityConflict(ModuledFeature other){
@@ -119,7 +119,7 @@ public class ModuledFeature {
 			Variability variability = module.getVariability();
 			temp_moduletoVariability.put(module, variability);
 		}
-		removeInvalidConfigurations(temp_moduletoVariability);
+		//removeInvalidConfigurations(temp_moduletoVariability);
 
 	}
 	

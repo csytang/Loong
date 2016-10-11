@@ -49,7 +49,9 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		// TODO Auto-generated method stub
+		
 		String argu = text.getText();
+		
 		ACDC acdc = new ACDC(argu.split(" "));
 		super.okPressed();
 	}

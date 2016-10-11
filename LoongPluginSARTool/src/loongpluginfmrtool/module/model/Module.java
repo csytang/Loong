@@ -63,7 +63,7 @@ public class Module implements Serializable {
 		this.dominateASTNode = element.getASTNode();		
 		this.contflowbuilder = new InternalConfBuilder(this);
 		this.model = pmodel;
-		this.variability = new Variability(this);
+		
 	}
 	
 	/**
@@ -81,9 +81,10 @@ public class Module implements Serializable {
 		configurations =  getAllConfigurationOptions();
 		components.addAll(configurations);
 		
-		this.tree = new ConfigurationOptionTree(this);
+		//this.tree = new ConfigurationOptionTree(this);
 		// compute Variability
-		computeVariability();
+		//computeVariability();
+		this.variability = new Variability(this);
 	}
 	
 	private void computeVariability() {

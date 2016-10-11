@@ -104,9 +104,11 @@ public class LIMBOConfigurationDialog extends Dialog {
 	@Override
 	protected void okPressed() {
 		// TODO Auto-generated method stub
+		
 		String textcontent = text.getText();
 		try{
 			this.cluster = Integer.parseInt(textcontent);
+			
 			LIMBO limbo = new LIMBO(builder,cluster);
 		}catch(NumberFormatException e){
 			Display.getCurrent().syncExec(new Runnable(){

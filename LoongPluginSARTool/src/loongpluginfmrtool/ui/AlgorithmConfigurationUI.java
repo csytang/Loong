@@ -3,9 +3,11 @@ package loongpluginfmrtool.ui;
 
 
 import loongpluginfmrtool.module.builder.ModuleBuilder;
+import loongpluginfmrtool.toolbox.acdc.ACDCConfigurationDialog;
 import loongpluginfmrtool.toolbox.bunch.Bunch;
 import loongpluginfmrtool.toolbox.limbo.LIMBO;
 import loongpluginfmrtool.toolbox.limbo.LIMBOConfigurationDialog;
+import loongpluginfmrtool.toolbox.mvs.MVSConfigurationDialog;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -104,6 +106,9 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 					break;
 				}
 				case "VMS":{
+					MVSConfigurationDialog dialog = new MVSConfigurationDialog(builder,shell);
+					dialog.create();
+					dialog.open();
 					break;
 				}
 				case "LIMBO":{
@@ -116,6 +121,9 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 					break;
 				}
 				case "ACDC":{
+					ACDCConfigurationDialog dialog = new ACDCConfigurationDialog(shell);
+					dialog.create();
+					dialog.open();
 					break;
 				}
 				}
