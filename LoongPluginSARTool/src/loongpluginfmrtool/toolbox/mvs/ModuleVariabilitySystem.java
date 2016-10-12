@@ -41,8 +41,6 @@ public class ModuleVariabilitySystem {
 		this.totalsize = this.indexToModule.size();
 		initialize();
 		performClustering();
-		
-		System.out.println("FINISH");
 	}
 	
 	protected void initialize(){
@@ -216,19 +214,17 @@ public class ModuleVariabilitySystem {
 		Map<ModuledFeature,MVSFeaturePair>needClustering = new HashMap<ModuledFeature,MVSFeaturePair>();
 		Set<MVSFeaturePair>modulefeatures = new HashSet<MVSFeaturePair>();
 		boolean canmerge = false;
-		int index1 = 0;
-		int index2 = 0;
+
 		double minimalvalue = MAXVALUE;
 		
 		for(int i = 0;i < size;i++){
 			for(int j = i+1;j < size;j++){
-				if(minimalvalue>information_loss_table_array[i][j] && computeThreshold(i,j)>information_loss_table_array[i][j]){
+				if(minimalvalue>information_loss_table_array[i][j] /*&& computeThreshold(i,j)>information_loss_table_array[i][j]*/
+						){
 					minimalvalue = information_loss_table_array[i][j];
 					ModuledFeature feature1 = indexToFeature.get(i);
 					ModuledFeature feature2 = indexToFeature.get(j);
-					index1 = i;
-					index2 = j;
-					
+
 					needClustering.clear();
 					modulefeatures.clear();
 					MVSFeaturePair pair = new MVSFeaturePair();
@@ -238,6 +234,7 @@ public class ModuleVariabilitySystem {
 					needClustering.put(feature1, pair);
 					needClustering.put(feature2, pair);
 					canmerge = true;
+					
 				}else if(minimalvalue==information_loss_table_array[i][j] && computeThreshold(i,j)>information_loss_table_array[i][j]){
 					ModuledFeature feature1 = indexToFeature.get(i);
 					ModuledFeature feature2 = indexToFeature.get(j);
@@ -278,6 +275,10 @@ public class ModuleVariabilitySystem {
 				features.remove(pairlist.get(i));
 			}
 		}
+		
+		
+		
+		
 		size = features.size();
 		featureinitupdate();
 		
@@ -360,7 +361,11 @@ public class ModuleVariabilitySystem {
 		assert pro_module_!=0;
 		double temp_2 = (pro_module_1/pro_module_)*total_mergedkl_vector_module_1+(pro_module_2/pro_module_)*total_mergedkl_vector_module_2;
 		assert Double.isNaN(temp_2)==false;
-		information_loss = temp_1*temp_2;
+		
+		// variability loss
+ 		double temp_3 = VariabilityLoss.computeVLoss(module_feature1, module_feature2);
+		information_loss = temp_1*temp_2*temp_3;
+		
 		assert Double.isNaN(information_loss)==false;
 		return information_loss;
 	}

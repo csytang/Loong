@@ -211,10 +211,9 @@ public class LIMBO {
 		Map<ModuledFeature,LIMBOFeaturePair>needClustering = new HashMap<ModuledFeature,LIMBOFeaturePair>();
 		Set<LIMBOFeaturePair>modulefeatures = new HashSet<LIMBOFeaturePair>();
 		boolean canmerge = false;
-		int index1 = 0;
-		int index2 = 0;
 		
 		double minimalvalue = MAXVALUE;
+		
 		
 		for(int i = 0;i < size;i++){
 			for(int j = i+1;j < size;j++){
@@ -222,8 +221,6 @@ public class LIMBO {
 					minimalvalue = information_loss_table_array[i][j];
 					ModuledFeature feature1 = indexToFeature.get(i);
 					ModuledFeature feature2 = indexToFeature.get(j);
-					index1 = i;
-					index2 = j;
 					
 					needClustering.clear();
 					modulefeatures.clear();
@@ -275,6 +272,10 @@ public class LIMBO {
 			}
 		}
 		size = features.size();
+		
+		
+		
+		
 		featureinitupdate();
 		
 		return true;
