@@ -48,7 +48,8 @@ public class Variability {
 			 if(visited.contains(option_top)){
 				 continue;
 			 }
-			 createAConfiguration(visited,option_top);
+			 if(!visited.isEmpty())
+				 createAConfiguration(visited,option_top);
 			 Set<ConfigurationOption>childrens = tree.getChildren(option_top);
 			 if(childrens!=null){
 				 for(ConfigurationOption sub_option:childrens){
@@ -67,11 +68,19 @@ public class Variability {
 	private void createAConfiguration(Set<ConfigurationOption> visited) {
 		// TODO Auto-generated method stub
 		Map<ConfigurationOption,Boolean>pconfigurationlist = new HashMap<ConfigurationOption,Boolean>();
+		
 		for(ConfigurationOption option:visited){
 			pconfigurationlist.put(option, true);
 		}
 		Configuration configuration = new Configuration(module,pconfigurationlist);
 		this.configurations.add(configuration);
+		if(visited.size()==1){
+			for(ConfigurationOption option:visited){
+				pconfigurationlist.put(option, false);
+			}
+			configuration = new Configuration(module,pconfigurationlist);
+			this.configurations.add(configuration);
+		}
 	}
 
 	private void createAConfiguration(Set<ConfigurationOption> visited,

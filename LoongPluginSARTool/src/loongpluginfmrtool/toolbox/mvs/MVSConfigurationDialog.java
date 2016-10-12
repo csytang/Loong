@@ -108,6 +108,7 @@ public class MVSConfigurationDialog extends Dialog {
 		String textcontent = text.getText();
 		try{
 			this.cluster = Integer.parseInt(textcontent);
+			//super.okPressed();
 			
 			ModuleVariabilitySystem mvs = new ModuleVariabilitySystem(builder,cluster);
 		}catch(NumberFormatException e){

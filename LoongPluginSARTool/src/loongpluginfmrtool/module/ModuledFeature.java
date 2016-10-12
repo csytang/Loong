@@ -64,6 +64,7 @@ public class ModuledFeature {
 		if(this.needvariability){
 			updateVariability();
 			removeInvalidConfigurations(moduletoVariability);
+			//System.out.println("Finish the variability");
 		}
 	}
 	
@@ -89,10 +90,9 @@ public class ModuledFeature {
 			Variability variabiliti = variablityList.get(i);
 			if(!moduletoVariability.containsKey(variabiliti.getModule()))
 				continue;
-			for(int j = i+1;j < variablityList.size();i++){
+			for(int j = i+1;j < variablityList.size();j++){
 				Variability variabilityj = variablityList.get(j);
-				if(!moduletoVariability.containsKey(variabilityj.getModule()))
-					continue;
+				if(!moduletoVariability.containsKey(variabilityj.getModule()));
 				if(variabiliti.hasConflict(variabilityj)){
 					moduletoVariability.remove(variabilityj.getModule());
 				}

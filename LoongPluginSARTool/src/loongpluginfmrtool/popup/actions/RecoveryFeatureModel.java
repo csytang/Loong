@@ -61,12 +61,14 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 			mbuilder.computeStatistic();
 			mbuilder.notifyModuleListener();
 			mbuilder.buildModuleHelper();
-	//.out.println("Finish Module Helper");
+	        //.out.println("Finish Module Helper");
 			
 			AlgorithmConfigurationUI instance = AlgorithmConfigurationUI.getDefault(shell,mbuilder);
 			instance.create();
 			instance.open();
 		}
+		
+		
 		
 		
 		

@@ -36,8 +36,8 @@
          <action
                class="loongpluginfmrtool.popup.actions.RecoveryFeatureModel"
                icon="icons/recovery.png"
-               id="LoongPluginFMRTool.action3"
-               label="Recovery Feature Model"
+               id="LoongPluginFMRTool.recoverfeaturemodel"
+               label="Recover Feature Model"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
          <action

@@ -54,9 +54,7 @@ public class ModuleBuilder {
 	private KullbackLeiblerTable kullback_leibler_table;
 	private InformationLossTable information_loss_table;
 	public static ModuleBuilder getInstance(IProject selectedProject,ApplicationObserver pDB){
-		if(ModuleBuilder.targetProject==selectedProject && lDB == pDB){
-			
-		}else{
+		if(ModuleBuilder.targetProject!=selectedProject || lDB != pDB){
 			instance = new ModuleBuilder(selectedProject,pDB);
 		}
 		return instance;
@@ -86,6 +84,7 @@ public class ModuleBuilder {
 		    	return Status.OK_STATUS;
 		    }
 		 };
+		 
 		 job.setRule(root);
 		 job.setUser(true);
 		 job.setPriority(Job.INTERACTIVE);

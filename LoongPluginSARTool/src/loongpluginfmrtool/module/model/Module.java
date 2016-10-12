@@ -81,16 +81,13 @@ public class Module implements Serializable {
 		configurations =  getAllConfigurationOptions();
 		components.addAll(configurations);
 		
-		//this.tree = new ConfigurationOptionTree(this);
-		// compute Variability
-		//computeVariability();
-		this.variability = new Variability(this);
 	}
 	
-	private void computeVariability() {
+	public void computeVariability() {
+		this.tree = new ConfigurationOptionTree(this);
 		// TODO Auto-generated method stub
-		
-		this.variability.Collect(this.tree);
+		variability = new Variability(this);
+		variability.Collect(this.tree);
 	}
 	
 	
