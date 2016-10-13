@@ -312,6 +312,10 @@ public class Module implements Serializable {
 		}
 		return total;
 	}
+	
+	public  Map<Module,Integer> getAllDependency(){
+		return module_dependency;
+	}
 
 	public Variability getVariability() {
 		// TODO Auto-generated method stub

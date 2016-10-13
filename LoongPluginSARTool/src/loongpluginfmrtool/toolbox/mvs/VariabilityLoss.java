@@ -17,8 +17,11 @@ public class VariabilityLoss {
 		// create a temp counting
 		modulefeature1.tempmergeModuledFeature(modulefeature2);
 		int totalafter = modulefeature1.tempgetVariabilityCount();
-		int missing = totalVariability1+totalVariability2-totalafter;
-		loss = ((double)missing)/(totalVariability1+totalVariability2);
+		int left = totalVariability1+totalVariability2-totalafter;
+		if(totalVariability1+totalVariability2==0){
+			return 1.0;
+		}
+		loss = ((double)left)/(totalVariability1+totalVariability2);
 		return loss;
 	}
 }

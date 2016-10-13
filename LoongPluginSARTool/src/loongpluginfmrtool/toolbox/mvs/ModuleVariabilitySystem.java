@@ -24,6 +24,7 @@ public class ModuleVariabilitySystem {
 	private double[][] kullback_leibler_table;
 	private ModuleDependencyTable dependency_table;
 	private double[][] information_loss_table_array;
+	private double[][] variability_loss_table_array;
 	private int[][] moduledependency_table;
 	private int[][] featuredependency_table_array;
 	private double[][] featuredependency_table_normalized_array;
@@ -32,6 +33,7 @@ public class ModuleVariabilitySystem {
 	private double MAXVALUE = 1;
 	private int cluster;
 	private boolean debug = true;
+	private double variabilitythreshold = 0.3;
 	public ModuleVariabilitySystem(ModuleBuilder pbuilder,int pcluster){
 		this.builder = pbuilder;
 		this.cluster = pcluster;
@@ -219,11 +221,11 @@ public class ModuleVariabilitySystem {
 		
 		for(int i = 0;i < size;i++){
 			for(int j = i+1;j < size;j++){
-				if(minimalvalue>information_loss_table_array[i][j] /*&& computeThreshold(i,j)>information_loss_table_array[i][j]*/
-						){
-					minimalvalue = information_loss_table_array[i][j];
-					ModuledFeature feature1 = indexToFeature.get(i);
-					ModuledFeature feature2 = indexToFeature.get(j);
+				ModuledFeature feature1 = indexToFeature.get(i);
+				ModuledFeature feature2 = indexToFeature.get(j);
+				if(minimalvalue>variability_loss_table_array[i][j]  && computeThreshold(i,j)>information_loss_table_array[i][j]
+						&& VariabilityLoss.computeVLoss(feature1, feature2)>=variabilitythreshold){
+					minimalvalue = variability_loss_table_array[i][j];
 
 					needClustering.clear();
 					modulefeatures.clear();
@@ -235,9 +237,9 @@ public class ModuleVariabilitySystem {
 					needClustering.put(feature2, pair);
 					canmerge = true;
 					
-				}else if(minimalvalue==information_loss_table_array[i][j] && computeThreshold(i,j)>information_loss_table_array[i][j]){
-					ModuledFeature feature1 = indexToFeature.get(i);
-					ModuledFeature feature2 = indexToFeature.get(j);
+				}else if(minimalvalue==variability_loss_table_array[i][j] && computeThreshold(i,j)>information_loss_table_array[i][j] &&
+						VariabilityLoss.computeVLoss(feature1, feature2)>=variabilitythreshold){
+					
 				
 					if(needClustering.containsKey(feature1)){
 						MVSFeaturePair pair = needClustering.get(feature1);
@@ -310,14 +312,19 @@ public class ModuleVariabilitySystem {
 	private void computeInformationLossTable() {
 		// TODO Auto-generated method stub
 		information_loss_table_array = new double[features.size()][features.size()];
+		variability_loss_table_array = new double[features.size()][features.size()];
+		
 		int size = features.size();
 		for(int i = 0;i < size;i++){
 			for(int j = i;j < size;j++){
 				if(i==j){
 					information_loss_table_array[i][j] = 0;
+					variability_loss_table_array[i][j] = 0;
 				}else{
 					information_loss_table_array[i][j] = compute_Single_InformationLoss(i,j);
+					variability_loss_table_array[i][j] = information_loss_table_array[i][j]*compute_Single_VL(i,j);
 					information_loss_table_array[j][i] = information_loss_table_array[i][j];
+					variability_loss_table_array[j][i] = variability_loss_table_array[i][j];
 				}
 			}
 			
@@ -326,6 +333,15 @@ public class ModuleVariabilitySystem {
 	}
 	
 	
+	private double compute_Single_VL(int index_1, int index_2) {
+		// TODO Auto-generated method stub
+		double information_loss = 0.0;
+		ModuledFeature module_feature1 = indexToFeature.get(index_1);
+		ModuledFeature module_feature2 = indexToFeature.get(index_2);
+		information_loss = VariabilityLoss.computeVLoss(module_feature1, module_feature2);
+		return information_loss;
+	}
+
 	protected double compute_Single_InformationLoss(int index_1,int index_2){
 		double information_loss = 0.0;
 		ModuledFeature module_feature1 = indexToFeature.get(index_1);
@@ -362,9 +378,8 @@ public class ModuleVariabilitySystem {
 		double temp_2 = (pro_module_1/pro_module_)*total_mergedkl_vector_module_1+(pro_module_2/pro_module_)*total_mergedkl_vector_module_2;
 		assert Double.isNaN(temp_2)==false;
 		
-		// variability loss
- 		double temp_3 = VariabilityLoss.computeVLoss(module_feature1, module_feature2);
-		information_loss = temp_1*temp_2*temp_3;
+		
+		information_loss = temp_1*temp_2;
 		
 		assert Double.isNaN(information_loss)==false;
 		return information_loss;
