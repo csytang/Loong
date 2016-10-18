@@ -47,7 +47,7 @@ public class LIMBO {
 		for(Map.Entry<Integer, Module> entry:indexToModule.entrySet()){
 			int index = entry.getKey();
 			Module module = entry.getValue();
-			ModuledFeature module_feature = new ModuledFeature(module,totalsize,false);
+			ModuledFeature module_feature = new ModuledFeature(module,totalsize);
 			// add to set
 			features.add(module_feature);
 			// add the mapping

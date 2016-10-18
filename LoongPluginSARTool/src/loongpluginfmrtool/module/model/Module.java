@@ -322,6 +322,11 @@ public class Module implements Serializable {
 		return variability;
 	}
 
+	public int getIndex() {
+		// TODO Auto-generated method stub
+		return moduleIndex;
+	}
+
 	
 	
 	

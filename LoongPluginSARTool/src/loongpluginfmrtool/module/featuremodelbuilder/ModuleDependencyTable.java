@@ -90,4 +90,12 @@ public class ModuleDependencyTable {
 		// TODO Auto-generated method stub
 		return table;
 	}
+
+	public int getDependencyCount(Module modulei, Module modulej) {
+		// TODO Auto-generated method stub
+		int indexi  = modulei.getIndex();
+		int indexj = modulej.getIndex();
+		return table[indexi][indexj];
+	
+	}
 }
