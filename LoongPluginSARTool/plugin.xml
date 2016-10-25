@@ -60,6 +60,13 @@
                label="Generate RSF file (ACDC Toolbox)"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
          </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.GenerateGroundTruth"
+               icon="icons/groundtruth.jpg"
+               id="LoongPluginFMRTool.generateGroundTruth"
+               label="Generate Ground-Truth"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
+         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
