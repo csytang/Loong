@@ -68,10 +68,10 @@ public class GenticClustering {
         }
        
         //使用 mutate 进行检查 
-        GAIndividual ind = newPopulation.getIndividual(0);
-        int moduletotalsize = ind.size();
+       
+        int modulesize = indexToModule.size();
         
-        for(int i = 0;i < moduletotalsize;i++){
+        for(int i = 0;i < modulesize;i++){
         	boolean hasmutipleset = false;
         	boolean hasbeenset = false;
         	List<Integer> mutiplesetIndexList = new LinkedList<Integer>();
@@ -90,16 +90,14 @@ public class GenticClustering {
         	}
         	if(hasmutipleset){
         		//如果有 多个被设定
-        		/*
-        		 * 选择一个 会是 fitness 降低最少的 
-        		 */
-        		for(int msindex = 0;msindex < mutiplesetIndexList.size();msindex++){
-        			
-        		}
+        		
+        		// 选择一个 会是 fitness 降低最少的 
+        		 System.out.println("Has multiple set for module index:"+i);
+        		
         		
         	}else{
         		if(!hasbeenset){
-        			//如果 没有设定
+        			System.out.println("Has no set for module index:"+i);
         			int maxImproveIndex = 0;
         			boolean isfirstset = true;
         			double maxImprove = 0.0;
@@ -121,10 +119,12 @@ public class GenticClustering {
         			GAIndividual changeindividual = newPopulation.getIndividual(maxImproveIndex);
         			changeindividual.setGene(i, true);
         			newPopulation.saveIndividual(maxImproveIndex, changeindividual);
+        		}else{
+        			System.out.println("Has one set for module index:"+i);
         		}
         	}
-        	
         }
+        
         
 
         return newPopulation;
