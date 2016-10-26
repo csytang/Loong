@@ -19,13 +19,16 @@ public class GACrossOver {
 	}
     public static  GAIndividual crossover(GAIndividual indiv1, GAIndividual indiv2,GenticClustering clustering,double uniformRate) {
     	GAIndividual newSol = new GAIndividual(clustering);
+    	newSol.setDefaultGeneLength(indiv1.size());
         // Loop through genes
         for (int i = 0; i < indiv1.size(); i++) {
             // Crossover
             if (Math.random() <= uniformRate) {
-                newSol.setGene(i, indiv1.getGene(i));
+            	boolean value = indiv1.getGene(i);
+                newSol.setGene(i, value);
             } else {
-                newSol.setGene(i, indiv2.getGene(i));
+            	boolean value = indiv2.getGene(i);
+                newSol.setGene(i, value);
             }
         }
         return newSol;

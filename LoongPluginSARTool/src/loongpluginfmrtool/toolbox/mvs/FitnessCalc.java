@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.Vector;
 
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.model.Module;
@@ -14,35 +15,36 @@ import loongpluginfmrtool.module.model.Module;
 
 public class FitnessCalc {
 
-	private static ModuleDependencyTable dependency_table;
-	private static int size;
-	private static Map<Integer,ModuleSet>indexModuleSet = new HashMap<Integer,ModuleSet>();
-
-	private static Stack<ModuleSet> modulestack = new Stack<ModuleSet>();
+	private ModuleDependencyTable dependency_table;
+	private int totalsize;
+	private Map<Integer,ModuleSet>indexModuleSet = new HashMap<Integer,ModuleSet>();
+	private int realsize;
+	private Stack<ModuleSet> modulestack = new Stack<ModuleSet>();
 	
-	public static double getFitnessValue(GAIndividual gaIndividual,ArrayList<Module>moduleArray) {
+	public double getFitnessValue(GAIndividual gaIndividual,Map<Integer, Module>indexToModule) {
 		// TODO Auto-generated method stub
 		// Information Loss; Variability Loss; Modularity
 		double fitness = 0.0;
-		BitSet gene = gaIndividual.getGene();
-		size = gene.size();
+		Vector<Boolean> gene = gaIndividual.getGene();
+		totalsize = gene.size();
 		Set<Module>containedModule = new HashSet<Module>();
 		dependency_table = gaIndividual.getGeneClustering().getDependencyTable();
 		
 		
 		int index = 0;
-		for(int i = 0;i < size;i++){
+		for(int i = 0;i < totalsize;i++){
 			boolean value = gene.get(i);
 			if(value){
-				containedModule.add(moduleArray.get(i));
+				containedModule.add(indexToModule.get(i));
 				Set<Module> moduleset = new HashSet<Module>();
-				moduleset.add(moduleArray.get(i));
+				moduleset.add(indexToModule.get(i));
 				ModuleSet set = new ModuleSet(moduleset,dependency_table,index);
 				indexModuleSet.put(index,set);
 				modulestack.push(set);
 				index++;
 			}
 		}
+		realsize = indexModuleSet.size();
 		
 		double informationloss = 0.0;
 		
@@ -58,15 +60,10 @@ public class FitnessCalc {
 			source.addModuleSet(top);
 			resetAllIndexs(source,top);
 		}
-		
 		// module quality metrics
 		ModuleQualityMetrics metrics = new ModuleQualityMetrics(source);
 		modularityvalue = metrics.getIntraConnectMSet1();
-		
 		fitness = informationloss+modularityvalue-variabilityloss;
-		
-		
-		
 		return fitness;
 	}
 
@@ -74,7 +71,7 @@ public class FitnessCalc {
 	 * 重新编写 index
 	 * 
 	 */
-	private static void resetAllIndexs(ModuleSet left,ModuleSet remove) {
+	private  void resetAllIndexs(ModuleSet left,ModuleSet remove) {
 		// TODO Auto-generated method stub
 		Map<Integer,ModuleSet>updateindexModuleSet = new HashMap<Integer,ModuleSet>();
 		int index = 0;
@@ -87,10 +84,10 @@ public class FitnessCalc {
 			}
 		}
 		indexModuleSet = updateindexModuleSet;
-		size = updateindexModuleSet.size();
+		realsize = updateindexModuleSet.size();
 	}
 
-	private static double computeInformationLoss(ModuleSet source,ModuleSet target) {
+	private  double computeInformationLoss(ModuleSet source,ModuleSet target) {
 		// build the dependency table
 		int[][] dependencytable = createDependencyTable();
 		double[][] normalized_dependency_table = normalizedDependencyTable(dependencytable);
@@ -100,11 +97,11 @@ public class FitnessCalc {
 		return information_loss_table_array[indexsource][indextarget];
 	}
 
-	private static double[][] computeInformationLossTable(double[][] normalized_dependency_table) {
+	private  double[][] computeInformationLossTable(double[][] normalized_dependency_table) {
 		// TODO Auto-generated method stub
-		double[][] information_loss_table_array = new double[size][size];
-		for(int i = 0;i < size;i++){
-			for(int j = i;j < size;j++){
+		double[][] information_loss_table_array = new double[realsize][realsize];
+		for(int i = 0;i < realsize;i++){
+			for(int j = i;j < realsize;j++){
 				if(i==j){
 					information_loss_table_array[i][j] = 0;
 				}else{
@@ -124,7 +121,7 @@ public class FitnessCalc {
 	 * @param normalized_dependency_table
 	 * @return
 	 */
-	protected static double compute_Single_InformationLoss(int index_1,int index_2,double[][] normalized_dependency_table){
+	protected  double compute_Single_InformationLoss(int index_1,int index_2,double[][] normalized_dependency_table){
 		double information_loss = 0.0;
 		ModuleSet module_feature1 = indexModuleSet.get(index_1);
 		ModuleSet module_feature2 = indexModuleSet.get(index_2);
@@ -133,12 +130,12 @@ public class FitnessCalc {
 		double temp_1 = pro_module_1+pro_module_2;
 		double pro_module_ = pro_module_1+pro_module_2;;
 		assert Double.isNaN(pro_module_)==false;
-		double[] mergedkl_vector_module_1 = new double[size];
-		double[] mergedkl_vector_module_2 = new double[size];
+		double[] mergedkl_vector_module_1 = new double[realsize];
+		double[] mergedkl_vector_module_2 = new double[realsize];
 		double total_mergedkl_vector_module_1 = 0.0;
 		double total_mergedkl_vector_module_2 = 0.0;
 		// 计算 D-KL Kullback-Leibler divergence
-		for(int i = 0;i < size;i++){
+		for(int i = 0;i < realsize;i++){
 			
 			double p_bar_i = pro_module_1/pro_module_*normalized_dependency_table[index_1][i]+pro_module_2/pro_module_*normalized_dependency_table[index_2][i];
 			if(p_bar_i==0||normalized_dependency_table[index_1][i]==0){
@@ -174,15 +171,15 @@ public class FitnessCalc {
 	 * @param dependencytable
 	 * @return
 	 */
-	private static double[][] normalizedDependencyTable(int[][] dependencytable) {
+	private  double[][] normalizedDependencyTable(int[][] dependencytable) {
 		// TODO Auto-generated method stub
-		double[][] normalized_dependency_table = new double[size][size];
-		for(int i = 0;i < size;i++){
+		double[][] normalized_dependency_table = new double[realsize][realsize];
+		for(int i = 0;i < realsize;i++){
 			int rowcount = 0;
-			for(int j = 0;j < size;j++){
+			for(int j = 0;j < realsize;j++){
 				rowcount+=dependencytable[i][j];
 			}
-			for(int j = 0; j < size;j++){
+			for(int j = 0; j < realsize;j++){
 				normalized_dependency_table[i][j] = ((double)dependencytable[i][j])/rowcount;
 			}
 		}
@@ -194,13 +191,15 @@ public class FitnessCalc {
 	 * 创建依赖关系表
 	 * @return
 	 */
-	private static int[][] createDependencyTable() {
+	private  int[][] createDependencyTable() {
 		// TODO Auto-generated method stub
-		int[][] dependencytable = new int[size][size];
-		for(int i = 0;i < size;i++){
+		int[][] dependencytable = new int[realsize][realsize];
+		for(int i = 0;i < realsize;i++){
 			ModuleSet moduleseti = indexModuleSet.get(i);
-			for(int j = 0;j < size;j++){
+			
+			for(int j = 0;j < realsize;j++){
 				ModuleSet modulesetj = indexModuleSet.get(j);
+				
 				if(i==j){
 					dependencytable[i][j] = 0;
 				}else{

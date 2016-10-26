@@ -1,8 +1,11 @@
 package loongpluginfmrtool.toolbox.mvs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
@@ -14,18 +17,22 @@ public class GenticClustering {
 	
 	 /* GA parameters */
     private static final double uniformRate = 0.5;
-    private static final double mutationRate = 0.015;
     private static final int tournamentSize = 5;
     private static final boolean elitism = true;
-    private ArrayList<Module>allmodules;
+    private Map<Integer, Module>indexToModule;
     private int cluster;
     private ModuleDependencyTable table;
-	public GenticClustering(ArrayList<Module>pallmodules,int pcluster,ModuleDependencyTable ptable){
-		this.allmodules = pallmodules;
+    private GAPopulation initpoluation;
+	public GenticClustering(Map<Integer, Module>pindexToModule,int pcluster,ModuleDependencyTable ptable){
+		this.indexToModule = pindexToModule;
 		this.cluster = pcluster;
 		this.table = ptable;
+		this.initpoluation = new GAPopulation(this,pcluster,true);
 	}
 	
+	public GAPopulation getInitialGAPopulation(){
+		return initpoluation;
+	}
 	
 	public ModuleDependencyTable getDependencyTable(){
 		return this.table;
@@ -35,8 +42,10 @@ public class GenticClustering {
 	public GAPopulation evolvePopulation(GAPopulation pop) {
 		// Keep our best individual
 		GAPopulation newPopulation = new GAPopulation(this,pop.size(),false);
+		
         if (elitism) {
             newPopulation.saveIndividual(0, pop.getFittest());
+            Set<Module>settedmodules = pop.getFittest().getallSelectedModules(indexToModule);
         }
 
         // Crossover population
@@ -49,17 +58,74 @@ public class GenticClustering {
         
         // Loop over the population size and create new individuals with
         // crossover 交叉
+        //  交叉 的 处理
+        
         for (int i = elitismOffset; i < pop.size(); i++) {
             GAIndividual indiv1 = tournamentSelection(pop);
             GAIndividual indiv2 = tournamentSelection(pop);
             GAIndividual newIndiv = GACrossOver.crossover(indiv1, indiv2,this,uniformRate);
             newPopulation.saveIndividual(i, newIndiv);
         }
-
-        // Mutate population
-        for (int i = elitismOffset; i < newPopulation.size(); i++) {
-            mutate(newPopulation.getIndividual(i));
+       
+        //使用 mutate 进行检查 
+        GAIndividual ind = newPopulation.getIndividual(0);
+        int moduletotalsize = ind.size();
+        
+        for(int i = 0;i < moduletotalsize;i++){
+        	boolean hasmutipleset = false;
+        	boolean hasbeenset = false;
+        	List<Integer> mutiplesetIndexList = new LinkedList<Integer>();
+        	mutiplesetIndexList.clear();
+        	for(int j = 0;j < newPopulation.size();j++){
+        		GAIndividual individual = newPopulation.getIndividual(j);
+        		if(individual.getGene(i)==true){
+	        		if(hasbeenset==false){
+	        			hasbeenset = true;
+	        			mutiplesetIndexList.add(j);
+	        		}else{
+	        			hasmutipleset = true;
+	        			mutiplesetIndexList.add(j);
+	        		}
+        		}
+        	}
+        	if(hasmutipleset){
+        		//如果有 多个被设定
+        		/*
+        		 * 选择一个 会是 fitness 降低最少的 
+        		 */
+        		for(int msindex = 0;msindex < mutiplesetIndexList.size();msindex++){
+        			
+        		}
+        		
+        	}else{
+        		if(!hasbeenset){
+        			//如果 没有设定
+        			int maxImproveIndex = 0;
+        			boolean isfirstset = true;
+        			double maxImprove = 0.0;
+        			for(int msindex = 0;msindex < newPopulation.size();msindex++){
+        				GAIndividual individual = newPopulation.getIndividual(msindex);
+        				GAIndividual mutateindividual = new GAIndividual(individual);
+        				mutateindividual.setGene(i, true);
+        				FitnessCalc cal = new FitnessCalc();
+        				double improve = cal.getFitnessValue(mutateindividual, indexToModule)-cal.getFitnessValue(individual, indexToModule);
+        				if(isfirstset){
+        					maxImprove = improve;
+        					maxImproveIndex = msindex;
+        					isfirstset = false;
+        				}else if(improve>maxImprove){
+        					maxImprove = improve;
+        					maxImproveIndex = msindex;
+        				}
+        			}
+        			GAIndividual changeindividual = newPopulation.getIndividual(maxImproveIndex);
+        			changeindividual.setGene(i, true);
+        			newPopulation.saveIndividual(maxImproveIndex, changeindividual);
+        		}
+        	}
+        	
         }
+        
 
         return newPopulation;
 	}
@@ -80,31 +146,19 @@ public class GenticClustering {
         }
         // Get the fittest
         GAIndividual fittest = tournament.getFittest();
-		return null;
+		return fittest;
 	}
 	
 	
     
-    /**
-     * 对一个 单一变量 进行 变异
-     * @param indiv
-     */
-    // Mutate an individual
-    private static void mutate(GAIndividual indiv) {
-        // Loop through genes
-        for (int i = 0; i < indiv.size(); i++) {
-            if (Math.random() <= mutationRate) {
-                // Create random gene
-            	boolean gene = Math.random()>0.5;
-                indiv.setGene(i, gene);
-            }
-        }
-    }
+    
 
 
-	public ArrayList<Module> getModuleArray() {
+	
+
+	public Map<Integer, Module> getIndextoModule() {
 		// TODO Auto-generated method stub
-		return allmodules;
+		return indexToModule;
 	}
     
 	

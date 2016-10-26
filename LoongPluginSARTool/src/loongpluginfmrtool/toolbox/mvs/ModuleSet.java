@@ -117,17 +117,17 @@ public class ModuleSet {
 	 * 删除中采取随机的政策
 	 * @param moduletoVariability
 	 */
-	protected void removeInvalidConfigurations(Map<Module,Variability>moduletoVariability){
-		ArrayList<Variability>variablityList = new ArrayList<Variability>(moduletoVariability.values());
+	protected void removeInvalidConfigurations(Map<Module,Variability>needmoduletoVariability){
+		ArrayList<Variability>variablityList = new ArrayList<Variability>(needmoduletoVariability.values());
 		for(int i = 0;i < variablityList.size();i++){
 			Variability variabiliti = variablityList.get(i);
-			if(!moduletoVariability.containsKey(variabiliti.getModule()))
+			if(!temp_moduletoVariability.containsKey(variabiliti.getModule()))
 				continue;
 			for(int j = i+1;j < variablityList.size();j++){
 				Variability variabilityj = variablityList.get(j);
-				if(!moduletoVariability.containsKey(variabilityj.getModule()));
+				if(!temp_moduletoVariability.containsKey(variabilityj.getModule()));
 				if(variabiliti.hasConflict(variabilityj)){
-					moduletoVariability.remove(variabilityj.getModule());
+					temp_moduletoVariability.remove(variabilityj.getModule());
 				}
 			}
 		}

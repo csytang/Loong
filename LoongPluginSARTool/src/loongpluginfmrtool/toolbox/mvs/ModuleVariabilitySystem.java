@@ -1,5 +1,6 @@
 package loongpluginfmrtool.toolbox.mvs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,15 +25,26 @@ public class ModuleVariabilitySystem {
 		this.indexToModule = this.builder.getIndexToModule();
 		this.allmodules = new HashSet<Module>(this.indexToModule.values());
 		this.dependency_table = this.builder.getDependencyTable();
-		initialize();
+		
 		performClustering();
 	}
 	
-	protected void initialize(){
-		
-	}
-	
 	protected void performClustering(){
-		
+		GenticClustering gencluster = new GenticClustering(indexToModule,cluster,dependency_table);
+		GAPopulation ga = gencluster.getInitialGAPopulation();
+		boolean stoppingcriter = true;
+		//目前测试 使用
+		int loop = 0;
+		while(stoppingcriter){
+			System.out.println("Loop:"+loop);
+			
+			System.out.println("Fitness is :"+ga.getPopulationFitCount());
+			
+			ga.printPopulation();
+			
+			ga = gencluster.evolvePopulation(ga);
+			
+			loop++;
+		}
 	}
 }

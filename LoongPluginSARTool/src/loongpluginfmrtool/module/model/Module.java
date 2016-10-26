@@ -83,6 +83,7 @@ public class Module implements Serializable {
 		
 	}
 	
+	
 	public void computeVariability() {
 		this.tree = new ConfigurationOptionTree(this);
 		// TODO Auto-generated method stub
@@ -319,6 +320,9 @@ public class Module implements Serializable {
 
 	public Variability getVariability() {
 		// TODO Auto-generated method stub
+		if(variability==null){
+			computeVariability();
+		}
 		return variability;
 	}
 

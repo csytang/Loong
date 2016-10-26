@@ -9,12 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
-
-import javax.xml.transform.stream.StreamResult;
-
-import loongplugin.CIDEbridge.CIDEcolorFileReader;
-import loongplugin.CIDEbridge.CIDEmodelcolorsReader;
 import loongplugin.color.ColorManager;
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
@@ -25,23 +19,17 @@ import loongplugin.feature.FeatureModelManager;
 import loongplugin.feature.guidsl.GuidslReader;
 import loongplugin.feature.guidsl.UnsupportedModelException;
 import loongplugin.modelcolor.ModelIDCLRFileReader;
-
 import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -49,7 +37,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import loongplugin.color.coloredfile.IColoredJavaSourceFile;;

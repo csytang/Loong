@@ -12,8 +12,8 @@ public class Variability {
 	 * 算一个varability
 	 * 然后再算每一个configuration 的比重
 	 */
-	private Module module;
-	private int totalValidConfig = 0;
+	public Module module;
+	public int totalValidConfig = 0;
 	private Set<Configuration>configurations;
 	private Set<ConfigurationOption>options;
 	private ConfigurationOptionTree tree;
