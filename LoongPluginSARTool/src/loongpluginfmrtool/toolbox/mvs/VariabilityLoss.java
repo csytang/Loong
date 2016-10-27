@@ -1,27 +1,36 @@
 package loongpluginfmrtool.toolbox.mvs;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import loongpluginfmrtool.module.ModuledFeature;
+import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.model.Module;
 
 public class VariabilityLoss {
 	public VariabilityLoss(){
 		
 	}
-	public static double computeVLoss(ModuleSet mset1,ModuleSet mset2){
+	
+	public static double computeVLossPos(Set<ModuleWrapper>msetgroup){
 		double loss = 0.0;
-		int totalVariability1 = mset1.getVariabilityCount();
-		int totalVariability2 = mset2.getVariabilityCount();
-		
-		// create a temp counting
-		mset1.tempmergeModuleSet(mset2);
-		int totalafter = mset1.tempgetVariabilityCount();
-		int left = totalVariability1+totalVariability2-totalafter;
-		if(totalVariability1+totalVariability2==0){
-			return 1.0;
+		int totalavariabilitycount = 0;
+		Set<Module>allmodules = new HashSet<Module>();
+		for(ModuleWrapper set:msetgroup){
+			totalavariabilitycount+=set.getConfigurationCount();
+			allmodules.addAll(set.getModuleSet());
 		}
-		loss = ((double)left)/(totalVariability1+totalVariability2);
+		
+		ArrayList<ModuleWrapper>setlist = new ArrayList<ModuleWrapper>(msetgroup);
+		ModuleWrapper top = setlist.get(0);
+		int clusterid = top.getClusterId();
+		ModuleDependencyTable table = top.getDependencyTable();
+		
+		ModuleWrapper mergeset = new ModuleWrapper(allmodules,table,clusterid);
+		int mergedcount = mergeset.getConfigurationCount();
+		
+		loss = ((double)mergedcount)/(totalavariabilitycount);
 		return loss;
 	}
 }

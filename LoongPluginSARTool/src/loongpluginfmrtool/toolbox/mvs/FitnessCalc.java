@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -16,78 +18,84 @@ import loongpluginfmrtool.module.model.Module;
 public class FitnessCalc {
 
 	private ModuleDependencyTable dependency_table;
-	private int totalsize;
-	private Map<Integer,ModuleSet>indexModuleSet = new HashMap<Integer,ModuleSet>();
-	private int realsize;
-	private Stack<ModuleSet> modulestack = new Stack<ModuleSet>();
+	private int modulesize;
+	private int clustercount;
+	private Map<Integer,Set<ModuleWrapper>>clusterToModules = new HashMap<Integer,Set<ModuleWrapper>>();// 类id 到 类内 module
+	private Map<Integer,Module>indexToModules = new HashMap<Integer,Module>();
+	private List<Set<ModuleWrapper>>listedWrapperGroup = new LinkedList<Set<ModuleWrapper>>();
 	
-	public double getFitnessValue(GAIndividual gaIndividual,Map<Integer, Module>indexToModule) {
+	public double getFitnessValue(GAIndividual gaIndividual,Map<Integer, Module>pindexToModule,int cluster) {
 		// TODO Auto-generated method stub
 		// Information Loss; Variability Loss; Modularity
 		double fitness = 0.0;
-		Vector<Boolean> gene = gaIndividual.getGene();
-		totalsize = gene.size();
-		Set<Module>containedModule = new HashSet<Module>();
+		Vector<Integer> gene = gaIndividual.getGene();
+		modulesize = gene.size();
 		dependency_table = gaIndividual.getGeneClustering().getDependencyTable();
+		indexToModules = pindexToModule;
+		clustercount = cluster;
+		//convert the indextoModuel 
+		/**
+		 * mdid : the id of the module
+		 * mdcluster: the id of the cluster
+		 */
 		
-		
-		int index = 0;
-		for(int i = 0;i < totalsize;i++){
-			boolean value = gene.get(i);
-			if(value){
-				containedModule.add(indexToModule.get(i));
-				Set<Module> moduleset = new HashSet<Module>();
-				moduleset.add(indexToModule.get(i));
-				ModuleSet set = new ModuleSet(moduleset,dependency_table,index);
-				indexModuleSet.put(index,set);
-				modulestack.push(set);
-				index++;
+		//////////////////////////////////////////////////////////////////////////////////////////
+
+		for(int mdid = 0;mdid <gene.size();mdid++){
+			int mdcluster = gene.get(mdid);
+			if(clusterToModules.containsKey(mdcluster)){
+				Set<ModuleWrapper> mset = clusterToModules.get(mdcluster);
+				mset.add(new ModuleWrapper(indexToModules.get(mdid),dependency_table,mdcluster));
+			}else{
+				Set<Module>moduleset = new HashSet<Module>();
+				moduleset.add(indexToModules.get(mdid));
+				ModuleWrapper mwrapper = new ModuleWrapper(moduleset,dependency_table,mdcluster);
+				Set<ModuleWrapper> mset= new HashSet<ModuleWrapper>();
+				mset.add(mwrapper);
+				clusterToModules.put(mdcluster, mset);
 			}
 		}
-		realsize = indexModuleSet.size();
+		//////////////////////////////////////////////////////////////////////////////////////////
+		double modularityvalue = 0.0;
+		double variabilityloss = 0.0;
+		double intramodularity = 0.0;
+		double intermodularity = 0.0;
+		for(Map.Entry<Integer, Set<ModuleWrapper>>entry:clusterToModules.entrySet()){
+			Set<ModuleWrapper> wrapperset = entry.getValue();
+			variabilityloss+=VariabilityLoss.computeVLossPos(wrapperset);
+			ModuleQualityMetrics metrics = new ModuleQualityMetrics(wrapperset);
+			intramodularity+=metrics.getIntraConnectMSet1();
+			listedWrapperGroup.add(wrapperset);
+		}
+		intramodularity = intramodularity / clustercount;
+		for(int i= 0;i < listedWrapperGroup.size();i++){
+			Set<ModuleWrapper> wrapperseti = listedWrapperGroup.get(i);
+			for(int j = i+1;j < listedWrapperGroup.size();j++){
+				Set<ModuleWrapper> wrappersetj = listedWrapperGroup.get(j);
+				ModuleQualityMetrics metrics = new ModuleQualityMetrics(wrapperseti,wrappersetj);
+				intermodularity+=metrics.getInterConnect();
+			}
+		}
+		intermodularity = intermodularity/ (clustercount*(clustercount-1)/2);
+		
+		modularityvalue = intramodularity-intermodularity;
+		//////////////////////////////////////////////////////////////////////////////////////////
 		
 		double informationloss = 0.0;
 		
-		double modularityvalue = 0.0;
 		
-		double variabilityloss = 0.0;
-		// pop the module from module stack and merge to compute all loss during merging
-		ModuleSet source= modulestack.pop();
-		while(!modulestack.isEmpty()){
-			ModuleSet top = modulestack.pop();
-			informationloss+=computeInformationLoss(source,top);
-			variabilityloss+=VariabilityLoss.computeVLoss(source, top);
-			source.addModuleSet(top);
-			resetAllIndexs(source,top);
-		}
-		// module quality metrics
-		ModuleQualityMetrics metrics = new ModuleQualityMetrics(source);
-		modularityvalue = metrics.getIntraConnectMSet1();
-		fitness = informationloss+modularityvalue-variabilityloss;
+		
+		//////////////////////////////////////////////////////////////////////////////////////////
+
+		fitness = modularityvalue-informationloss+variabilityloss;
+		
+		
 		return fitness;
 	}
 
-	/**
-	 * 重新编写 index
-	 * 
-	 */
-	private  void resetAllIndexs(ModuleSet left,ModuleSet remove) {
-		// TODO Auto-generated method stub
-		Map<Integer,ModuleSet>updateindexModuleSet = new HashMap<Integer,ModuleSet>();
-		int index = 0;
-		for(Map.Entry<Integer, ModuleSet>entry:indexModuleSet.entrySet()){
-			ModuleSet set = entry.getValue();
-			if(!set.equals(remove)){
-				updateindexModuleSet.put(index, set);
-				set.setIndex(index);
-				index++;
-			}
-		}
-		indexModuleSet = updateindexModuleSet;
-		realsize = updateindexModuleSet.size();
-	}
+	
 
-	private  double computeInformationLoss(ModuleSet source,ModuleSet target) {
+	private  double computeInformationLoss(ModuleWrapper source,ModuleWrapper target) {
 		// build the dependency table
 		int[][] dependencytable = createDependencyTable();
 		double[][] normalized_dependency_table = normalizedDependencyTable(dependencytable);

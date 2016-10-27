@@ -27,6 +27,11 @@ public class Variability {
 		option_queue = new LinkedList<ConfigurationOption>();
 	}
 	
+	public Set<Configuration> getAllValidConfigurations(){
+		return configurations;
+	}
+	
+	
 	protected void Collect(ConfigurationOptionTree ptree){
 		this.tree = ptree;
 		this.roots = this.tree.getRoots();

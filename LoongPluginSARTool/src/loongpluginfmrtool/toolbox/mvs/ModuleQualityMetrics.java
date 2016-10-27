@@ -1,6 +1,7 @@
 package loongpluginfmrtool.toolbox.mvs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,28 +10,28 @@ import loongpluginfmrtool.module.ModuledFeature;
 import loongpluginfmrtool.module.model.Module;
 
 public class ModuleQualityMetrics {
-	private ModuleSet mset1;
-	private ModuleSet mset2;
+	private Set<ModuleWrapper> mwrapperset1;
+	private Set<ModuleWrapper> mwrapperset2;
 	private double intra_connectivity_feature1 = 0.0;
 	private double intra_connectivity_feature2 = 0.0;
 
 	private double inter_connectivity = 0.0;
 	
-	public ModuleQualityMetrics(ModuleSet pmset1, ModuleSet pmset2){
-		this.mset1 = pmset1;
-		this.mset2 = pmset2;
+	public ModuleQualityMetrics(Set<ModuleWrapper> pmset1, Set<ModuleWrapper> pmset2){
+		this.mwrapperset1 = pmset1;
+		this.mwrapperset2 = pmset2;
 		computebasicMetrics();
 	}
 	
-	public ModuleQualityMetrics(ModuleSet pmset1){
-		this.mset1 = pmset1;
-		intra_connectivity_feature1 = compute_intro_connectivity(mset1);
+	public ModuleQualityMetrics(Set<ModuleWrapper> pmset1){
+		this.mwrapperset1 = pmset1;
+		intra_connectivity_feature1 = compute_intro_connectivity(mwrapperset1);
 	}
 	
 	protected void computebasicMetrics(){
-		intra_connectivity_feature1 = compute_intro_connectivity(mset1);
-		intra_connectivity_feature2 = compute_intro_connectivity(mset2);
-		inter_connectivity = compute_inter_connectivity(mset1,mset2);
+		intra_connectivity_feature1 = compute_intro_connectivity(mwrapperset1);
+		intra_connectivity_feature2 = compute_intro_connectivity(mwrapperset2);
+		inter_connectivity = compute_inter_connectivity(mwrapperset1,mwrapperset2);
 	}
 	
 	public double getIntraConnectMSet1(){
@@ -53,18 +54,26 @@ public class ModuleQualityMetrics {
 	 * @param feature2
 	 * @return
 	 */
-	private double compute_inter_connectivity(ModuleSet mset1,
-			ModuleSet mset2) {
+	private double compute_inter_connectivity(Set<ModuleWrapper> mset1,
+			Set<ModuleWrapper> mset2) {
 		// TODO Auto-generated method stub
-		int num_md_f1 = mset1.getModuleSet().size();
-		int num_md_f2 = mset2.getModuleSet().size();
+		int num_md_f1 = 0;
+		int num_md_f2 = 0;
 		double result = 0.0;
 		double ef1f2 = 0.0;
 		//f1
-		Set<Module> intramodules_f1 = mset1.getModuleSet();
+		Set<Module> intramodules_f1 = new HashSet<Module>();
+		for(ModuleWrapper wrapper:mset1){
+			intramodules_f1.addAll(wrapper.getModuleSet());
+			num_md_f1+=wrapper.getModuleSet().size();
+		}
 		
 		//f2
-		Set<Module> intramodules_f2 = mset2.getModuleSet();
+		Set<Module> intramodules_f2 = new HashSet<Module>();
+		for(ModuleWrapper wrapper:mset2){
+			intramodules_f2.addAll(wrapper.getModuleSet());
+			num_md_f2+=wrapper.getModuleSet().size();
+		}
 		
 		for(Module module:intramodules_f1){
 			Map<Module,Integer> module_count = module.getAllDependency();
@@ -97,10 +106,14 @@ public class ModuleQualityMetrics {
 	 * A = u/pow(N,2)
 	 * u = 
 	 */
-	protected double compute_intro_connectivity(ModuleSet mset){
-		int num_module = mset.getModuleSet().size();
+	protected double compute_intro_connectivity(Set<ModuleWrapper> mset){
+		int num_module = 0;
 		int intra_connection = 0;
-		Set<Module> intramodules = mset.getModuleSet();
+		Set<Module> intramodules = new HashSet<Module>();
+		for(ModuleWrapper wrapper:mset){
+			intramodules.addAll(wrapper.getModuleSet());
+			num_module+=wrapper.getModuleSet().size();
+		}
 		List<Module> list_intramodules = new ArrayList<Module>(intramodules);
 		for(int i = 0;i < list_intramodules.size();i++){
 			Module modulei = list_intramodules.get(i);

@@ -67,4 +67,15 @@ public class Configuration {
 		}
 		return false;
 	}
+	
+	/**
+	 * return whether a configuration is invalid under another configuration
+	 * @param config
+	 * @return
+	 */
+	public boolean isInvalidUnder(Configuration config) {
+		// TODO Auto-generated method stub
+		
+		return false;
+	}
 }
