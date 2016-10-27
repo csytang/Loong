@@ -134,21 +134,21 @@ getLocalMaxGraph(Cluster c)
 
     //for (int i=0; i<(rndClustOrdering.length/2); ++i) {
     for (int i=0; i<rndFreq; ++i) {
-      int pos1 = (int)(random_d.nextFloat() * (rndClustOrdering.length-1));
-      int pos2 = (int)(random_d.nextFloat() * (rndClustOrdering.length-1));
-      int tmp = rndClustOrdering[pos1];
-      rndClustOrdering[pos1] = rndClustOrdering[pos2];
-      rndClustOrdering[pos2] = tmp;
+    	int pos1 = (int)(random_d.nextFloat() * (rndClustOrdering.length-1));
+    	int pos2 = (int)(random_d.nextFloat() * (rndClustOrdering.length-1));
+    	int tmp = rndClustOrdering[pos1];
+    	rndClustOrdering[pos1] = rndClustOrdering[pos2];
+    	rndClustOrdering[pos2] = tmp;
     }
 
     rndFreq = (int)(dPct * (double)((double)rndClustNameOrdering.length/2.0));
     //for (int i=0; i<(rndClustNameOrdering.length/2); ++i) {
     for (int i=0; i<rndFreq; ++i) {
-      int pos1 = (int)(random_d.nextFloat() * (rndClustNameOrdering.length-1));
-      int pos2 = (int)(random_d.nextFloat() * (rndClustNameOrdering.length-1));
-      int tmp = rndClustNameOrdering[pos1];
-      rndClustNameOrdering[pos1] = rndClustNameOrdering[pos2];
-      rndClustNameOrdering[pos2] = tmp;
+    	int pos1 = (int)(random_d.nextFloat() * (rndClustNameOrdering.length-1));
+    	int pos2 = (int)(random_d.nextFloat() * (rndClustNameOrdering.length-1));
+    	int tmp = rndClustNameOrdering[pos1];
+    	rndClustNameOrdering[pos1] = rndClustNameOrdering[pos2];
+    	rndClustNameOrdering[pos2] = tmp;
     }
     //Cluster maxC = c.cloneCluster();
     //Cluster intermC = c.cloneCluster();

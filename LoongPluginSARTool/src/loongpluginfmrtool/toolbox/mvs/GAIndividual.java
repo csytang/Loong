@@ -23,7 +23,9 @@ public class GAIndividual {
 		// TODO Auto-generated constructor stub
 		this.clustering = individual.clustering;
 		this.size = individual.size;
-		this.genes = individual.genes;
+		for(int i = 0;i < size;i++){
+			this.genes.add(i, individual.getGene(i));
+		}
 	}
 
 	public GenticClustering getGeneClustering(){

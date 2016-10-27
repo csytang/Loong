@@ -1,7 +1,5 @@
 package loongpluginfmrtool.toolbox.mvs;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +66,12 @@ public class GenticClustering {
         }
        
         //使用 mutate 进行检查 
+       //在未 mutation之前
+//       System.out.println("Current fitness is:"+newPopulation.getPopulationFitCount());
+        
+    //   newPopulation.printPopulation();
        
-        int modulesize = indexToModule.size();
+       int modulesize = indexToModule.size();
         
         for(int i = 0;i < modulesize;i++){
         	boolean hasmutipleset = false;
@@ -92,12 +94,41 @@ public class GenticClustering {
         		//如果有 多个被设定
         		
         		// 选择一个 会是 fitness 降低最少的 
-        		 System.out.println("Has multiple set for module index:"+i);
-        		
+//        		 System.out.println("Has multiple set for module index:"+i);
+        		 int maxImproveIndex = 0;
+     			boolean isfirstset = true;
+     			double maxImprove = 0.0;
+     			int multiplesetIndexSize = mutiplesetIndexList.size();
+     			for(int index= 0;index < multiplesetIndexSize;index++){
+     				int muindex = mutiplesetIndexList.get(index);
+     				GAIndividual individual = newPopulation.getIndividual(muindex);
+     				GAIndividual mutateindividual = new GAIndividual(individual);
+     				mutateindividual.setGene(i, false);
+     				FitnessCalc cal = new FitnessCalc();
+     				double improve = cal.getFitnessValue(mutateindividual, indexToModule)-cal.getFitnessValue(individual, indexToModule);
+     				if(isfirstset){
+     					maxImprove = improve;
+     					maxImproveIndex = muindex;
+     					isfirstset = false;
+     				}else if(improve>maxImprove){
+     					maxImprove = improve;
+     					maxImproveIndex = muindex;
+     				}
+     			}
+     			for(int index= 0;index < multiplesetIndexSize;index++){
+     				int muindex = mutiplesetIndexList.get(index);
+     				if(muindex!=maxImproveIndex){
+     					GAIndividual changeindividual = newPopulation.getIndividual(muindex);
+             			changeindividual.setGene(i, false);
+             			newPopulation.saveIndividual(muindex, changeindividual);
+     				}
+     			}
+  //   			System.out.println("Current fitness is:"+newPopulation.getPopulationFitCount());
+     			//cnewPopulation.printPopulation();
         		
         	}else{
         		if(!hasbeenset){
-        			System.out.println("Has no set for module index:"+i);
+//        			System.out.println("Has no set for module index:"+i);
         			int maxImproveIndex = 0;
         			boolean isfirstset = true;
         			double maxImprove = 0.0;
@@ -118,9 +149,11 @@ public class GenticClustering {
         			}
         			GAIndividual changeindividual = newPopulation.getIndividual(maxImproveIndex);
         			changeindividual.setGene(i, true);
+ //       			System.out.println("Current fitness is:"+newPopulation.getPopulationFitCount());
         			newPopulation.saveIndividual(maxImproveIndex, changeindividual);
-        		}else{
-        			System.out.println("Has one set for module index:"+i);
+  //      		    newPopulation.printPopulation();
+        		       
+        			//newPopulation.saveIndividual(maxImproveIndex, changeindividual);
         		}
         	}
         }
