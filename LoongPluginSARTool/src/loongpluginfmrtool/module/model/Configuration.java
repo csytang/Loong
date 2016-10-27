@@ -19,12 +19,32 @@ public class Configuration {
 		this.configurationdetail = pconfigurationlist;
 		this.module = pmodule;
 	}
+	
 	public Set<ConfigurationOption> getSelected(){
 		return selected;
 	}
+	
 	public Set<ConfigurationOption> getUnselected(){
 		return unselected;
 	}
+	
+	public Set<Statement> getSelectedStatements(){
+		Set<Statement> selectedstatement = new HashSet<Statement>();
+		for(ConfigurationOption option:selected){
+			selectedstatement.addAll(option.getEnable_Statements());
+		}
+		return selectedstatement;
+	}
+	
+	public Set<Statement> getUnselectedStatements(){
+		Set<Statement> unelectedstatement = new HashSet<Statement>();
+		for(ConfigurationOption option:unselected){
+			unelectedstatement.addAll(option.getDisable_Statements());
+		}
+		return unelectedstatement;
+	}
+	
+	
 	public Map<ConfigurationOption,Boolean> getConfigurationDetail(){
 		return this.configurationdetail;
 	}
@@ -75,7 +95,12 @@ public class Configuration {
 	 */
 	public boolean isInvalidUnder(Configuration config) {
 		// TODO Auto-generated method stub
-		
-		return false;
+		Set<Statement> enable = getSelectedStatements();
+		Set<Statement> configenable = config.getSelectedStatements();
+		if(enable.containsAll(configenable)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

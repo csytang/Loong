@@ -16,6 +16,8 @@ public class GenticClustering {
 	 /* GA parameters */
     private static final double uniformRate = 0.5;
     private static final int tournamentSize = 5;
+    private static final double mutationRate = 0.015;
+
     private static final boolean elitism = true;
     private Map<Integer, Module>indexToModule;
     private int cluster;
@@ -68,10 +70,26 @@ public class GenticClustering {
         }
        
         // mutate
-        
+        // Mutate population
+        for (int i = elitismOffset; i < newPopulation.size(); i++) {
+            mutate(newPopulation.getIndividual(i));
+        }
         
 
         return newPopulation;
+	}
+
+	private void mutate(GAIndividual individual) {
+		// TODO Auto-generated method stub
+		// Loop through genes
+        for (int i = 0; i < individual.size(); i++) {
+            if (Math.random() <= mutationRate) {
+                // Create random gene
+            	Random rad =  new Random();
+                int gene = rad.nextInt(cluster);
+                individual.setGene(i, gene);
+            }
+        }
 	}
 
 	/**

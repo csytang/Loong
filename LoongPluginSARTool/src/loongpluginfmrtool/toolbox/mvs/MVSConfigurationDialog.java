@@ -37,6 +37,10 @@ public class MVSConfigurationDialog extends Dialog {
 	private Shell shell;
 	private ModuleBuilder builder;
 	private int cluster;
+	private int populationcount;
+	private Text populationcounttext;
+	private Text evolution;
+	private int evolutioncount;
 	/**
 	 * Create the dialog.
 	 * @param parentShell
@@ -74,14 +78,22 @@ public class MVSConfigurationDialog extends Dialog {
 		text.setLayoutData(gd_text);
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
+		
+		Label lblIndividualsIn = new Label(container, SWT.NONE);
+		lblIndividualsIn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		lblIndividualsIn.setText("# Individuals In Population");
+		
+		populationcounttext = new Text(container, SWT.BORDER);
+		populationcounttext.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
+		
+		Label lblEvoluation = new Label(container, SWT.NONE);
+		lblEvoluation.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		lblEvoluation.setText("# Evolution");
+		
+		evolution = new Text(container, SWT.BORDER);
+		evolution.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		
 		
@@ -106,11 +118,14 @@ public class MVSConfigurationDialog extends Dialog {
 		// TODO Auto-generated method stub
 		
 		String textcontent = text.getText();
+		String populationtextcontent = populationcounttext.getText();
+		String evoluationtextcontent = evolution.getText();
 		try{
 			this.cluster = Integer.parseInt(textcontent);
 			//super.okPressed();
-			
-			ModuleVariabilitySystem mvs = new ModuleVariabilitySystem(builder,cluster);
+			this.populationcount = Integer.parseInt(populationtextcontent);
+			this.evolutioncount = Integer.parseInt(evoluationtextcontent);
+			ModuleVariabilitySystem mvs = new ModuleVariabilitySystem(builder,cluster,populationcount,evolutioncount);
 		}catch(NumberFormatException e){
 			Display.getCurrent().syncExec(new Runnable(){
 

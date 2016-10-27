@@ -75,13 +75,7 @@ public class GAPopulation {
         return fittest;
     }
 	
-	public double getPopulationFitCount(){
-		double count = 0.0;
-		for (int i = 0; i < size(); i++) {
-			count+=individuals[i].getFitness();
-        }
-		return count;
-	}
+	
 	
     
 }
