@@ -31,6 +31,9 @@ public class ModuleVariabilitySystem {
 	}
 	
 	protected void performClustering(){
+		/*
+		 * 
+		 */
 		clustering = new GenticClustering(indexToModule,cluster,populationcount,dependency_table);
 		population =  clustering.getInitialGAPopulation();
 		for(int i = 0;i < evoluation;i++){

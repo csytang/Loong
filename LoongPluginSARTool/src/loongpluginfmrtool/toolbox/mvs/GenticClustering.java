@@ -24,6 +24,13 @@ public class GenticClustering {
     private ModuleDependencyTable table;
     private GAPopulation initpoluation;
     private int populationsize;
+    /**
+     * 
+     * @param pindexToModule
+     * @param pcluster # of cluster
+     * @param population # of population
+     * @param ptable # table
+     */
 	public GenticClustering(Map<Integer, Module>pindexToModule,int pcluster,int population,ModuleDependencyTable ptable){
 		this.indexToModule = pindexToModule;
 		this.cluster = pcluster;

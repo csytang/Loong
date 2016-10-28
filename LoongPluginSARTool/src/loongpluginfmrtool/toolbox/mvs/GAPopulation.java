@@ -15,19 +15,21 @@ import loongpluginfmrtool.module.model.Module;
 public class GAPopulation {
 	
 	private GAIndividual[] individuals;
-	private int acluster;
+	private int acluster_count;
 	private Map<Integer,Module> indextomodules;
 	private GenticClustering clustering;
-	public GAPopulation(GenticClustering pclustering,int cluster,int populationsize, boolean initialise){
+	private int populationcount;
+	public GAPopulation(GenticClustering pclustering,int clustercount,int populationsize, boolean initialise){
 		this.clustering = pclustering;
 		this.indextomodules = pclustering.getIndextoModule();
-		this.acluster = cluster;
-		individuals = new GAIndividual[cluster];
+		this.acluster_count = clustercount;
+		individuals = new GAIndividual[populationsize];
+		populationcount = populationsize;
 		// update default size;
 		if(initialise){
 			int defaultsize = 0;
 			for(int i = 0;i < populationsize;i++){
-				GAIndividual individul = new GAIndividual(clustering,acluster);
+				GAIndividual individul = new GAIndividual(clustering,acluster_count);
 				defaultsize = indextomodules.size();
 				individul.setDefaultGeneLength(defaultsize);
 				individul.initialize();
@@ -47,7 +49,7 @@ public class GAPopulation {
     
     
     public void printPopulation(){
-    	for(int i = 0;i < acluster;i++){
+    	for(int i = 0;i < populationcount;i++){
     		GAIndividual  ind = individuals[i];
     		ind.printIndividual();
     	}
