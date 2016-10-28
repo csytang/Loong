@@ -27,7 +27,7 @@ public class LIMBO {
 	private int[][] featuredependency_table_array;
 	private double[][] featuredependency_table_normalized_array;
 	private int size;
-	private int totalsize;
+	private int num_module;
 	private double MAXVALUE = 10000;
 	private int cluster;
 	private boolean debug = true;
@@ -37,7 +37,7 @@ public class LIMBO {
 		this.indexToModule = this.builder.getIndexToModule();
 		this.allmodules = new HashSet<Module>(this.indexToModule.values());
 		this.dependency_table = this.builder.getDependencyTable();
-		this.totalsize = this.indexToModule.size();
+		this.num_module = this.indexToModule.size();
 		initialize();
 		performClustering();
 	}
@@ -47,7 +47,7 @@ public class LIMBO {
 		for(Map.Entry<Integer, Module> entry:indexToModule.entrySet()){
 			int index = entry.getKey();
 			Module module = entry.getValue();
-			ModuledFeature module_feature = new ModuledFeature(module,totalsize);
+			ModuledFeature module_feature = new ModuledFeature(module,num_module);
 			// add to set
 			features.add(module_feature);
 			// add the mapping

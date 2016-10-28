@@ -60,12 +60,24 @@ public class FitnessCalc {
 		double variabilityloss = 0.0;
 		double intramodularity = 0.0;
 		double intermodularity = 0.0;
+		
+		double informationloss = 0.0;
+		
+		
 		for(Map.Entry<Integer, Set<ModuleWrapper>>entry:clusterToModules.entrySet()){
 			Set<ModuleWrapper> wrapperset = entry.getValue();
+			
+			// variability loss
 			variabilityloss+=VariabilityLoss.computeVLossPos(wrapperset);
+			
 			ModuleQualityMetrics metrics = new ModuleQualityMetrics(wrapperset);
 			intramodularity+=metrics.getIntraConnectMSet1();
 			listedWrapperGroup.add(wrapperset);
+			
+			//information loss 
+			InformationLossCalc infolosscal = new InformationLossCalc();
+			informationloss+=infolosscal.computeILNeg(wrapperset, dependency_table, indexToModules);
+			
 		}
 		intramodularity = intramodularity / clustercount;
 		for(int i= 0;i < listedWrapperGroup.size();i++){
@@ -79,16 +91,7 @@ public class FitnessCalc {
 		intermodularity = intermodularity/ (clustercount*(clustercount-1)/2);
 		
 		modularityvalue = intramodularity-intermodularity;
-		//////////////////////////////////////////////////////////////////////////////////////////
 		
-		double informationloss = 0.0;
-		
-		///// information loss computer
-		
-		
-		
-		//////////////////////////////////////////////////////////////////////////////////////////
-
 		fitness = modularityvalue-informationloss+variabilityloss;
 		
 		
