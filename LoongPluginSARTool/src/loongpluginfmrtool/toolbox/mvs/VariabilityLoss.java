@@ -18,7 +18,8 @@ public class VariabilityLoss {
 		int totalavariabilitycount = 0;
 		Set<Module>allmodules = new HashSet<Module>();
 		for(ModuleWrapper set:msetgroup){
-			totalavariabilitycount+=set.getConfigurationCount();
+			int configurationcount = set.getConfigurationCount();
+			totalavariabilitycount += configurationcount;
 			allmodules.addAll(set.getModuleSet());
 		}
 		
@@ -29,7 +30,9 @@ public class VariabilityLoss {
 		
 		ModuleWrapper mergeset = new ModuleWrapper(allmodules,table,clusterid);
 		int mergedcount = mergeset.getConfigurationCount();
-		
+		if(totalavariabilitycount==0){
+			return 0.0;
+		}
 		loss = ((double)mergedcount)/(totalavariabilitycount);
 		return loss;
 	}

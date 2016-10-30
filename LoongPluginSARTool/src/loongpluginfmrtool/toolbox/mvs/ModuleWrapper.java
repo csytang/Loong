@@ -36,10 +36,12 @@ public class ModuleWrapper {
 		addModules(pallmodules);
 	}
 
+	
 	private void setModuleToVariability() {
 		// TODO Auto-generated method stub
 		for(Module module:this.amodules){
-			moduletoVariability.put(module, module.getVariability());
+			Variability variab = module.getVariability();
+			moduletoVariability.put(module, variab);
 		}
 	}
 
@@ -98,9 +100,9 @@ public class ModuleWrapper {
 	}
 	
 	public int getConfigurationCount(){
-		if(validConfigs==null){
-			updateIntraConfigurations();
-		}
+		//if(validConfigs==null){
+		updateIntraConfigurations();
+		//}
 		return validConfigs.size();
 	}
 	

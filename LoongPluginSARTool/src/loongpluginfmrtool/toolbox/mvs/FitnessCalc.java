@@ -68,7 +68,8 @@ public class FitnessCalc {
 			Set<ModuleWrapper> wrapperset = entry.getValue();
 			
 			// variability loss
-			variabilityloss+=VariabilityLoss.computeVLossPos(wrapperset);
+			double variabilitylossiteration = VariabilityLoss.computeVLossPos(wrapperset);
+			variabilityloss+=variabilitylossiteration;
 			
 			ModuleQualityMetrics metrics = new ModuleQualityMetrics(wrapperset);
 			intramodularity+=metrics.getIntraConnectMSet1();
@@ -79,6 +80,7 @@ public class FitnessCalc {
 			informationloss+=infolosscal.computeILNeg(wrapperset, dependency_table, indexToModules);
 			
 		}
+		
 		intramodularity = intramodularity / clustercount;
 		for(int i= 0;i < listedWrapperGroup.size();i++){
 			Set<ModuleWrapper> wrapperseti = listedWrapperGroup.get(i);

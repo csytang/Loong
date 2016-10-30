@@ -103,4 +103,32 @@ public class Configuration {
 			return false;
 		}
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if(!(obj instanceof Configuration)){
+			return false;
+		}
+		Configuration obj_config = (Configuration)obj;
+		if(!module.equals(obj_config.module)){
+			return false;
+		}
+		if(optionlist.size()!=obj_config.optionlist.size()){
+			return false;
+		}
+		for(ConfigurationOption option:optionlist){
+			if(!obj_config.optionlist.contains(option)){
+				return false;
+			}
+			if(configurationdetail.get(option)!=obj_config.configurationdetail.get(option)){
+				return false;
+			}
+		}
+		return true;
+		
+	}
+	
+	
+	
 }

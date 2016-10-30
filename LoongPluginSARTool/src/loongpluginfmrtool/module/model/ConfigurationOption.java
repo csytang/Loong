@@ -11,6 +11,7 @@ import java.util.Set;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 
 public class ConfigurationOption extends ModuleComponent{
@@ -25,17 +26,23 @@ public class ConfigurationOption extends ModuleComponent{
 	private int externalVariabilityCount = 0;
 	private int overallVariabilityCount = 0;
 	private boolean overallVariabilityisCount = false;
-
-	public ConfigurationOption(Module passociatedmodule){
+	private MethodDeclaration methoddecl;
+	public ConfigurationOption(Module passociatedmodule,MethodDeclaration pmethoddecl){
 		super(passociatedmodule);
 		unit = passociatedmodule.getCompilationUnit();
+		methoddecl = pmethoddecl;
 	}
-	public ConfigurationOption(Expression pconfigOption,Module passociatedmodule){
+	
+	public MethodDeclaration getMethod(){
+		return methoddecl;
+	}
+	public ConfigurationOption(Expression pconfigOption,Module passociatedmodule,MethodDeclaration pmethoddecl){
 		super(passociatedmodule);
 		this.aconfigOption = pconfigOption;
 		this.associatedmodule = passociatedmodule;
 		this.confg_relationlik = new HashSet<ConfigurationRelationLink>();
 		unit = passociatedmodule.getCompilationUnit();
+		methoddecl = pmethoddecl;
 	}
 	
 	public void setOverallVariabilityCount(int value){
@@ -49,9 +56,20 @@ public class ConfigurationOption extends ModuleComponent{
 	
 	public void addConfigurationRelation(ConfigurationOption option,ConfigRelation relation){
 		ConfigurationRelationLink link = new ConfigurationRelationLink(this,option,relation);
-		confg_relationlik.add(link);
+		// check whether there is a conflict
+		if(!isAlreadyAdded(link)){
+			confg_relationlik.add(link);
+		}
 	}
 	
+	private boolean isAlreadyAdded(ConfigurationRelationLink link) {
+		// TODO Auto-generated method stub
+		for(ConfigurationRelationLink conf:confg_relationlik){
+			if(conf.equals(link))
+				return true;
+		}
+		return false;
+	}
 	public void addEnable_Statements(Statement element){
 		select_statement.add(element);
 		// 也计入到影响的 astnode部分
@@ -191,7 +209,12 @@ public class ConfigurationOption extends ModuleComponent{
 			ConfigurationOption cong_obj = (ConfigurationOption)obj;
 			if(cong_obj.getAssociatedModule().equals(associatedmodule)){
 				if(cong_obj.getExpression().equals(aconfigOption)){
-					return true;
+					if(cong_obj.getExpression().getStartPosition()==aconfigOption.getStartPosition() &&
+							cong_obj.getExpression().getLength()==aconfigOption.getLength()){
+						return true;
+					}else{
+						return false;
+					}
 				}else{
 					return false;
 				}
@@ -205,6 +228,23 @@ public class ConfigurationOption extends ModuleComponent{
 	public int getOverallVariability() {
 		// TODO Auto-generated method stub
 		return overallVariabilityCount;
+	}
+
+	public boolean isParentOf(ConfigurationOption res) {
+		// TODO Auto-generated method stub
+		if(!methoddecl.equals(res.methoddecl)){
+			return false;
+		}
+		for(ConfigurationRelationLink link:confg_relationlik){
+			ConfigurationOption target = link.getTargetConfigurationOption();
+			if(target.equals(res)){
+				if(link.getRelation().equals(ConfigRelation.CONTAINS)){
+					return true;
+				}else
+					return false;
+			}
+		}
+		return false;
 	}
 	
 	

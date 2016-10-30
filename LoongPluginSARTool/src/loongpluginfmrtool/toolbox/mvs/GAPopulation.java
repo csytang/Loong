@@ -19,6 +19,7 @@ public class GAPopulation {
 	private Map<Integer,Module> indextomodules;
 	private GenticClustering clustering;
 	private int populationcount;
+	private boolean debug = true;
 	public GAPopulation(GenticClustering pclustering,int clustercount,int populationsize, boolean initialise){
 		this.clustering = pclustering;
 		this.indextomodules = pclustering.getIndextoModule();
@@ -35,8 +36,6 @@ public class GAPopulation {
 				individul.initialize();
 				saveIndividual(i,individul);
 			}
-			
-			
 			
 		}
 	}
@@ -58,7 +57,7 @@ public class GAPopulation {
     /* Public methods */
     // Get population size
     public int size() {
-        return individuals.length;
+        return populationcount;
     }
 
     // Save individual
@@ -69,13 +68,30 @@ public class GAPopulation {
 	public GAIndividual getFittest() {
 		GAIndividual fittest = individuals[0];
         // Loop through individuals to find fittest
+		if(debug){
+			if(fittest==null){
+				System.err.println("ERROR");
+			}
+		}
         for (int i = 0; i < size(); i++) {
-            if (fittest.getFitness() <= getIndividual(i).getFitness()) {
-                fittest = getIndividual(i);
+        	GAIndividual individuali = getIndividual(i);
+        	if(debug){
+    			if(individuali==null){
+    				System.err.println("ERROR");
+    			}
+    		}
+            if (fittest.getFitness() <= individuali.getFitness()) {
+                fittest = individuali;
             }
         }
         return fittest;
     }
+
+
+	public int getClusterCount() {
+		// TODO Auto-generated method stub
+		return acluster_count;
+	}
 	
 	
 	

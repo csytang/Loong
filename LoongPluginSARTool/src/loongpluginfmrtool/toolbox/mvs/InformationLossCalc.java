@@ -239,7 +239,7 @@ public class InformationLossCalc {
 			if(!Double.isNaN(mergedkl_vector_module_1[i]))
 				total_mergedkl_vector_module_1+=mergedkl_vector_module_1[i];
 			assert Double.isNaN(total_mergedkl_vector_module_1)==false;
-			assert total_mergedkl_vector_module_1>=0;
+			//assert total_mergedkl_vector_module_1>=0;
 			if(p_bar_i==0||featuredependency_table_normalized_array[index_2][i]==0){
 				mergedkl_vector_module_2[i] = 0;
 			}else
@@ -251,9 +251,11 @@ public class InformationLossCalc {
 		assert pro_module_!=0;
 		double temp_2 = (pro_module_1/pro_module_)*total_mergedkl_vector_module_1+(pro_module_2/pro_module_)*total_mergedkl_vector_module_2;
 		assert Double.isNaN(temp_2)==false;
-		assert temp_2>=0;
+		//assert temp_2>=0;
 		information_loss = temp_1*temp_2;
 		assert Double.isNaN(information_loss)==false;
+		if(information_loss<0)
+			information_loss = 0;
 		return information_loss;
 	}
 }

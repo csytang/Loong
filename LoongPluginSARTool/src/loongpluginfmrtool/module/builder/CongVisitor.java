@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
@@ -24,8 +25,10 @@ public class CongVisitor extends ASTVisitor{
 	private Set<ConfigurationOption> configurationOptions = new HashSet<ConfigurationOption>();
 	
 	private Module associatemdule;
-	public CongVisitor(Module mainmodule){
+	private MethodDeclaration methoddecl;
+	public CongVisitor(Module mainmodule,MethodDeclaration pmethoddecl){
 		associatemdule = mainmodule;
+		methoddecl = pmethoddecl;
 	}
 	
 	public boolean visit(IfStatement node) {
@@ -33,7 +36,7 @@ public class CongVisitor extends ASTVisitor{
 		Expression condition = if_node.getExpression();
 		Statement then_statement = if_node.getThenStatement();
 		Statement else_statement = if_node.getElseStatement();
-		ConfigurationOption option = new ConfigurationOption(condition,associatemdule);
+		ConfigurationOption option = new ConfigurationOption(condition,associatemdule,methoddecl);
 		if(then_statement!=null){
 			configurationOptions.add(option);
 			option.addEnable_Statements(then_statement);
@@ -50,7 +53,7 @@ public class CongVisitor extends ASTVisitor{
     	WhileStatement while_statement = (WhileStatement)node;
     	Expression condition = while_statement.getExpression();
     	Statement body = while_statement.getBody();
-    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule);
+    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule,methoddecl);
     	if(body!=null){
     		configurationOptions.add(option);
     		option.addEnable_Statements(body);
@@ -64,7 +67,7 @@ public class CongVisitor extends ASTVisitor{
     	DoStatement do_statement = (DoStatement) node;
     	Expression condition = do_statement.getExpression();
     	Statement body = do_statement.getBody();
-    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule);
+    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule,methoddecl);
     	if(body!=null){
     		configurationOptions.add(option);
     		option.addEnable_Statements(body);
@@ -78,7 +81,7 @@ public class CongVisitor extends ASTVisitor{
 		EnhancedForStatement enhance_statement = (EnhancedForStatement)node;
 		Expression condition = enhance_statement.getExpression();
 		Statement body = enhance_statement.getBody();
-    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule);
+    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule,methoddecl);
 		if(body!=null){
 			configurationOptions.add(option);
     		option.addEnable_Statements(body);
@@ -91,7 +94,7 @@ public class CongVisitor extends ASTVisitor{
 		ForStatement for_statement  = (ForStatement)node;
 		Expression condition = for_statement.getExpression();
 		Statement body = for_statement.getBody();
-    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule);
+    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule,methoddecl);
 		if(body!=null){
 			configurationOptions.add(option);
     		option.addEnable_Statements(body);
@@ -104,7 +107,7 @@ public class CongVisitor extends ASTVisitor{
 	public boolean visit(SwitchStatement node) {
 		SwitchStatement switch_node = (SwitchStatement)node;
 		Expression condition = switch_node.getExpression();
-    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule);
+    	ConfigurationOption option = new ConfigurationOption(condition,associatemdule,methoddecl);
     	List<Statement> sub_statements = switch_node.statements();
     	if(sub_statements!=null){
     		if(!sub_statements.isEmpty()){

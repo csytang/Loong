@@ -80,7 +80,9 @@ public class InternalConfBuilder {
 			LElement method = entry.getKey();
 			Set<ConfigurationOption> configs = entry.getValue();
 			for(ConfigurationOption option:configs){
-				configuration_method.put(option, method);
+				if(!configuration_method.containsKey(option)){
+					configuration_method.put(option, method);
+				}
 			}
 		}
 		
@@ -135,9 +137,7 @@ public class InternalConfBuilder {
 					if(isMutuallyExclude){
 						config1.addConfigurationRelation(config2, ConfigRelation.EXECLUDE);
 						config2.addConfigurationRelation(config1, ConfigRelation.EXECLUDE);
-					}
-					
-					
+					}					
 				}
 			}
 		}
@@ -239,7 +239,7 @@ public class InternalConfBuilder {
 	protected void processMethodCongBuilder(){
 		for(LElement method:this.method_elements){
 			MethodDeclaration methoddecl_astnode = (MethodDeclaration)method.getASTNode();
-			CongVisitor confvisitor = new CongVisitor(module);
+			CongVisitor confvisitor = new CongVisitor(module,methoddecl_astnode);
 			methoddecl_astnode.accept(confvisitor);
 			Set<ConfigurationOption> configurationoption_set = confvisitor.getConfigurationOptions();
 			if(!configurationoption_set.isEmpty())

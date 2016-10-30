@@ -27,6 +27,20 @@ public class ConfigurationRelationLink {
 		String link = asource.toString()+"\t-->\t"+atarget.toString();
 		return link;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if(!(obj instanceof ConfigurationRelationLink))
+			return false;
+		ConfigurationRelationLink conf_link = (ConfigurationRelationLink)obj;
+		if(!asource.equals(conf_link.asource))
+			return false;
+		if(!atarget.equals(conf_link.atarget))
+			return false;
+		if(!arelation.equals(conf_link.arelation))
+			return false;
+		return true;
+	}
 	
 	
 }

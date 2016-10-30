@@ -1,11 +1,14 @@
 package loongpluginfmrtool.module.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 public class Variability {
 	/**
@@ -15,16 +18,14 @@ public class Variability {
 	public Module module;
 	public int totalValidConfig = 0;
 	private Set<Configuration>configurations;
-	private Set<ConfigurationOption>options;
+	private Set<ConfigurationOption> options;
 	private ConfigurationOptionTree tree;
-	private Queue<ConfigurationOption>option_queue;
 	private Set<ConfigurationOption> roots;
-	private Set<ConfigurationOption> visited = new HashSet<ConfigurationOption>();
+	
 	public Variability(Module pmodule){
 		this.module = pmodule;
 		this.configurations = new HashSet<Configuration>();
 		this.options = this.module.getAllConfigurationOptions();
-		option_queue = new LinkedList<ConfigurationOption>();
 	}
 	
 	public Set<Configuration> getAllValidConfigurations(){
@@ -36,70 +37,59 @@ public class Variability {
 		this.tree = ptree;
 		this.roots = this.tree.getRoots();
 		for(ConfigurationOption root:roots){
-			option_queue.clear();
-			option_queue.add(root);
-			BFEncoding(option_queue);
+			encoding(root);
 		}
-		totalValidConfig = options.size();
+		totalValidConfig = configurations.size();
 	}
 	
 	/**
 	 * 从根节点到叶子节点
 	 * @param queue
+	 * encoding an option from a single root
+	 * 
 	 */
-	protected void BFEncoding(Queue<ConfigurationOption>queue){
-		while(!queue.isEmpty()){
-			 ConfigurationOption option_top = queue.poll();
-			 if(visited.contains(option_top)){
-				 continue;
-			 }
-			 if(!visited.isEmpty())
-				 createAConfiguration(visited,option_top);
-			 Set<ConfigurationOption>childrens = tree.getChildren(option_top);
-			 if(childrens!=null){
-				 for(ConfigurationOption sub_option:childrens){
-					 if(!visited.contains(option_top)){
-						 queue.add(sub_option);
-					 }
-				 }
-			 }
-			 visited.add(option_top);
-			 if(queue.isEmpty()){
-				 createAConfiguration(visited);
-			 }
-		}
-	}
-
-	private void createAConfiguration(Set<ConfigurationOption> visited) {
-		// TODO Auto-generated method stub
-		Map<ConfigurationOption,Boolean>pconfigurationlist = new HashMap<ConfigurationOption,Boolean>();
+	protected void encoding(ConfigurationOption root){
+		Queue<ConfigurationOption> visited = new LinkedList<ConfigurationOption>();
+		Queue<ConfigurationOption> unvisited = new LinkedList<ConfigurationOption>();
+		unvisited.add(root);
 		
-		for(ConfigurationOption option:visited){
-			pconfigurationlist.put(option, true);
-		}
-		Configuration configuration = new Configuration(module,pconfigurationlist);
-		this.configurations.add(configuration);
-		if(visited.size()==1){
-			for(ConfigurationOption option:visited){
-				pconfigurationlist.put(option, false);
+		while(!unvisited.isEmpty()){// unvisited is not empty
+			ConfigurationOption head = unvisited.peek();
+			if(tree.getSameMethodDirectChildren(head)!=null){
+				Set<ConfigurationOption> children = tree.getSameMethodDirectChildren(head);
+				for(ConfigurationOption child:children){
+					if(!visited.contains(child)){
+						//if(){
+							unvisited.add(child);
+						//}
+					}
+				}
 			}
-			configuration = new Configuration(module,pconfigurationlist);
-			this.configurations.add(configuration);
+			visited.add(head);
+			createConfigurationbyPath(head,root);
+			unvisited.poll();
 		}
-	}
-
-	private void createAConfiguration(Set<ConfigurationOption> visited,
-			ConfigurationOption option_top) {
-		// TODO Auto-generated method stub
-		Map<ConfigurationOption,Boolean>pconfigurationlist = new HashMap<ConfigurationOption,Boolean>();
-		for(ConfigurationOption option:visited){
-			pconfigurationlist.put(option, true);
-		}
-		pconfigurationlist.put(option_top, false);
-		Configuration configuration = new Configuration(module,pconfigurationlist);
-		this.configurations.add(configuration);
 	}
 	
+	private void createConfigurationbyPath(ConfigurationOption leaf,ConfigurationOption root){
+		Map<ConfigurationOption,Boolean>configurationdetail = new HashMap<ConfigurationOption,Boolean>();
+		ConfigurationOption curr = leaf;
+		Configuration configuration ;
+		if(leaf==root){
+			configurationdetail.put(leaf, false);
+			configuration = new Configuration(module,configurationdetail);
+			configurations.add(configuration);
+			return;
+		}
+		configurationdetail.put(curr, false);
+		while(tree.getSameMethodDirectParent(curr)!=root){
+			curr = tree.getSameMethodDirectParent(curr);
+			configurationdetail.put(curr, true);
+		}
+		configurationdetail.put(root, true);
+		configuration = new Configuration(module,configurationdetail);
+		configurations.add(configuration);
+	}
 	public boolean hasConflict(Variability othervariability){
 		boolean conflict = false;
 		for(Configuration config:configurations){

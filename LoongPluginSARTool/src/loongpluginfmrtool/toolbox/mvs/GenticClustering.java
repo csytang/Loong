@@ -50,7 +50,10 @@ public class GenticClustering {
 	// Evolve a population种群进化
 	public GAPopulation evolvePopulation(GAPopulation pop) {
 		// Keep our best individual
-		GAPopulation newPopulation = new GAPopulation(this,pop.size(),this.populationsize,false);
+		/**
+		 * GenticClustering pclustering,int clustercount,int populationsize, boolean initialise
+		 */
+		GAPopulation newPopulation = new GAPopulation(this,pop.getClusterCount(),this.populationsize,false);
 		
         if (elitism) {
             newPopulation.saveIndividual(0, pop.getFittest());
@@ -107,7 +110,7 @@ public class GenticClustering {
 	public GAIndividual tournamentSelection(GAPopulation pop) {
 		// TODO Auto-generated method stub
 		// Create a tournament population
-        GAPopulation tournament = new GAPopulation(this,tournamentSize,this.populationsize, false);
+        GAPopulation tournament = new GAPopulation(this,cluster,tournamentSize,false);
         // For each place in the tournament get a random individual
         for (int i = 0; i < tournamentSize; i++) {
             int randomId = (int) (Math.random() * pop.size());
