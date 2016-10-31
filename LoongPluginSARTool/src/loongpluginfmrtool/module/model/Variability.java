@@ -78,6 +78,11 @@ public class Variability {
 		if(leaf==root){
 			configurationdetail.put(leaf, false);
 			configuration = new Configuration(module,configurationdetail);
+			configurationdetail.clear();
+			configurations.add(configuration);
+			
+			configurationdetail.put(leaf, true);
+			configuration = new Configuration(module,configurationdetail);
 			configurations.add(configuration);
 			return;
 		}

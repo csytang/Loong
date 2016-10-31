@@ -55,16 +55,16 @@
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
          </action>
          <action
-               class="loongpluginfmrtool.popup.actions.CreateRSFFile"
-               id="LoongPluginFMRTool.action4"
-               label="Generate RSF file (ACDC Toolbox)"
-               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
-         </action>
-         <action
                class="loongpluginfmrtool.popup.actions.GenerateGroundTruth"
                icon="icons/groundtruth.jpg"
                id="LoongPluginFMRTool.generateGroundTruth"
                label="Generate Ground-Truth"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.GenerateJavaRigiSF"
+               id="LoongPluginFMRTool.rigistandardfile"
+               label="Generate Rigi Standard File for this Project"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
          </action>
       </objectContribution>
@@ -82,7 +82,7 @@
          </menu>
          <action
                class="loongpluginsartool.popup.actions.CPPProjectSARecovery"
-               icon="icons/recovery.png"
+               icon="icons/ConfigurationIcon.png"
                id="LoongPluginSARTool.architecturerecoverycpp"
                label="Open Feature Configuration Editor"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryC/group1">

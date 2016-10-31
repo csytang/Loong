@@ -343,6 +343,10 @@ public class ModuleBuilder {
 		}
 		return kullback_leibler_table;
 	}
+	public IProject gettargetProject() {
+		// TODO Auto-generated method stub
+		return targetProject;
+	}
 	
 	
 }

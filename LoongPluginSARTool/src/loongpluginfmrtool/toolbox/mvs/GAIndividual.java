@@ -16,6 +16,10 @@ public class GAIndividual {
 	private GenticClustering clustering;
 	private int lenth;
 	private int clustersize;
+	private double informationlosscount;
+	private double modulequalitycount;
+	private double variabilitygain;
+	
 	public GAIndividual(GenticClustering pclustering,int pclustersize){
 		this.clustering = pclustering;
 		this.clustersize = pclustersize;
@@ -80,6 +84,9 @@ public class GAIndividual {
 		if (fitness == 0) {
 			FitnessCalc cal = new FitnessCalc();
             fitness = cal.getFitnessValue(this,clustering.getIndextoModule(),clustersize);
+            informationlosscount = cal.getInformationLoss();
+            modulequalitycount = cal.getModuleQuality();
+            variabilitygain = cal.getVariabilityLoss();
         }
         return fitness;
 	}
@@ -94,6 +101,21 @@ public class GAIndividual {
 		}
 		System.out.println();
 	}
+	public double getVariabilityLoss() {
+		// TODO Auto-generated method stub
+		return variabilitygain;
+	}
+	public double getInformationLoss() {
+		// TODO Auto-generated method stub
+		return informationlosscount;
+	}
+	public double getModuleQuality() {
+		// TODO Auto-generated method stub
+		return modulequalitycount;
+	}
+	
+	
+	
 
 	
     

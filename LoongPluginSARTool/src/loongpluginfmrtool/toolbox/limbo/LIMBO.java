@@ -10,6 +10,7 @@ import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.model.*;
 import loongpluginfmrtool.module.*;
+import loongpluginfmrtool.util.ClusteringResultRSFOutput;
 
 public class LIMBO {
 	private Map<Module,ModuledFeature>modulesToFeatures = new HashMap<Module,ModuledFeature>();
@@ -18,7 +19,7 @@ public class LIMBO {
 	private Map<Integer, Module>indexToModule = new HashMap<Integer, Module>();
 	private Map<Module, Integer>ModuleToIndex = new HashMap<Module, Integer>();
 	private Map<Integer, ModuledFeature> indexToFeature = new HashMap<Integer, ModuledFeature>();
-	
+	private Map<Integer,Set<Module>>clusterres;
 	private Set<Module>allmodules = new HashSet<Module>();
 	private double[][] kullback_leibler_table;
 	private ModuleDependencyTable dependency_table;
@@ -180,6 +181,21 @@ public class LIMBO {
 		if(debug){
 			print();
 		}
+		clusterres = new HashMap<Integer,Set<Module>>();
+		for(Map.Entry<Integer, ModuledFeature>entry:indexToFeature.entrySet()){
+			int index = entry.getKey();
+			ModuledFeature feature = entry.getValue();
+			if(clusterres.containsKey(index)){
+				Set<Module> set = clusterres.get(index);
+				set.addAll(feature.getModules());
+				clusterres.put(index, set);
+			}else{
+				Set<Module> set = new HashSet<Module>();
+				set.addAll(feature.getModules());
+				clusterres.put(index, set);
+			}
+		}
+		ClusteringResultRSFOutput output = new ClusteringResultRSFOutput(clusterres,"limbo",builder.gettargetProject());
 	}
 
 	protected void print(){

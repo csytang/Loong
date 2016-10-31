@@ -1,13 +1,17 @@
 package loongpluginfmrtool.toolbox.mvs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.eclipse.core.resources.IProject;
 
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.model.Module;
+import loongpluginfmrtool.util.ClusteringResultRSFOutput;
 
 public class ModuleVariabilitySystem {
 	
@@ -20,6 +24,7 @@ public class ModuleVariabilitySystem {
 	private GenticClustering clustering;
 	private int evoluation;
 	private boolean debug = true;
+	private Map<Integer,Set<Module>>clusterres;
 	public ModuleVariabilitySystem(ModuleBuilder pbuilder,int pcluster,int ppopulationcount,int pevoluation){
 		this.builder = pbuilder;
 		this.cluster = pcluster;
@@ -28,8 +33,15 @@ public class ModuleVariabilitySystem {
 		this.populationcount = ppopulationcount;
 		this.evoluation = pevoluation;
 		performClustering();
+		outputResult();
+		ClusteringResultRSFOutput output = new ClusteringResultRSFOutput(clusterres,"modulevariabilitysystem",builder.gettargetProject());
 	}
 	
+	private void outputResult() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	protected void performClustering(){
 		/*
 		 * 
@@ -39,9 +51,38 @@ public class ModuleVariabilitySystem {
 		for(int i = 0;i < evoluation;i++){
 			population = clustering.evolvePopulation(population);
 			if(debug){
-				System.out.println(population.getFittest().getFitness());
+				GAIndividual fitnessind = population.getFittest();
+				System.out.println(fitnessind.getFitness()+"["+"VL:"+fitnessind.getVariabilityLoss()+"\t IL:"+fitnessind.getInformationLoss()+
+						"\t MQ:"+fitnessind.getModuleQuality()+"]");
 			}
 		}
-		
+		translatePopulation(population.getFittest(),cluster,indexToModule);
+	}
+	
+	protected void translatePopulation(GAIndividual fitness,int cluster,Map<Integer, Module>indexToModule){
+		// range 0-cluster-1
+		Map<Integer,Set<Module>>clusters = new HashMap<Integer,Set<Module>>();
+		Vector<Integer> genes = fitness.getGene();
+		for(int i = 0;i < genes.size();i++){
+			int clusterid = genes.get(i);
+			Module module = indexToModule.get(i);
+			if(clusters.containsKey(clusterid)){
+				Set<Module> modules = clusters.get(clusterid);
+				modules.add(module);
+				clusters.put(clusterid, modules);
+			}else{
+				Set<Module> modules = new HashSet<Module>();
+				modules.add(module);
+				clusters.put(clusterid, modules);
+			}
+		}
+		clusterres = clusters;
+		for(Map.Entry<Integer, Set<Module>>entry:clusters.entrySet()){
+			System.out.println("\t index:"+entry.getKey());
+			System.out.println("\t feature contains:");
+			for(Module submodule:entry.getValue()){
+				System.out.println("\t \tModule:"+submodule.getDisplayName());
+			}
+		}
 	}
 }

@@ -233,8 +233,10 @@ public class Module implements Serializable {
 		// TODO Auto-generated method stub
 		CompilationUnit unit = (CompilationUnit)dominateASTNode;
 		List types = unit.types();    
-		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class  
-		return typeDec.getName().toString();
+		TypeDeclaration typeDec = (TypeDeclaration) types.get(0); //typeDec is the class 
+		String packageName = unit.getPackage().getName().toString();
+		String fullName = packageName+"."+typeDec.getName().toString();
+		return fullName;
 	}
 	
 	public String getModuleName(){

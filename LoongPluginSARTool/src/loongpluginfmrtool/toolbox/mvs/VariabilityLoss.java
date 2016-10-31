@@ -33,7 +33,7 @@ public class VariabilityLoss {
 		if(totalavariabilitycount==0){
 			return 0.0;
 		}
-		loss = ((double)mergedcount)/(totalavariabilitycount);
+		loss = ((double)mergedcount-totalavariabilitycount)/(mergedcount);
 		return loss;
 	}
 }

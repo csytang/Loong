@@ -23,6 +23,9 @@ public class FitnessCalc {
 	private Map<Integer,Set<ModuleWrapper>>clusterToModules = new HashMap<Integer,Set<ModuleWrapper>>();// 类id 到 类内 module
 	private Map<Integer,Module>indexToModules = new HashMap<Integer,Module>();
 	private List<Set<ModuleWrapper>>listedWrapperGroup = new LinkedList<Set<ModuleWrapper>>();
+	private double informationloss = 0.0;
+	private double variabilitygain = 0.0;
+	private double modularityvalue = 0.0;
 	
 	public double getFitnessValue(GAIndividual gaIndividual,Map<Integer, Module>pindexToModule,int cluster) {
 		// TODO Auto-generated method stub
@@ -56,12 +59,12 @@ public class FitnessCalc {
 			}
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////
-		double modularityvalue = 0.0;
-		double variabilityloss = 0.0;
+		modularityvalue = 0.0;
+		variabilitygain = 0.0;
 		double intramodularity = 0.0;
 		double intermodularity = 0.0;
 		
-		double informationloss = 0.0;
+		informationloss = 0.0;
 		
 		
 		for(Map.Entry<Integer, Set<ModuleWrapper>>entry:clusterToModules.entrySet()){
@@ -69,7 +72,7 @@ public class FitnessCalc {
 			
 			// variability loss
 			double variabilitylossiteration = VariabilityLoss.computeVLossPos(wrapperset);
-			variabilityloss+=variabilitylossiteration;
+			variabilitygain+=variabilitylossiteration;
 			
 			ModuleQualityMetrics metrics = new ModuleQualityMetrics(wrapperset);
 			intramodularity+=metrics.getIntraConnectMSet1();
@@ -94,11 +97,27 @@ public class FitnessCalc {
 		
 		modularityvalue = intramodularity-intermodularity;
 		
-		fitness = modularityvalue-informationloss+variabilityloss;
+		fitness = modularityvalue-informationloss+variabilitygain;
 		
 		
 		return fitness;
 	}
 
+	public double getVariabilityLoss() {
+		// TODO Auto-generated method stub
+		return variabilitygain;
+	}
+
+	public double getModuleQuality() {
+		// TODO Auto-generated method stub
+		return modularityvalue;
+	}
+
+	public double getInformationLoss() {
+		// TODO Auto-generated method stub
+		return informationloss;
+	}
+	
+	
 
 }
