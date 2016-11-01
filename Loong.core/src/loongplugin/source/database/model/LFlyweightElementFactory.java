@@ -40,7 +40,8 @@ public class LFlyweightElementFactory {
 		String id = ASTID.calculateId(node);
 		return (LElement) javaElements.get(id);
 	}
-
+	
+	public static int uniqueindex = 0;
 	/**
 	 * Returns a flyweight object representing a program element.
 	 * 
@@ -82,7 +83,8 @@ public class LFlyweightElementFactory {
 			}
 			return lReturn;
 		}
-		lReturn = new LElement(nodeId,pCategory,pColorSourceFile,node);
+		lReturn = new LElement(nodeId,pCategory,pColorSourceFile,node,uniqueindex);
+		uniqueindex++;
 		
 		if (bindingKey != null)
 			javaElements.put(bindingKey, lReturn);

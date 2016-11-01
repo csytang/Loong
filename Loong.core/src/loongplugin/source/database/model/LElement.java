@@ -101,7 +101,7 @@ public class LElement {
 	private CLRAnnotatedSourceFile aColorSourceFile;
 	private CompilationUnitColorManager aColorManager; 
 	private ASTNode aastNode;
-	
+	private int aindex;
 	private LICategories acategory;
 	private Set<LICategories> subcategories;
 	private Set<SlicingVariable> bindingvariables = new HashSet<SlicingVariable>();
@@ -125,13 +125,13 @@ public class LElement {
 	 * declaring class for fields, and the name and signature appended
 	 * to the fully-qualified name of the declaring class for methods.
 	 */
-	public  LElement(String pId,LICategories pcategory,CLRAnnotatedSourceFile pColorSourceFile,ASTNode pastNode)
+	public  LElement(String pId,LICategories pcategory,CLRAnnotatedSourceFile pColorSourceFile,ASTNode pastNode,int pindex)
 	{
 		aId = pId;
 		aColorSourceFile = pColorSourceFile;
 		aColorManager = (CompilationUnitColorManager) pColorSourceFile.getColorManager();
 		aastNode = pastNode;
-		
+		aindex = pindex;
 		acategory = pcategory;
 		subcategories = new HashSet<LICategories>();
 		for(Feature feature:aColorManager.getOwnColors(aastNode)){
@@ -140,7 +140,9 @@ public class LElement {
 		}
 	}
 	
-	
+	public int getIndex(){
+		return this.aindex;
+	}
 
 	private LElement findDeclarationForFieldorVariable(LFlyweightElementFactory LElementFactory, SimpleName nameNode) {
 		// TODO Auto-generated method stub
@@ -1248,5 +1250,7 @@ public class LElement {
 		}else
 			return bindingLElements;
 	}
+
+	
 	
 }
