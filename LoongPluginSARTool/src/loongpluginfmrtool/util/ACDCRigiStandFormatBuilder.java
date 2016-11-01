@@ -62,6 +62,9 @@ public class ACDCRigiStandFormatBuilder {
 		allelements = aDB.getAllElements();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Set<LElement>artifects = new HashSet<LElement>();
+		if( monitor != null ){ 
+			monitor.beginTask( "Extracting ACDC RSF facts", allelements.size()+3);
+    	}
 		
 		for(LElement element:allelements){
 			String artName = element.getASTID();
@@ -93,7 +96,7 @@ public class ACDCRigiStandFormatBuilder {
 				break;
 			}
 			case COMPILATION_UNIT:{
-				artType = ".JavaFile";
+				artType = "JavaFile";
 				break;
 			}
 			}
@@ -108,6 +111,8 @@ public class ACDCRigiStandFormatBuilder {
 				}
 				artifects.add(element);
 			}
+			if( monitor != null ) 
+				monitor.worked(1);
 		}
 		
 		for(LElement element:artifects){
@@ -129,7 +134,7 @@ public class ACDCRigiStandFormatBuilder {
 			}
 			
 		}
-		
+		monitor.worked(1);
 		
 		InputStream inputsource = new ByteArrayInputStream(out.toByteArray());
         try {
@@ -144,7 +149,7 @@ public class ACDCRigiStandFormatBuilder {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-		
+        monitor.worked(1);
+		monitor.done();
 	}
 }
