@@ -64,7 +64,7 @@
          <action
                class="loongpluginfmrtool.popup.actions.GenerateJavaRigiSF"
                id="LoongPluginFMRTool.rigistandardfile"
-               label="Generate ACDC_Fact Rigi Standard File for this Project"
+               label="Generate Rigi Standard File for this Project(ACDC Toolbox)"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
          </action>
       </objectContribution>

@@ -1,6 +1,10 @@
 package loongpluginfmrtool.toolbox.bunch;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -10,7 +14,10 @@ import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.module.featuremodelbuilder.ModuleDependencyTable;
 import loongpluginfmrtool.module.model.Module;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -56,11 +63,15 @@ public class MDGFileConfig extends TitleAreaDialog {
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		text = new Text(container, SWT.BORDER);
-		text.setBounds(84, 49, 332, 19);
+		text.setBounds(81, 111, 332, 19);
 		
 		Label lblPleaseInputThe = new Label(container, SWT.NONE);
 		lblPleaseInputThe.setBounds(10, 10, 316, 14);
 		lblPleaseInputThe.setText("Please input the directory path");
+		
+		Label lblNewLabel = new Label(container, SWT.NONE);
+		lblNewLabel.setBounds(10, 41, 407, 50);
+		lblNewLabel.setText("By default(no input), it will create the .mdg file\n under this project workspace with name <project name>.mdg");
 
 		return area;
 	}
@@ -104,25 +115,62 @@ public class MDGFileConfig extends TitleAreaDialog {
 	
 	private void createMDGFile(ModuleDependencyTable dependency_table,String directory) throws FileNotFoundException, UnsupportedEncodingException {
 		// TODO Auto-generated method stub
-		PrintWriter writer = new PrintWriter(directory+"/"+aProject.getName()+".mdg", "UTF-8");
-		// write to file
 		table = dependency_table.getTable();
 		int size = table.length;
+		PrintWriter writer = null;
+		ByteArrayOutputStream out = null;
+		boolean isdefault = false;
+		IFile file = null;
+		directory = directory.trim();
+		if(directory.equals("")){
+			file = aProject.getFile(aProject.getName()+".mdg");
+			out = new ByteArrayOutputStream();
+			isdefault= true;
+		}else{
+			writer = new PrintWriter(directory+"/"+aProject.getName()+".mdg", "UTF-8");
+			// write to file
+		}
 		for(int i = 0;i < size;i++){
-			for(int j = 0;j < size;j++){
-				if(i!=j){
-					if(table[i][j]!=0){
-						Module modulei = indexToModule.get(i);
-						Module modulej = indexToModule.get(j);
-						String modulePackageNamei = modulei.getNameWithPackage();
-						String modulePackageNamej = modulej.getNameWithPackage();
-						writer.println(modulePackageNamei+"\t"+modulePackageNamej);
+				for(int j = 0;j < size;j++){
+					if(i!=j){
+						if(table[i][j]!=0){
+							Module modulei = indexToModule.get(i);
+							Module modulej = indexToModule.get(j);
+							String modulePackageNamei = modulei.getNameWithPackage();
+							String modulePackageNamej = modulej.getNameWithPackage();
+							if(isdefault){
+								String str = modulePackageNamei+"\t"+modulePackageNamej+"\n";
+								try {
+									out.write(str.getBytes());
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}else
+								writer.println(modulePackageNamei+"\t"+modulePackageNamej);
+						}
 					}
 				}
+		}
+		if(isdefault){
+			InputStream inputsource = new ByteArrayInputStream(out.toByteArray());
+			try {
+				if(file.exists()){
+					file.setContents(inputsource, true, true, null);
+				}else
+					file.create(inputsource, EFS.NONE, null);
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}else{
+			writer.close();
 		}
 		
-		writer.close();
 	}
 	
 }

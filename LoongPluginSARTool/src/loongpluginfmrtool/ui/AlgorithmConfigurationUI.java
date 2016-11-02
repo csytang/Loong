@@ -9,6 +9,7 @@ import loongpluginfmrtool.toolbox.limbo.LIMBO;
 import loongpluginfmrtool.toolbox.limbo.LIMBOConfigurationDialog;
 import loongpluginfmrtool.toolbox.mvs.MVSConfigurationDialog;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -33,15 +34,17 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 	private Algorithms curr = Algorithms.VMS;
 	private ModuleBuilder builder;
 	private Shell shell;
+	private IProject aProject;
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
-	public AlgorithmConfigurationUI(Shell parentShell,ModuleBuilder mbuilder) {
+	public AlgorithmConfigurationUI(Shell parentShell,ModuleBuilder mbuilder,IProject pProject) {
 		super(parentShell);
 		this.shell = parentShell;
 		instance = this;
 		builder = mbuilder;
+		aProject  = pProject;
 		setShellStyle(SWT.BORDER | SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.RESIZE);
 	}
 
@@ -121,7 +124,7 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 					break;
 				}
 				case "ACDC":{
-					ACDCConfigurationDialog dialog = new ACDCConfigurationDialog(shell);
+					ACDCConfigurationDialog dialog = new ACDCConfigurationDialog(shell,aProject);
 					dialog.create();
 					dialog.open();
 					break;
@@ -142,10 +145,10 @@ public class AlgorithmConfigurationUI extends TitleAreaDialog {
 		return new Point(450, 336);
 	}
 
-	public static AlgorithmConfigurationUI getDefault(Shell parentShell,ModuleBuilder builder) {
+	public static AlgorithmConfigurationUI getDefault(Shell parentShell,ModuleBuilder builder,IProject aProject) {
 		// TODO Auto-generated method stub
 		if(instance == null){
-			instance = new AlgorithmConfigurationUI(parentShell,builder);
+			instance = new AlgorithmConfigurationUI(parentShell,builder,aProject);
 		}
 		return instance;
 	}

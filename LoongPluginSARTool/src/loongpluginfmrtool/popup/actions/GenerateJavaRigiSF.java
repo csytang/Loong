@@ -3,7 +3,7 @@ package loongpluginfmrtool.popup.actions;
 import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
-import loongpluginfmrtool.util.ACDCRigiStandFormatBuilder;
+import loongpluginfmrtool.util.ACDCRsfBuilder;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -60,7 +60,7 @@ public class GenerateJavaRigiSF implements IObjectActionDelegate{
 
 				@Override
 				public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-					ACDCRigiStandFormatBuilder builder = new ACDCRigiStandFormatBuilder(lDB,aProject);
+					ACDCRsfBuilder builder = new ACDCRsfBuilder(lDB,aProject);
 					builder.build(monitor);
 					return Status.OK_STATUS;
 				}
