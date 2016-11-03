@@ -4,8 +4,9 @@ import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.ui.AlgorithmConfigurationUI;
+import loongpluginfmrtool.toolbox.acdc.ACDCConfigurationDialog;
 import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -20,7 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-public class RecoveryFeatureModel implements IObjectActionDelegate {
+public class RecoveryFeatureModelACDC implements IObjectActionDelegate {
 
 	private IStructuredSelection aSelection;
 	private IProject aProject;
@@ -30,7 +31,7 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 	private ModuleBuilder mbuilder;
 	private ModuleModelChangeListener listener;
 	
-	public RecoveryFeatureModel() {
+	public RecoveryFeatureModelACDC() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -62,19 +63,13 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 			mbuilder.notifyModuleListener();
 			mbuilder.buildModuleHelper();
 	        //.out.println("Finish Module Helper");
-			
-			AlgorithmConfigurationUI instance = AlgorithmConfigurationUI.getDefault(shell,mbuilder,aProject);
-			instance.create();
-			instance.open();
+			ACDCConfigurationDialog dialog = new ACDCConfigurationDialog(shell,aProject);
+			dialog.create();
+			dialog.open();
 		}
-		
-		
-		
-		
 		
 	}
 
-	
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		// TODO Auto-generated method stub
@@ -88,7 +83,7 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 		this.part = targetPart;
 		shell = targetPart.getSite().getShell();
 	}
-	
+
 	private IProject getSelectedProject() {
 		IProject lReturn = null;
 		Iterator i = aSelection.iterator();
@@ -103,5 +98,4 @@ public class RecoveryFeatureModel implements IObjectActionDelegate {
 		}
 		return lReturn;
 	}
-
 }

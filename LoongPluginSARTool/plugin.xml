@@ -34,10 +34,45 @@
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
          <action
-               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModel"
-               icon="icons/recovery.png"
-               id="LoongPluginFMRTool.recoverfeaturemodel"
-               label="Recover Feature Model"
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelBunch"
+               icon="icons/arch.png"
+               id="LoongPluginFMRTool.featurerecoveryBunch"
+               label="Recovery Feature Model with Bunch"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelACDC"
+               icon="icons/arch.png"
+               id="LoongPluginFMRTool.featurerecoveryACDC"
+               label="Recovery Feature Model with ACDC"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelLIMBO"
+               icon="icons/arch.png"
+               id="LoongPluginFMRTool.featurerecoveryLIMBO"
+               label="Recovery Feature Model with LIMBO"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelVMS"
+               icon="icons/arch.png"
+               id="LoongPluginFMRTool.featurerecoveryVMS"
+               label="Recovery Feature Model with Variability Modelling"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelARC"
+               icon="icons/arch.png"
+               id="LoongPluginFMRTool.featurerecoveryARC"
+               label="Recovery Feature Model with ARConcern"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelWCA"
+               icon="icons/arch.png"
+               id="LoongPluginFMRTool.featurerecoveryWCA"
+               label="Recovery Feature Model with Weighted Clustering Algorithm"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
          <action

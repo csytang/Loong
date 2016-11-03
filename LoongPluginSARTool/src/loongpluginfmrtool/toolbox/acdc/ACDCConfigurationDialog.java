@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -27,6 +30,7 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 	private static boolean isBenabled = false;
 	private static boolean isSenabled = false;
 	private static boolean isOenabled = false;
+	private Text clustertext;
 	
 	/**
 	 * Create the dialog.
@@ -92,6 +96,13 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 		lblAcdcConfigurationOptions.setBounds(10, 98, 430, 14);
 		lblAcdcConfigurationOptions.setText("ACDC configuration options:");
 		
+		Label lblAcdcClusterSize = new Label(container, SWT.NONE);
+		lblAcdcClusterSize.setBounds(10, 142, 430, 14);
+		lblAcdcClusterSize.setText("ACDC cluster size:");
+		
+		clustertext = new Text(container, SWT.BORDER);
+		clustertext.setBounds(10, 162, 111, 19);
+		
 		
 
 		return area;
@@ -102,7 +113,27 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		// TODO Auto-generated method stub
+		String clusterstr = clustertext.getText();
+		int cluster;
+		try{
+			cluster = Integer.parseInt(clusterstr);
+		}catch(Exception e){
+			Display.getCurrent().syncExec(new Runnable(){
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					MessageDialog.openInformation(shell, "Loong Plugin System-FMRTool",
+					"Please intput a number in cluster count option");
+				}
+		    	
+		    });
+			super.okPressed();
+			return;
+		}
 		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();  
+		String projectPath = workspace.getRoot().getLocation().toOSString();
 		String sourcefilepath = this.sourcetext.getText();
 		sourcefilepath = sourcefilepath.trim();
 		String targetfilepath = this.targettext.getText();
@@ -123,14 +154,20 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 				super.okPressed();
 				return;
 			}
-			argulist.add(file.getFullPath().toOSString());
+			IPath path = file.getFullPath();
+			path = path.makeAbsolute();
+			String fullsourcePath = projectPath+path.toOSString();
+			argulist.add(fullsourcePath);
 		}else{
 			argulist.add(sourcefilepath);
 		}
 		
 		if(targetfilepath.equals("")){
 			IFile file = aProject.getFile("acdc_result.rsf");
-			argulist.add(file.getFullPath().toOSString());
+			IPath path = file.getFullPath();
+			path = path.makeAbsolute();
+			String fulltargetPath = projectPath+path.toOSString();
+			argulist.add(fulltargetPath);
 		}else{
 			argulist.add(targetfilepath);
 		}
@@ -157,11 +194,19 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 		
 		argulist.add("-d1");
 		
-		String[] args = (String[])argulist.toArray();
+		argulist.add("-l"+cluster);
+		
+		String[] args = new String[argulist.size()];
+		
+		for(int i = 0; i < argulist.size();i++){
+			args[i] = argulist.get(i);
+		}
 		
 		ACDC acdc = new ACDC(args);
 		
 		super.okPressed();
+		
+		
 	}
 
 	/**
@@ -181,7 +226,7 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(526, 297);
+		return new Point(529, 346);
 	}
 	
 	
