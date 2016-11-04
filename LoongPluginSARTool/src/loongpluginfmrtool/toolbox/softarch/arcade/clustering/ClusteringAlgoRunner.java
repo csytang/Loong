@@ -47,8 +47,7 @@ public class ClusteringAlgoRunner {
 		
 		try {
 			if (fastClusters.isEmpty()) {
-				List<File> javaFiles = FileListing.getFileListing(new File(srcDir),
-						".java");
+				List<File> javaFiles = FileListing.getFileListing(new File(srcDir),".java");
 				
 				for (File javaFile : javaFiles) {
 					FastCluster cluster = new FastCluster(javaFile.getPath().toString());

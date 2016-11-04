@@ -58,18 +58,17 @@ public class DocTopics {
 		pipeList.add(new CharSequenceLowercase());
 		pipeList.add(new CharSequence2TokenSequence(Pattern
 				.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}")));
-		pipeList.add(new TokenSequenceRemoveStopwords(new File(
-				"stoplists/en.txt"), "UTF-8", false, false, false));
+		pipeList.add(new TokenSequenceRemoveStopwords(new File(srcDir+File.separatorChar+"stoplists/en.txt"), "UTF-8", false, false, false));
 		
 		if (Config.getSelectedLanguage().equals(Config.Language.c)) {
 			pipeList.add(new TokenSequenceRemoveStopwords(new File(
-					"res/ckeywords"), "UTF-8", false, false, false));
+					srcDir+File.separatorChar+"res/ckeywords"), "UTF-8", false, false, false));
 			pipeList.add(new TokenSequenceRemoveStopwords(new File(
-					"res/cppkeywords"), "UTF-8", false, false, false));
+					srcDir+File.separatorChar+"res/cppkeywords"), "UTF-8", false, false, false));
 		}
 		else {
 			pipeList.add(new TokenSequenceRemoveStopwords(new File(
-					"res/javakeywords"), "UTF-8", false, false, false));
+					srcDir+File.separatorChar+"res/javakeywords"), "UTF-8", false, false, false));
 		}
 		pipeList.add(new StemmerPipe());
 		pipeList.add(new TokenSequence2FeatureSequence());

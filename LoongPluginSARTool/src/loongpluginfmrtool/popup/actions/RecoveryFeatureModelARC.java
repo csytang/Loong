@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.toolbox.arc.ARCConfigurationDialog;
+import loongpluginfmrtool.toolbox.arc.ARCConfigurationWizard;
 import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
 
 import org.eclipse.core.resources.IProject;
@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
@@ -62,10 +63,10 @@ public class RecoveryFeatureModelARC implements IObjectActionDelegate {
 			mbuilder.notifyModuleListener();
 			mbuilder.buildModuleHelper();
 			
-			ARCConfigurationDialog dialog = new ARCConfigurationDialog(mbuilder,lDB,shell);
+			
+			WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard());
 			dialog.create();
 			dialog.open();
-			
 		}
 	}
 

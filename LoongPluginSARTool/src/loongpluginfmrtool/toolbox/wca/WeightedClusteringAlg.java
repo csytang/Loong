@@ -59,10 +59,8 @@ public class WeightedClusteringAlg {
 	private ModuleBuilder builder;
 	private int acluster;
 	private IProject aProject;
-	private Set<File>allsourcefiles = new HashSet<File>();
 	private Map<CompilationUnit,File> compilationUnitFile = new HashMap<CompilationUnit,File>();
 	public static FastFeatureVectors ffVecs = null;
-	private int numTopics = 0;
 	private Set<LElement> allelements;
 	private Map<CompilationUnit,Set<CompilationUnit>>dependsrelationmapping = new HashMap<CompilationUnit,Set<CompilationUnit>>();
 	private Set<LRelation>allcontainsrelations = new HashSet<LRelation>();
@@ -105,7 +103,7 @@ public class WeightedClusteringAlg {
 		
 		TypedEdgeGraph typedEdgeGraph = new TypedEdgeGraph();
 		
-		numTopics = (int)(((double)allsourcefiles.size())* 0.18);
+		
 		
 		
 		// build the relation mapping
@@ -161,7 +159,6 @@ public class WeightedClusteringAlg {
 		
 		FeatureVectorMap fvMap = new FeatureVectorMap(typedEdgeGraph);
 		ffVecs = fvMap.convertToFastFeatureVectors();
-		
 		
 		
 		// Run WCA algortihm

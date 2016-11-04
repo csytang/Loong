@@ -89,14 +89,13 @@ public class Config {
 
 	public static StoppingCriterionConfig stoppingCriterion = StoppingCriterionConfig.clustergain;
 	private static int numClusters = 1;
-	private static String stopWordsFilename = "cfg" + File.separator + "stopwords.txt";
+	private static String stopWordsFilename = File.separator + "stopwords.txt";
 	public static boolean isExcelFileWritingEnabled = false;
 	public static ClusteringAlgorithmType getCurrentClusteringAlgorithm() {
 		return currentClusteringAlgorithm;
 	}
 
-	public static void setCurrentClusteringAlgorithm(
-			ClusteringAlgorithmType currentClusteringAlgorithm) {
+	public static void setCurrentClusteringAlgorithm(ClusteringAlgorithmType currentClusteringAlgorithm) {
 		Config.currentClusteringAlgorithm = currentClusteringAlgorithm;
 	}
 
@@ -105,16 +104,15 @@ public class Config {
 	public static boolean ignoreDependencyFilters = false;
 	
 	/* Concern properties data */
+	
 	private static String malletTopicKeysFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/"
 			+ Config.getCurrProjStr() + "/"
 			+ Config.getCurrProjStr() + "-" + Config.getNumTopics() + "-topic-keys.txt";
 	
-	private static String malletWordTopicCountsFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/"
-				+ Config.getCurrProjStr() + "/"
+	private static String malletWordTopicCountsFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/"+ Config.getCurrProjStr() + "/"
 				+ Config.getCurrProjStr() + "-" + Config.getNumTopics() + "-word-topic-counts.txt";
 	
-	private static String malletDocTopicsFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/"
-			+ Config.getCurrProjStr() + "/"
+	private static String malletDocTopicsFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/"+ Config.getCurrProjStr() + "/"
 			+ Config.getCurrProjStr() + "-" + Config.getNumTopics() + "-doc-topics.txt";
 	
 	private static int numTopics = 10;
@@ -543,8 +541,7 @@ public class Config {
 		String deselectedPkgsStr = prop.getProperty("deselected_pkgs");
 		String sootClassPathJarDirStr = prop
 				.getProperty("sootclasspath_jardir");
-		String eclipseDotClassPathStr = prop
-				.getProperty("eclipse_dot_classpath");
+		String eclipseDotClassPathStr = prop.getProperty("eclipse_dot_classpath");
 
 		String[] jarDirsArray;
 		sootClasspathStr = prop.getProperty("sootclasspath");
@@ -696,8 +693,7 @@ public class Config {
 		return projSrcDir;
 	}
 
-	public static void initProjectData(
-			ClassGraphTransformer t) {
+	public static void initProjectData(ClassGraphTransformer t) {
 		t.LlamaChatTMD.docTopicsFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/LlamaChat/LlamaChat-doc-topics.txt";
 		t.LlamaChatTMD.topicKeysFilename = "/home/joshua/Documents/Software Engineering Research/Subjects/LlamaChat/LlamaChat-topic-keys.txt";
 
