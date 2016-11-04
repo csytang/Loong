@@ -1,16 +1,20 @@
 package loongpluginfmrtool.toolbox.arc;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 public class ARCConfigurationWizard extends Wizard {
 
-	private ARCConfigurationWizardPageDataLoad dataload = ARCConfigurationWizardPageDataLoad.getDefault();
-	private ARCConfigurationWizardPageConfig cfg = ARCConfigurationWizardPageConfig.getDefault();
+	private ARCConfigurationWizardPageDataLoad dataload;
+	private ARCConfigurationWizardPageConfig cfg;
+	private IProject aProject;
 	
-	
-	public ARCConfigurationWizard() {
+	public ARCConfigurationWizard(IProject pProject) {
 		super();
+		this.aProject = pProject;
+		dataload =  ARCConfigurationWizardPageDataLoad.getDefault(aProject);
+		cfg = ARCConfigurationWizardPageConfig.getDefault();
 		setWindowTitle("Configuration Page");
 	}
 

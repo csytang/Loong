@@ -64,7 +64,7 @@ public class RecoveryFeatureModelARC implements IObjectActionDelegate {
 			mbuilder.buildModuleHelper();
 			
 			
-			WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard());
+			WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard(aProject));
 			dialog.create();
 			dialog.open();
 		}

@@ -1,5 +1,14 @@
 package loongpluginfmrtool.toolbox.arc;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -10,24 +19,34 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+
 public class ARCConfigurationWizardPageDataLoad extends WizardPage {
 	private Text offlineupdatecontenttext;
 	private Button offlineupdateButton;
 	private Button onlineDownloadButton;
 	private ARCConfigurationWizardDataLoadSelectionListener[]listener = new ARCConfigurationWizardDataLoadSelectionListener[2];
+	private String projectPath;
 	/**
 	 * Create the wizard.
 	 */
 	private static ARCConfigurationWizardPageDataLoad instance;
-	private ARCConfigurationWizardPageDataLoad() {
+	private String baseurl = "http://www.chrisyttang.org/loong_fmr/sup/";
+	private String stopword = "stopwords.txt";
+	private String stopworddie = "stoplists";
+	private String[] lang = {"cs.txt","de.txt","en.txt","fi.txt","fr.txt","jp.txt","misc.txt","project.txt","stopwords_total.txt"};
+	private IProject aProject;
+	private ARCConfigurationWizardPageDataLoad(IProject pProject) {
 		super("wizardPage");
 		setTitle("Data Load Wizard for Architecture Recovery With Concerns\n");
 		setDescription("This configuration will help you download or direct the modules and files used in ARC");
+		aProject = pProject;
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();  
+		projectPath = workspace.getRoot().getLocation().toOSString()+File.separatorChar+aProject.getName().toString();
 	}
 	
-	public static ARCConfigurationWizardPageDataLoad getDefault(){
+	public static ARCConfigurationWizardPageDataLoad getDefault(IProject pProject){
 		if(instance==null){
-			instance = new ARCConfigurationWizardPageDataLoad();
+			instance = new ARCConfigurationWizardPageDataLoad(pProject);
 		}
 		return instance;
 	}
@@ -82,6 +101,31 @@ public class ARCConfigurationWizardPageDataLoad extends WizardPage {
 			@Override
 			public void handleEvent(Event event) {
 				// TODO Auto-generated method stub
+				File stopwordfile = new File(projectPath+File.separatorChar+"sup"+File.separatorChar+stopword);
+				URL url;
+				try {
+					url = new URL(baseurl+stopword);
+					FileUtils.copyURLToFile(url, stopwordfile);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				for(String sublang:lang){
+					File sublangfile = new File(projectPath+File.separatorChar+"sup"+File.separatorChar+stopworddie+File.separatorChar+sublang);
+					try {
+						url = new URL(baseurl+stopworddie+"/"+sublangfile);
+						FileUtils.copyURLToFile(url, sublangfile);
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				
 			}
 			
@@ -90,7 +134,8 @@ public class ARCConfigurationWizardPageDataLoad extends WizardPage {
 		onlineDownloadButton.setBounds(249, 155, 127, 28);
 		onlineDownloadButton.setText("Download online");
 	}
-
+	
+	
 	public void setOnlineSetting() {
 		// TODO Auto-generated method stub
 		
