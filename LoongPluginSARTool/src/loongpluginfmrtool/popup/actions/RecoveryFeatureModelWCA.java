@@ -5,6 +5,7 @@ import java.util.Iterator;
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
 import loongpluginfmrtool.toolbox.limbo.LIMBOConfigurationDialog;
+import loongpluginfmrtool.toolbox.wca.WCAConfigurationDialog;
 import loongpluginfmrtool.views.moduleviews.ModuleViewPart.ModuleModelChangeListener;
 
 import org.eclipse.core.resources.IProject;
@@ -62,8 +63,10 @@ public class RecoveryFeatureModelWCA implements IObjectActionDelegate {
 			mbuilder.computeStatistic();
 			mbuilder.notifyModuleListener();
 			mbuilder.buildModuleHelper();
-	        //.out.println("Finish Module Helper");
-			
+	       
+			WCAConfigurationDialog dialog = new WCAConfigurationDialog(mbuilder,lDB,shell);
+			dialog.create();
+			dialog.open();
 			
 		}
 		

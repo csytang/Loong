@@ -19,7 +19,7 @@ import loongpluginfmrtool.toolbox.softarch.arcade.util.FileListing;
 
 public class ClusteringAlgoRunner {
 
-	private static Logger logger = Logger.getLogger(ClusteringAlgoRunner.class);
+	//private static Logger logger = Logger.getLogger(ClusteringAlgoRunner.class);
 	protected static ArrayList<FastCluster> fastClusters;
 	public static ArrayList<FastCluster> getFastClusters() {
 		return fastClusters;
@@ -60,19 +60,19 @@ public class ClusteringAlgoRunner {
 			e.printStackTrace();
 		}
 
-		logger.debug("Listing initial cluster names using for-each...");
+		System.out.println("Listing initial cluster names using for-each...");
 		for (FastCluster cluster : fastClusters) {
-			logger.debug(cluster.getName());
+			System.out.println(cluster.getName());
 		}
 
-		logger.debug("Listing initial cluster names using indexed loop...");
+		System.out.println("Listing initial cluster names using indexed loop...");
 		for (int i = 0; i < fastClusters.size(); i++) {
 			FastCluster cluster = (FastCluster) fastClusters.get(i);
-			logger.debug(cluster.getName());
+			System.out.println(cluster.getName());
 		}
 
 		numberOfEntitiesToBeClustered = fastClusters.size();
-		logger.debug("number of initial clusters: " + numberOfEntitiesToBeClustered);
+		System.out.println("number of initial clusters: " + numberOfEntitiesToBeClustered);
 
 	}
 
@@ -97,7 +97,7 @@ public class ClusteringAlgoRunner {
 						fastClusters.add(fastCluster);
 				}
 				else {
-					logger.debug("Excluding file: " + fastCluster.getName());
+					System.out.println("Excluding file: " + fastCluster.getName());
 				}
 		}
 		if (Config.getClusteringGranule().equals(Granule.func)) {
@@ -121,15 +121,15 @@ public class ClusteringAlgoRunner {
 	}
 	
 	protected static void checkAndUpdateClusterGain(double clusterGain) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Current cluster gain: " + clusterGain);
-			logger.debug("Current max cluster gain: " + maxClusterGain);
-		}
+		//if (logger.isDebugEnabled()) {
+			System.out.println("Current cluster gain: " + clusterGain);
+			System.out.println("Current max cluster gain: " + maxClusterGain);
+		//}
 
 		if (clusterGain > maxClusterGain) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Updating max cluster gain and num clusters at it...");
-			}
+			
+				System.out.println("Updating max cluster gain and num clusters at it...");
+			
 			maxClusterGain = clusterGain;
 			numClustersAtMaxClusterGain = fastClusters.size();
 		}
@@ -137,20 +137,20 @@ public class ClusteringAlgoRunner {
 	
 	protected static void printTwoMostSimilarClustersUsingStructuralData(
 			MaxSimData maxSimData) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("In, "
+		//if (logger.isDebugEnabled()) {
+			System.out.println("In, "
 					+ Thread.currentThread().getStackTrace()[1].getMethodName()
 					+ ", \nMax Similar Clusters: ");
 
 			ClusterUtil.printSimilarFeatures(maxSimData.c1, maxSimData.c2,
 					fastFeatureVectors);
 
-			logger.debug(maxSimData.currentMaxSim);
-			logger.debug("\n");
+			System.out.print(maxSimData.currentMaxSim);
+			System.out.print("\n");
 
-			logger.debug("before merge, clusters size: " + fastClusters.size());
+			System.out.println("before merge, clusters size: " + fastClusters.size());
 			
-		}
+		//}
 	}
 	
 	public static void setFastFeatureVectors(
@@ -161,12 +161,12 @@ public class ClusteringAlgoRunner {
 	
 	protected static void performPostProcessingConditionally() {
 		if (Config.getClustersToWriteList() == null) {
-			logger.debug("Config.getClustersToWriteList() == null so skipping post processing");
+			System.out.println("Config.getClustersToWriteList() == null so skipping post processing");
 			return;
 		}
 		if (Config.getClustersToWriteList().contains(fastClusters.size())) {
 			String postProcMsg = "Performing post processing at " + fastClusters.size() + " number of clusters";
-			logger.debug(postProcMsg);
+			System.out.println(postProcMsg);
 			ClusterUtil.fastClusterPostProcessing(fastClusters,fastFeatureVectors);
 		}
 	}

@@ -98,12 +98,12 @@ public class ClusterUtil {
 	}
 
 	public static void printItemsInClusters(ArrayList<Cluster> clusters) {
-		logger.debug("Listing items in each cluster of the clusters...");
+		System.out.println("Listing items in each cluster of the clusters...");
 		for (Cluster c : clusters) {
-			logger.debug("Cluster: " + c.name);
+			System.out.println("Cluster: " + c.name);
 			int fvCount = 0;
 			for (FeatureVector fv : c.items) {
-				logger.debug("\t " + fvCount + ": " + fv.name);
+				System.out.println("\t " + fvCount + ": " + fv.name);
 				fvCount++;
 			}
 		}
@@ -240,7 +240,7 @@ public class ClusterUtil {
 	
 	public static void printFastClustersByLine(ArrayList<FastCluster> clusters) {
 		for (int i = 0; i < clusters.size(); i++) {
-			logger.debug(i + ": " + clusters.get(i).getName());
+			System.out.println(i + ": " + clusters.get(i).getName());
 		}
 
 	}
@@ -1006,7 +1006,7 @@ public class ClusterUtil {
 		String c2LimitedName = DebugUtil.getLimitedString(c2.getName(),
 				characterLimit);
 
-		logger.debug("Features shared between " + c1LimitedName + " and "
+		System.out.println("Features shared between " + c1LimitedName + " and "
 				+ c2LimitedName);
 
 		/*

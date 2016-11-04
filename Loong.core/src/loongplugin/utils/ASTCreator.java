@@ -13,9 +13,9 @@ import loongplugin.LoongPlugin;
 
 public class ASTCreator {
 
-	public boolean useStatementsRecovery = true;
+	public static boolean useStatementsRecovery = true;
 
-	public CompilationUnit createAST(IOpenable input)
+	public static CompilationUnit createAST(IOpenable input)
 			throws JavaModelException, CoreException {
 		CompilationUnit root;
 

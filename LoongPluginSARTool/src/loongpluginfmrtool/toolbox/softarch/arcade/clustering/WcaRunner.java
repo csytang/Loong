@@ -14,12 +14,10 @@ import loongpluginfmrtool.toolbox.softarch.arcade.util.StopWatch;
 
 public class WcaRunner extends ClusteringAlgoRunner {
 	
-	private static Logger logger = Logger.getLogger(WcaRunner.class);
 	
 	private static int arbitraryDecisions = 0;
-
-	public static void computeClustersWithPQAndWCA(
-			StoppingCriterion stopCriterion) {
+	
+	public static void computeClustersWithPQAndWCA(StoppingCriterion stopCriterion) {
 		StopWatch loopSummaryStopwatch = new StopWatch();
 		
 		arbitraryDecisions = 0;
@@ -34,7 +32,7 @@ public class WcaRunner extends ClusteringAlgoRunner {
 		matrixCreateTimer.start();
 		List<List<Double>> simMatrix = createSimilarityMatrix(fastClusters);
 		matrixCreateTimer.stop();
-		logger.debug("time to create similarity matrix: "
+		System.out.println("time to create similarity matrix: "
 				+ matrixCreateTimer.getElapsedTime());
 
 		int clusterStepCount = 0;
@@ -44,8 +42,7 @@ public class WcaRunner extends ClusteringAlgoRunner {
 			if (Config.stoppingCriterion
 					.equals(Config.StoppingCriterionConfig.clustergain)) {
 				double clusterGain = 0;
-				clusterGain = ClusterUtil
-						.computeClusterGainUsingStructuralDataFromFastFeatureVectors(fastClusters);
+				clusterGain = ClusterUtil.computeClusterGainUsingStructuralDataFromFastFeatureVectors(fastClusters);
 				checkAndUpdateClusterGain(clusterGain);
 			}
 
@@ -56,7 +53,7 @@ public class WcaRunner extends ClusteringAlgoRunner {
 			MaxSimData data  = identifyMostSimClusters(simMatrix);
 			
 			timer.stop();
-			logger.debug("time to identify two most similar clusters: "
+			System.out.println("time to identify two most similar clusters: "
 					+ timer.getElapsedTime());
 			
 			printTwoMostSimilarClustersUsingStructuralData(data);
@@ -74,7 +71,7 @@ public class WcaRunner extends ClusteringAlgoRunner {
 				if (clusterStepCount == stepCountToStop) {
 					loopSummaryStopwatch.stop();
 
-					logger.debug("Time in milliseconds to compute clusters after priority queue initialization: "
+					System.out.println("Time in milliseconds to compute clusters after priority queue initialization: "
 							+ loopSummaryStopwatch.getElapsedTime());
 
 					DebugUtil.earlyExit();
@@ -86,16 +83,15 @@ public class WcaRunner extends ClusteringAlgoRunner {
 
 		loopSummaryStopwatch.stop();
 
-		logger.debug("Time in milliseconds to compute clusters after priority queue initialization: "
+		System.out.println("Time in milliseconds to compute clusters after priority queue initialization: "
 				+ loopSummaryStopwatch.getElapsedTime());
-		logger.debug("max cluster gain: " + maxClusterGain);
-		logger.debug("num clusters at max cluster gain: "
+		System.out.println("max cluster gain: " + maxClusterGain);
+		System.out.println("num clusters at max cluster gain: "
 				+ numClustersAtMaxClusterGain);
 
 	}
 	
-	private static void updateFastClustersAndSimMatrixToReflectMergedCluster(MaxSimData data,
-			FastCluster newCluster, List<List<Double>> simMatrix) {
+	private static void updateFastClustersAndSimMatrixToReflectMergedCluster(MaxSimData data,FastCluster newCluster, List<List<Double>> simMatrix) {
 		
 		FastCluster cluster = fastClusters.get(data.rowIndex);
 		FastCluster otherCluster = fastClusters.get(data.colIndex);
@@ -172,26 +168,24 @@ public class WcaRunner extends ClusteringAlgoRunner {
 		// newCluster.addClustersToPriorityQueue(clusters);
 	}
 	
-	protected static void printTwoMostSimilarClustersUsingStructuralData(
-			MaxSimData maxSimData) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("In, "
+	protected static void printTwoMostSimilarClustersUsingStructuralData(MaxSimData maxSimData) {
+		
+			System.out.println("In, "
 					+ Thread.currentThread().getStackTrace()[1].getMethodName()
 					+ ", \nMax Similar Clusters: ");
 
 			ClusterUtil.printSimilarFeatures(fastClusters.get(maxSimData.rowIndex), fastClusters.get(maxSimData.colIndex),
 					fastFeatureVectors);
 
-			logger.debug(maxSimData.currentMaxSim);
-			logger.debug("\n");
+			System.out.println(maxSimData.currentMaxSim);
+			System.out.println("\n");
 
-			logger.debug("before merge, clusters size: " + fastClusters.size());
+			System.out.println("before merge, clusters size: " + fastClusters.size());
 			
-		}
+		
 	}
 	
-	private static MaxSimData identifyMostSimClusters(
-			List<List<Double>> simMatrix) {
+	private static MaxSimData identifyMostSimClusters(List<List<Double>> simMatrix) {
 		if ( simMatrix.size() != fastClusters.size() ) {
 			throw new IllegalArgumentException("expected simMatrix.size():" + simMatrix.size() + " to be fastClusters.size(): " + fastClusters.size());
 		}
@@ -221,7 +215,7 @@ public class WcaRunner extends ClusteringAlgoRunner {
 		}
 		if (!foundMoreSimilarMeasure) {
 			String couldNotFindMoreSimilarMeasureMsg = "Cannot find any similar entities...making arbitrary decision at " + fastClusters.size() + " clusters...";
-			logger.debug(couldNotFindMoreSimilarMeasureMsg);
+			System.out.println(couldNotFindMoreSimilarMeasureMsg);
 			//System.out.println(couldNotFindMoreSimilarMeasureMsg);
 			msData.foundMoreSimilarMeasure = foundMoreSimilarMeasure;
 			arbitraryDecisions++;
@@ -230,8 +224,7 @@ public class WcaRunner extends ClusteringAlgoRunner {
 		return msData;
 	}
 
-	private static List<List<Double>> createSimilarityMatrix(
-			ArrayList<FastCluster> clusters) {
+	private static List<List<Double>> createSimilarityMatrix(ArrayList<FastCluster> clusters) {
 
 		//HashMap<HashSet<String>, Double> map = new HashMap<HashSet<String>, Double>();
 		
@@ -267,6 +260,71 @@ public class WcaRunner extends ClusteringAlgoRunner {
 		return simMatrixObj;
 	}
 
+	public static void computeClustersWithPQAndWCA(StoppingCriterion stopCriterion, int acluster) {
+		// TODO Auto-generated method stub
+		StopWatch loopSummaryStopwatch = new StopWatch();
+		
+		arbitraryDecisions = 0;
+
+		initializeClusters(null);
+
+		// SimCalcUtil.verifySymmetricClusterOrdering(clusters);
+
+		loopSummaryStopwatch.start();
+		
+		StopWatch matrixCreateTimer = new StopWatch();
+		matrixCreateTimer.start();
+		List<List<Double>> simMatrix = createSimilarityMatrix(fastClusters);
+		matrixCreateTimer.stop();
+		System.out.println("time to create similarity matrix: "
+				+ matrixCreateTimer.getElapsedTime());
+
+		int clusterStepCount = 0;
+		int stepCountToStop = 5;
+//		boolean stopAtClusterStep = false; // for debugging purposes
+		while (fastClusters.size()>acluster) {
+			if (Config.stoppingCriterion
+					.equals(Config.StoppingCriterionConfig.clustergain)) {
+				double clusterGain = 0;
+				clusterGain = ClusterUtil
+						.computeClusterGainUsingStructuralDataFromFastFeatureVectors(fastClusters);
+				checkAndUpdateClusterGain(clusterGain);
+			}
+
+			//runClusterStepForWCA();
+			StopWatch timer = new StopWatch();
+			timer.start();
+			//identifyMostSimClustersForConcernsMultiThreaded(data);
+			MaxSimData data  = identifyMostSimClusters(simMatrix);
+			
+			timer.stop();
+			System.out.println("time to identify two most similar clusters: "
+					+ timer.getElapsedTime());
+			
+			printTwoMostSimilarClustersUsingStructuralData(data);
+			
+			FastCluster cluster = fastClusters.get(data.rowIndex);
+			FastCluster otherCluster = fastClusters.get(data.colIndex);
+			FastCluster newCluster = new FastCluster(cluster, otherCluster);
+			
+			updateFastClustersAndSimMatrixToReflectMergedCluster(data,newCluster,simMatrix);
+			
+			
+			performPostProcessingConditionally();
+		}
+
+		loopSummaryStopwatch.stop();
+
+		System.out.println("Time in milliseconds to compute clusters after priority queue initialization: "
+				+ loopSummaryStopwatch.getElapsedTime());
+		System.out.println("max cluster gain: " + maxClusterGain);
+		System.out.println("num clusters at max cluster gain: "
+				+ numClustersAtMaxClusterGain);
+		
+		
+	}
+
+	
 	
 
 }

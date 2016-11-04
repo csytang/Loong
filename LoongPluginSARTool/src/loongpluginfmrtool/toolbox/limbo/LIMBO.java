@@ -195,7 +195,7 @@ public class LIMBO {
 				clusterres.put(index, set);
 			}
 		}
-		ClusteringResultRSFOutput output = new ClusteringResultRSFOutput(clusterres,"limbo",builder.gettargetProject());
+		ClusteringResultRSFOutput.ModuledRSFOutput(clusterres,"limbo",builder.gettargetProject());
 	}
 
 	protected void print(){

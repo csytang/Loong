@@ -34,7 +34,8 @@ public class ModuleVariabilitySystem {
 		this.evoluation = pevoluation;
 		performClustering();
 		outputResult();
-		ClusteringResultRSFOutput output = new ClusteringResultRSFOutput(clusterres,"modulevariabilitysystem",builder.gettargetProject());
+		//ClusteringResultRSFOutput output = new ClusteringResultRSFOutput(clusterres,"modulevariabilitysystem",builder.gettargetProject());
+		ClusteringResultRSFOutput.ModuledRSFOutput(clusterres,"modulevariabilitysystem",builder.gettargetProject());
 	}
 	
 	private void outputResult() {

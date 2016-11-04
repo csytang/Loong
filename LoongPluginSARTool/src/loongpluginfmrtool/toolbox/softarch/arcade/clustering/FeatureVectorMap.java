@@ -64,7 +64,7 @@ public class FeatureVectorMap {
 	public HashMap<String, BitSet> nameToFeatureSetMap = new HashMap<String, BitSet>(1500);
 	
 	boolean DEBUG = false;
-	Logger logger = Logger.getLogger(FeatureVectorMap.class);
+	//Logger logger = Logger.getLogger(FeatureVectorMap.class);
 	private ArrayList<String> endNodesListWithNoDupes;
 	private HashSet<String> startNodesSet;
 	private Set<String> allNodesSet;
@@ -211,7 +211,7 @@ public class FeatureVectorMap {
 				}
 			}
 			
-			logger.debug(featureSet);
+			System.out.println(featureSet);
 			totalTrueBits += featureSet.cardinality();
 			
 			/*if (featureSet.size() != endNodesListWithNoDupes.size()) {
@@ -241,16 +241,16 @@ public class FeatureVectorMap {
 			
 		}
 		
-		logger.debug("total true bits among feature sets: " + totalTrueBits);
+		System.out.println("total true bits among feature sets: " + totalTrueBits);
 		
 		HashSet<List<String>> featureSetEdges = new HashSet<List<String>>();
-		logger.debug("Printing edges represented by feature sets...");
+		System.out.println("Printing edges represented by feature sets...");
 		for (String source : startNodesSet) {
 			BitSet featureSet = nameToFeatureSetMap.get(source);
 			for (int i=0;i<featureSet.size();i++) {
 				if (featureSet.get(i)) {
 					String target = endNodesListWithNoDupes.get(i);
-					logger.debug(source + " " + target);
+					System.out.println(source + " " + target);
 					featureSetEdges.add(Lists.newArrayList(source,target));
 				}
 			}
@@ -259,15 +259,15 @@ public class FeatureVectorMap {
 		if (RsfReader.untypedEdgesSet != null) {
 			Set<List<String>> intersectionSet = Sets.intersection(
 					featureSetEdges, RsfReader.untypedEdgesSet);
-			logger.debug("Printing intersection of rsf reader untyped edges set and feature set edges...");
-			logger.debug("intersection set size: " + intersectionSet.size());
-			logger.debug(Joiner.on("\n").join(intersectionSet));
+			System.out.println("Printing intersection of rsf reader untyped edges set and feature set edges...");
+			System.out.println("intersection set size: " + intersectionSet.size());
+			System.out.println(Joiner.on("\n").join(intersectionSet));
 
 			Set<List<String>> differenceSet = Sets.difference(featureSetEdges,
 					RsfReader.untypedEdgesSet);
-			logger.debug("Printing difference of rsf reader untyped edges set and feature set edges...");
-			logger.debug("difference set size: " + differenceSet.size());
-			logger.debug(Joiner.on("\n").join(differenceSet));
+			System.out.println("Printing difference of rsf reader untyped edges set and feature set edges...");
+			System.out.println("difference set size: " + differenceSet.size());
+			System.out.println(Joiner.on("\n").join(differenceSet));
 		}
 		
 		/*double mapSize = 0;
@@ -304,7 +304,7 @@ public class FeatureVectorMap {
 		doc.appendChild(rootElement);
 
 		// classedge elements
-		logger.trace("Printing out feature vector map...");
+		System.out.println("Printing out feature vector map...");
 		for (String source : allNodesSet) {
 			Element fvElem = doc.createElement("FeatureVector");
 			rootElement.appendChild(fvElem);
@@ -376,9 +376,9 @@ public class FeatureVectorMap {
 		doc.appendChild(rootElement);
 
 		// classedge elements
-		logger.trace("Printing out feature vector map...");
+		System.out.println("Printing out feature vector map...");
 		for (FeatureVector fv : sc_fv_map.values()) {
-			logger.trace(fv);
+			//logger.trace(fv);
 			Element fvElem = doc.createElement("FeatureVector");
 			rootElement.appendChild(fvElem);
 
@@ -521,7 +521,7 @@ public class FeatureVectorMap {
 		Iterator iter = map.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry pair = (Map.Entry) iter.next();
-			logger.debug(pair);
+			System.out.println(pair);
 		}
 		
 	}

@@ -17,6 +17,9 @@
             <separator
                   name="group2">
             </separator>
+            <separator
+                  name="group3">
+            </separator>
          </menu>
          <action
                class="loongpluginfmrtool.popup.actions.OpenFeatureNameRecommendationView"
@@ -101,6 +104,24 @@
                id="LoongPluginFMRTool.rigistandardfile"
                label="Generate Rigi Standard File for this Project(ACDC Toolbox)"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group2">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.MoJoMeasure"
+               id="LoongPluginFMRTool.actionMoJoFM"
+               label="MoJoFM Measuring"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group3">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.a2aMeasure"
+               id="LoongPluginFMRTool.actionArch2ArchMeasure"
+               label="Arch2Arch Measuring"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group3">
+         </action>
+         <action
+               class="loongpluginfmrtool.popup.actions.cluster2clusterMeasure"
+               id="LoongPluginFMRTool.actioncluster2cluster"
+               label="Cluster2Cluster Measuring"
+               menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group3">
          </action>
       </objectContribution>
       <objectContribution
