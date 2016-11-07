@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Shell;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
@@ -34,8 +36,6 @@ public class ArchRConcernAlg {
 
 	private ApplicationObserver aAO;
 	private ModuleBuilder abuilder;
-	private StoppingCriterionConfig astoppingCriterion;
-	private int acluster;
 	private Set<LElement> allelements;
 	private Map<CompilationUnit,Set<CompilationUnit>>dependsrelationmapping = new HashMap<CompilationUnit,Set<CompilationUnit>>();
 	private int numTopics = 0;
@@ -51,6 +51,7 @@ public class ArchRConcernAlg {
 	private String topWordsFilename;
 	private IProject aProject;
 	private String configFilePath;
+	private Shell shell;
 	/**
 	 * 
 	 * @param pAO application obersever by default
@@ -58,22 +59,23 @@ public class ArchRConcernAlg {
 	 * @param pstoppingCriterion the stopping criterion for architecture recovery with concern algorithm
 	 * @param pcluster # of clusters
 	 */
-	public ArchRConcernAlg(ApplicationObserver pAO,ModuleBuilder pbuilder,StoppingCriterionConfig pstoppingCriterion,int pcluster){
+	public ArchRConcernAlg(ApplicationObserver pAO,ModuleBuilder pbuilder){
 		this.aAO = pAO;
 		this.aDB = this.aAO.getProgramDatabase();
 		this.aProject = this.aAO.getInitializedProject();
 		this.abuilder = pbuilder;
-		this.astoppingCriterion = pstoppingCriterion;
-		this.acluster = pcluster;		
+			
+		preconfig();
+		configuration();
 		run();
 	}
 	
-	protected void run(){
+	protected void preconfig(){
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();  
 		
 		projectPath = workspace.getRoot().getLocation().toOSString()+File.separatorChar+aProject.getName().toString();
-		sourcecodeDir = projectPath+File.separatorChar;
+		sourcecodeDir = projectPath;
 		
 		assert isValidFilePath(sourcecodeDir);
 		
@@ -148,19 +150,19 @@ public class ArchRConcernAlg {
 		
 		// all folders should be scanned and output redirected
 		topicModelFilename = projectPath + File.separatorChar + numTopics + "_topics.mallet";
-		docTopicsFilename = projectPath + File.separatorChar + numTopics + "_doc_topics.txt";
+		docTopicsFilename = projectPath + File.separatorChar + numTopics + "-doc-topics.txt";
 		topWordsFilename = projectPath + File.separatorChar + numTopics + "_top_words_per_topic.txt";
 		
-		// Configuration
-		// Create a Configuration file
-		
-		//Config.initConfigFromFile(filename);
-		  
-		
+	}
+	
+	private void configuration(){
+		WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard(aProject,aAO,shell,topicModelFilename,docTopicsFilename,numTopics,allsourcefiles.size()));
+		dialog.create();
+		dialog.open();
+	}
+	
+	private void run(){
 		ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir+"/base", numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);
-		
-		
-		
 	}
 	
 	private boolean isValidFilePath(String filePath) {

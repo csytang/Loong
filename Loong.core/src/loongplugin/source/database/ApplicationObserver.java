@@ -295,6 +295,11 @@ public class ApplicationObserver extends Observable{
 		else
 			return false;
 	}
+
+	public Set<String> getPackages() {
+		// TODO Auto-generated method stub
+		return aPackages;
+	}
 	
 
    

@@ -2,6 +2,7 @@ package loongpluginfmrtool.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,7 +38,7 @@ public class ACDCRsfBuilder {
 		aAO = pAO;
 		aProject = pProject;
 		aDB = pAO.getProgramDatabase();
-		file = pProject.getFile(aProject.getName()+"_info.rsf");		
+		file = pProject.getFile("data"+File.separatorChar+aProject.getName()+"_deps.rsf");		
 		allcontainsrelations.add(LRelation.ACCESS_FIELD);
 		allcontainsrelations.add(LRelation.ACCESS_LOCAL_VARIABLE);
 		allcontainsrelations.add(LRelation.ACCESS_METHOD);
@@ -141,6 +143,21 @@ public class ACDCRsfBuilder {
 		}
 		
 		monitor.worked(1);
+		
+		IFolder filedir = aProject.getFolder("data");
+		
+		if(file.exists()){
+			return;
+		}
+		if(!filedir.exists()){
+			try {
+				filedir.create(false, true, monitor);
+				file = aProject.getFile("data"+File.separatorChar+aProject.getName()+"_ground_truth_recovery.rsf");
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		InputStream inputsource = new ByteArrayInputStream(out.toByteArray());
         try {

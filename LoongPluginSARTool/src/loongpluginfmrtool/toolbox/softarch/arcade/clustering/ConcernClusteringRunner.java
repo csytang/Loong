@@ -152,6 +152,16 @@ public class ConcernClusteringRunner extends ClusteringAlgoRunner {
 		
 	}
 
+	/**
+	 * 
+	 * @param tmeMethod
+	 * @param srcDir
+	 * @param artifactsDir
+	 * @param numTopics
+	 * @param topicModelFilename
+	 * @param docTopicsFilename
+	 * @param topWordsFilename
+	 */
 	private void initializeDocTopicsForEachFastCluster(TopicModelExtractionMethod tmeMethod, String srcDir, String artifactsDir, int numTopics,
 			String topicModelFilename, String docTopicsFilename, String topWordsFilename) {
 	//	if (logger.isDebugEnabled()) {

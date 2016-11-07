@@ -2,6 +2,7 @@ package loongpluginfmrtool.groundTruth;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import loongplugin.color.ColorManager;
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
@@ -19,9 +21,11 @@ import loongplugin.feature.FeatureModelManager;
 import loongplugin.feature.guidsl.GuidslReader;
 import loongplugin.feature.guidsl.UnsupportedModelException;
 import loongplugin.modelcolor.ModelIDCLRFileReader;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -47,7 +51,6 @@ public class CreateGroundTruthJob extends WorkspaceJob {
 	private IFile modelm;
 	private IFile modelcolors;
 	private FeatureModel fmodel;
-	private ColorManager clrmanager;
 	private Map<IColoredJavaSourceFile,Set<Feature>>groundTruthMapping = new HashMap<IColoredJavaSourceFile,Set<Feature>>();
 	
 	public CreateGroundTruthJob(IProject sourceProject) {
@@ -95,11 +98,9 @@ public class CreateGroundTruthJob extends WorkspaceJob {
 		
 		ModelIDCLRFileReader dclrreader = new ModelIDCLRFileReader(modelcolors,FeatureModelManager.getInstance(project).getFeatureModel());
 		
-		clrmanager = dclrreader.getColorManager();
-		
 		obtainFeatureGroundMapping(monitor);
 		
-		writeGroundTruthFile();
+		writeGroundTruthFile(monitor);
 		
 		return Status.OK_STATUS;
 	}
@@ -147,12 +148,17 @@ public class CreateGroundTruthJob extends WorkspaceJob {
 	}
 	
 	
-	private void writeGroundTruthFile() throws CoreException{
+	private void writeGroundTruthFile(IProgressMonitor monitor) throws CoreException{
 		
-		IFile file = project.getFile("gt.rsf");
+		IFile file = project.getFile("data"+File.separatorChar+project.getName()+"_ground_truth_recovery.rsf");
+		IFolder filedir = project.getFolder("data");
 		
 		if(file.exists()){
 			return;
+		}
+		if(!filedir.exists()){
+			filedir.create(false, true, monitor);
+			file = project.getFile("data"+File.separatorChar+project.getName()+"_ground_truth_recovery.rsf");
 		}
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
