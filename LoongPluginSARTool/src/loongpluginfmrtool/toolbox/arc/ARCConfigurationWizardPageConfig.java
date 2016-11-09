@@ -1,12 +1,14 @@
 package loongpluginfmrtool.toolbox.arc;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -16,6 +18,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -47,7 +50,6 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 	private IProject aProject;
 	private Shell shell;
 	private String projectPath = "";
-	private Button btnExtract;
 	private Text numtopicrangeContentEnd;
 	private Text numtopicStep;
 	private Text text_1;
@@ -59,8 +61,9 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 	private int aminaltopics =0;
 	private int atotaltopics =0;
 	private String workspacePath;
-	
-	private ARCConfigurationWizardPageConfig(IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,int minaltopics,int totaltopics) {
+	private String arcClustersFilename;
+	private String projectodemfile = "";
+	private ARCConfigurationWizardPageConfig(IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,String parcClustersFilename,int minaltopics,int totaltopics) {
 		super("wizardPage");
 		this.aProject = pProject;
 		this.shell = pShell;
@@ -70,16 +73,18 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		this.adocTopicsFilePath = docTopicsFilePath;
 		this.aminaltopics = minaltopics;
 		this.atotaltopics = totaltopics;
+		this.arcClustersFilename = parcClustersFilename;
+		this.projectodemfile = this.aProject.getName()+".odem";
 		workspacePath =ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		projectPath = workspacePath+File.separatorChar+aProject.getName().toString();
 		setTitle("Data Load Wizard for Architecture Recovery With Concerns");
 		setDescription("This configuration will help you create configuration file (.cfg) for ARC");
 	}
 	
-	public static ARCConfigurationWizardPageConfig getDefault(IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,int minaltopics,int totaltopics) {
+	public static ARCConfigurationWizardPageConfig getDefault(IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,String arcClustersFilename,int minaltopics,int totaltopics) {
 		// TODO Auto-generated method stub
 		if(instance==null)
-			instance = new ARCConfigurationWizardPageConfig(pProject,pAO,pShell,topicModelFilePath,docTopicsFilePath,minaltopics,totaltopics);
+			instance = new ARCConfigurationWizardPageConfig(pProject,pAO,pShell,topicModelFilePath,docTopicsFilePath,arcClustersFilename,minaltopics,totaltopics);
 		return instance;
 	}
 	
@@ -120,28 +125,49 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		
 		odemtextContent = new Text(container, SWT.BORDER);
 		odemtextContent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		if(aProject.getFile(projectodemfile).exists()){
+			IFile odemfile = aProject.getFile(projectodemfile);
+			String fullpath = odemfile.getLocation().toOSString();
+			odemtextContent.setText(fullpath);
+		}
 		
-		btnExtract = new Button(container, SWT.NONE);
-		GridData gd_btnExtract = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnExtract.widthHint = 121;
-		btnExtract.setLayoutData(gd_btnExtract);
-		btnExtract.setToolTipText("This will inovke the Class Dependency Analyzer(CDA) v 1.16.0 to generate the odem file");
-		btnExtract.setText("Extract");// odem file
-		btnExtract.addListener(SWT.Selection, new Listener(){
-
-			@Override
-			public void handleEvent(Event event) {
-				// TODO extract the odem file from the target project
-				
-				
-			}
-			 
-		});
+		new Label(container, SWT.NONE);
 		
 		Button btnNewButton = new Button(container, SWT.NONE);
 		btnNewButton.setToolTipText("Direct upload file from local disk");
 		btnNewButton.setText("Load Local File");
-		
+		btnNewButton.addListener(SWT.Selection, new Listener(){
+
+			@Override
+			public void handleEvent(Event event) {
+				// TODO Auto-generated method stub
+
+				String filePath = "";
+				
+				FileDialog fDialog = new FileDialog(shell,SWT.OPEN);
+				fDialog.setFilterExtensions(new String [] {"*.odem"});
+				filePath = fDialog.open();
+				if(filePath==null||filePath.equals(""))
+					return;
+				File odemfile = new File(filePath);
+				
+				String targetpath = aProject.getFile(projectodemfile).getLocation().toOSString();
+				File targetfile = new File(targetpath);
+				if(!aProject.getFile(projectodemfile).exists()){
+					try {
+						FileUtils.copyFile(odemfile, targetfile);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					odemtextContent.setText(targetpath);
+				}else{
+					odemtextContent.setText(targetpath);
+				}
+				
+			}
+			
+		});
 		
 		Label lblGroundtruthfile = new Label(container, SWT.NONE);
 		lblGroundtruthfile.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -268,7 +294,7 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 				fullpackage+=subpackage;
 				fullpackage+=",";
 			}
-			if(shortedpackges.size()>1){
+			if(shortedpackges.size()>=1){
 				fullpackage = fullpackage.substring(0,fullpackage.length()-1);
 			}
 			selectePkgTextContent.setText(fullpackage);
@@ -289,9 +315,22 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		smellclstextContent = new Text(container, SWT.BORDER);
 		smellclstextContent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		new Label(container, SWT.NONE);
+		if(aProject!=null){
+			smellclstextContent.setText(this.arcClustersFilename);
+		}
 		
 		Button btnGenerateScript = new Button(container, SWT.NONE);
 		btnGenerateScript.setText("Generate Script");
+		btnGenerateScript.addListener(SWT.Selection, new Listener(){
+			// add create the local configuration script
+			@Override
+			public void handleEvent(Event event) {
+				// TODO extract the odem file from the target project
+				
+				
+			}
+			 
+		});
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
 		
@@ -304,38 +343,46 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 	 * @param shortedpackges
 	 * @return
 	 */
-	private Set<String> replacesubPackages(String parentpackage,Set<String> shortedpackges) {
+	
+	private Set<String> replacesubPackages(String subject,Set<String> shortedpackges) {
 		// TODO Auto-generated method stub
 		Set<String>res = new HashSet<String>();
-		boolean issubpackage = false;
-		boolean isparent = false;
-		for(String packagename:shortedpackges){
-			if(issubpackage){
-				res.add(packagename);
-				continue;
-			}
-			if(packagename.indexOf(parentpackage)==0){
-				if(packagename.charAt(parentpackage.length())=='.'){
-					isparent = true;
-					continue;
-				}else{
-					res.add(packagename);
-				}	
-			}else if(parentpackage.indexOf(packagename)==0){
-				if(parentpackage.charAt(packagename.length())=='.'){
-					issubpackage = true;
-					continue;
-				}else{
-					res.add(packagename);
-				}
+		if(shortedpackges.isEmpty()){
+			res.add(subject);
+			return res;
+		}
+		boolean shoudadd_subject = true;
+		for(String str:shortedpackges){
+			if(isaparent(subject,str)){
+				// if parentpackage is parent of str, then add parentpackage instead of str;
+				res.add(subject);
+			}else if(isaparent(str,subject)){
+				res.add(str);
+				shoudadd_subject = false;
 			}else{
-				res.add(packagename);
+				res.add(str);
 			}
 		}
-		
-		if(isparent)
-			res.add(parentpackage);
+		if(shoudadd_subject){
+			res.add(subject);
+		}
 		return res;
+		
+	}
+	/**
+	 * whether str1 is the parent of str2
+	 * @param str1
+	 * @param str2
+	 * @return
+	 */
+	private boolean isaparent(String str1,String str2){
+		if(str2.indexOf(str1)==0){
+			if(str2.charAt(str1.length())=='.'){
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 	
 }

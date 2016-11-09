@@ -49,6 +49,7 @@ public class ArchRConcernAlg {
 	private String topicModelFilename;
 	private String docTopicsFilename;
 	private String topWordsFilename;
+	private String arcClustersFilename;
 	private IProject aProject;
 	private String configFilePath;
 	private Shell shell;
@@ -147,16 +148,18 @@ public class ArchRConcernAlg {
 		numTopics = (int)(((double)allsourcefiles.size())* 0.18);
 		
 		// write the archifect 
-		
+		int numClusters = (int) ((double) allsourcefiles.size() * .20); // number of clusters to obtain is based
+								// on the number of entities
 		// all folders should be scanned and output redirected
 		topicModelFilename = projectPath + File.separatorChar + numTopics + "_topics.mallet";
 		docTopicsFilename = projectPath + File.separatorChar + numTopics + "-doc-topics.txt";
 		topWordsFilename = projectPath + File.separatorChar + numTopics + "_top_words_per_topic.txt";
-		
+		arcClustersFilename =projectPath + File.separatorChar + numTopics + "_topics_"
+				+numClusters + "_arc_clusters.rsf";
 	}
 	
 	private void configuration(){
-		WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard(aProject,aAO,shell,topicModelFilename,docTopicsFilename,numTopics,allsourcefiles.size()));
+		WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard(aProject,aAO,shell,topicModelFilename,docTopicsFilename,arcClustersFilename,numTopics,allsourcefiles.size()));
 		dialog.create();
 		dialog.open();
 	}
