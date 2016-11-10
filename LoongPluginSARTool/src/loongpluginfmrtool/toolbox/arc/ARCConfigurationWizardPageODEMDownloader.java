@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -30,19 +32,23 @@ public class ARCConfigurationWizardPageODEMDownloader extends WizardPage {
 	 * Create the wizard.
 	 */
 	private Text remoteurltext;
-	private IProject aproject;
+	private IProject aProject;
 	private Map<String,URL>projectToURLs = new HashMap<String,URL>();
 	private String baseurl = "http://www.chrisyttang.org/loong_fmr/odem/";
 	private String targetFileName = "";
 	private Combo predurlcombo;
 	private Shell shell;
+	private String projectPath;
+	private Label lblStatusLabel;
 	private static ARCConfigurationWizardPageODEMDownloader instance;
-	private ARCConfigurationWizardPageODEMDownloader(Shell parentShell,IProject pproject) {
+	private ARCConfigurationWizardPageODEMDownloader(IProject pproject,Shell parentShell) {
 		super("wizardPage");
 		setTitle("Download the odem file for this project, if exists");
 		setDescription("We have create some odem files for several subject projects, you can easily download from here.");
 		shell = parentShell;
-		aproject = pproject;
+		aProject = pproject;
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();  
+		projectPath = workspace.getRoot().getLocation().toOSString()+File.separatorChar+aProject.getName().toString();
 		try {
 			projectToURLs.put("Prevayler", new URL(baseurl+"prevayler.odem"));
 			projectToURLs.put("MobileMedia v8", new URL(baseurl+"mobilemediav8.odem"));
@@ -52,11 +58,11 @@ public class ARCConfigurationWizardPageODEMDownloader extends WizardPage {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		targetFileName = aproject.getName()+".odem";
+		targetFileName = projectPath+File.separatorChar+aProject.getName()+".odem";
 	}
-	public static ARCConfigurationWizardPageODEMDownloader getDefault(Shell parentShell,IProject pProject){
+	public static ARCConfigurationWizardPageODEMDownloader getDefault(IProject pProject,Shell parentShell){
 		if(instance==null)
-			instance = new ARCConfigurationWizardPageODEMDownloader(parentShell,pProject);
+			instance = new ARCConfigurationWizardPageODEMDownloader(pProject,parentShell);
 		return instance;
 	}
 
@@ -96,7 +102,7 @@ public class ARCConfigurationWizardPageODEMDownloader extends WizardPage {
 		new Label(container, SWT.NONE);
 		
 		Label label = new Label(container, SWT.NONE);
-		label.setText(aproject.getName());
+		label.setText(aProject.getName());
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
 		new Label(container, SWT.NONE);
@@ -167,7 +173,8 @@ public class ARCConfigurationWizardPageODEMDownloader extends WizardPage {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						
+						ARCConfigurationWizardPageConfig.setODEMLocation(odemfile.getAbsolutePath());
+						lblStatusLabel.setText("Finish Download");
 					}else{
 						// return an error
 						Display.getCurrent().syncExec(new Runnable(){
@@ -197,6 +204,8 @@ public class ARCConfigurationWizardPageODEMDownloader extends WizardPage {
 					try {
 						URL remoteurl = new URL(remoteurltext.getText().trim());
 						FileUtils.copyURLToFile(remoteurl, odemfile);
+						ARCConfigurationWizardPageConfig.setODEMLocation(odemfile.getAbsolutePath());
+						lblStatusLabel.setText("Finish Download");
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
 						Display.getCurrent().syncExec(new Runnable(){
@@ -219,6 +228,12 @@ public class ARCConfigurationWizardPageODEMDownloader extends WizardPage {
 			}
 		});
 		setControl(container);
+		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
+		new Label(container, SWT.NONE);
+		
+		lblStatusLabel = new Label(container, SWT.NONE);
+		lblStatusLabel.setText("Status");
 	}
 
 }

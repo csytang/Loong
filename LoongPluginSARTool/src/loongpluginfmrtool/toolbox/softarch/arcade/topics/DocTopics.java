@@ -67,8 +67,7 @@ public class DocTopics {
 					srcDir+File.separatorChar+"res/cppkeywords"), "UTF-8", false, false, false));
 		}
 		else {
-			pipeList.add(new TokenSequenceRemoveStopwords(new File(
-					srcDir+File.separatorChar+"res/javakeywords"), "UTF-8", false, false, false));
+			pipeList.add(new TokenSequenceRemoveStopwords(new File(srcDir+File.separatorChar+"res/javakeywords"), "UTF-8", false, false, false));
 		}
 		pipeList.add(new StemmerPipe());
 		pipeList.add(new TokenSequence2FeatureSequence());

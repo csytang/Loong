@@ -142,7 +142,7 @@ public class ARCConfigurationWizardPageDataLoad extends WizardPage {
 		lblstatusLabel = new Label(container, SWT.NONE);
 		lblstatusLabel.setEnabled(false);
 		lblstatusLabel.setAlignment(SWT.CENTER);
-		lblstatusLabel.setBounds(10, 205, 592, 14);
+		lblstatusLabel.setBounds(10, 205, 592, 38);
 		lblstatusLabel.setText("Status");
 		
 		onlineDownloadButton = new Button(container, SWT.NONE);

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -51,8 +52,8 @@ public class ArchRConcernAlg {
 	private String topWordsFilename;
 	private String arcClustersFilename;
 	private IProject aProject;
-	private String configFilePath;
 	private Shell shell;
+	private boolean configrationset = false;
 	/**
 	 * 
 	 * @param pAO application obersever by default
@@ -159,15 +160,23 @@ public class ArchRConcernAlg {
 	}
 	
 	private void configuration(){
-		WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard(aProject,aAO,shell,topicModelFilename,docTopicsFilename,arcClustersFilename,numTopics,allsourcefiles.size()));
+		WizardDialog dialog = new WizardDialog(shell,new ARCConfigurationWizard(this,aProject,aAO,shell,topicModelFilename,docTopicsFilename,arcClustersFilename,numTopics,allsourcefiles.size()));
 		dialog.create();
 		dialog.open();
 	}
 	
-	private void run(){
-		ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir+"/base", numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);
+	public void setConfigurationFile(IFile cfgfile){
+		String fulllocationpath = projectPath+File.separatorChar+cfgfile.getLocation().toOSString();
+		Config.initConfigFromFile(fulllocationpath);
+		configrationset = true;
 	}
 	
+	private void run(){
+		if(configrationset){
+			ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir+"/base", numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);
+	
+		}
+	}
 	private boolean isValidFilePath(String filePath) {
 		// TODO Auto-generated method stub
 		File file = new File(filePath);

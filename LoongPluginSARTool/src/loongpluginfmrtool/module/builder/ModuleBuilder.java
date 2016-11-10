@@ -73,9 +73,17 @@ public class ModuleBuilder {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		ModuleViewPart view_instance = ModuleViewPart.getInstance();
-		listeners.add(view_instance.getModuleListener());
 		
+		ModuleViewPart view_instance = ModuleViewPart.getInstance();
+		ModuleModelChangeListener listener = view_instance.getModuleListener();
+		if(listener!=null){
+			listeners.add(listener);
+		}else{
+			view_instance.resetModuleListener();
+			listener = view_instance.getModuleListener();
+			assert listener!=null;
+			listeners.add(listener);
+		}
 		final IContainer root=ResourcesPlugin.getWorkspace().getRoot();
 		WorkspaceJob job=new WorkspaceJob("CreateModule"){
 		    @Override 

@@ -106,6 +106,9 @@ public class ModuleViewPart extends ViewPart {
 	public ModuleModelChangeListener getModuleListener(){
 		return listener;
 	}
+	public void resetModuleListener(){
+		this.listener  = new ModuleModelChangeListener();
+	}
 	
 	private IProject getSelectedProject() {
 		ISelectionService selectionService = Workbench.getInstance().getActiveWorkbenchWindow().getSelectionService();    

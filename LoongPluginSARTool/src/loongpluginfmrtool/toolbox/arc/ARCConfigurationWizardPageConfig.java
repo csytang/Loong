@@ -1,7 +1,10 @@
 package loongpluginfmrtool.toolbox.arc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,9 +12,11 @@ import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -32,13 +37,13 @@ import org.eclipse.swt.widgets.Combo;
 
 public class ARCConfigurationWizardPageConfig extends WizardPage {
 	private static ARCConfigurationWizardPageConfig instance;
-	private Text projecttextContent;
-	private Text odemtextContent;
+	private Text projectNameTextContent;
+	private static Text odemtextContent;
 	private Text grandtruthtextContent;
 	private Text deptrsftextContent;
 	private Text txtArc;
 	private Combo granulecombo;
-	private Text text_7;
+	private Text preselectedRangeStart;
 	private Text numtopicrangeContentStart;
 	private Text topictextContent;
 	private Text selectePkgTextContent;
@@ -52,8 +57,8 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 	private String projectPath = "";
 	private Text numtopicrangeContentEnd;
 	private Text numtopicStep;
-	private Text text_1;
-	private Text text_2;
+	private Text preselectedRangeEnd;
+	private Text preselectedRangeStep;
 	private ApplicationObserver aAO;
 	private ProgramDatabase aPD;
 	private String atopicModelFilePath ="";
@@ -63,8 +68,11 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 	private String workspacePath;
 	private String arcClustersFilename;
 	private String projectodemfile = "";
-	private ARCConfigurationWizardPageConfig(IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,String parcClustersFilename,int minaltopics,int totaltopics) {
+	private String relativeprojectcfgpath = "";
+	private ArchRConcernAlg alg;
+	private ARCConfigurationWizardPageConfig(ArchRConcernAlg palg,IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,String parcClustersFilename,int minaltopics,int totaltopics) {
 		super("wizardPage");
+		this.alg = palg;
 		this.aProject = pProject;
 		this.shell = pShell;
 		this.aAO = pAO;
@@ -74,17 +82,26 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		this.aminaltopics = minaltopics;
 		this.atotaltopics = totaltopics;
 		this.arcClustersFilename = parcClustersFilename;
-		this.projectodemfile = this.aProject.getName()+".odem";
+		
 		workspacePath =ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		projectPath = workspacePath+File.separatorChar+aProject.getName().toString();
+		this.projectodemfile = projectPath+File.separatorChar+this.aProject.getName()+".odem";
+		this.relativeprojectcfgpath = this.aProject.getName()+".cfg";
+				
 		setTitle("Data Load Wizard for Architecture Recovery With Concerns");
 		setDescription("This configuration will help you create configuration file (.cfg) for ARC");
 	}
 	
-	public static ARCConfigurationWizardPageConfig getDefault(IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,String arcClustersFilename,int minaltopics,int totaltopics) {
+	public static void setODEMLocation(String location){
+		if(instance!=null){
+			odemtextContent.setText(location);
+		}
+	}
+	
+	public static ARCConfigurationWizardPageConfig getDefault(ArchRConcernAlg alg,IProject pProject,ApplicationObserver pAO,Shell pShell,String topicModelFilePath,String docTopicsFilePath,String arcClustersFilename,int minaltopics,int totaltopics) {
 		// TODO Auto-generated method stub
 		if(instance==null)
-			instance = new ARCConfigurationWizardPageConfig(pProject,pAO,pShell,topicModelFilePath,docTopicsFilePath,arcClustersFilename,minaltopics,totaltopics);
+			instance = new ARCConfigurationWizardPageConfig(alg,pProject,pAO,pShell,topicModelFilePath,docTopicsFilePath,arcClustersFilename,minaltopics,totaltopics);
 		return instance;
 	}
 	
@@ -103,10 +120,10 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblNewLabel.setText("project_name");
 		
-		projecttextContent = new Text(container, SWT.BORDER);
-		projecttextContent.setEditable(false);
-		projecttextContent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		projecttextContent.setText(this.aProject.getName());
+		projectNameTextContent = new Text(container, SWT.BORDER);
+		projectNameTextContent.setEditable(false);
+		projectNameTextContent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		projectNameTextContent.setText(this.aProject.getName());
 		
 		Label lblNewLabel_3 = new Label(container, SWT.NONE);
 		lblNewLabel_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -125,11 +142,7 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		
 		odemtextContent = new Text(container, SWT.BORDER);
 		odemtextContent.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		if(aProject.getFile(projectodemfile).exists()){
-			IFile odemfile = aProject.getFile(projectodemfile);
-			String fullpath = odemfile.getLocation().toOSString();
-			odemtextContent.setText(fullpath);
-		}
+		
 		
 		new Label(container, SWT.NONE);
 		
@@ -227,17 +240,17 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 		lblPreselectedrange.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblPreselectedrange.setText("preselected_range");
 		
-		text_7 = new Text(container, SWT.BORDER);
+		preselectedRangeStart = new Text(container, SWT.BORDER);
 		GridData gd_text_7 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_text_7.widthHint = 174;
-		text_7.setLayoutData(gd_text_7);
+		preselectedRangeStart.setLayoutData(gd_text_7);
 		
-		text_1 = new Text(container, SWT.BORDER);
-		text_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		preselectedRangeEnd = new Text(container, SWT.BORDER);
+		preselectedRangeEnd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		text_2 = new Text(container, SWT.BORDER);
-		text_2.setText("5");
-		text_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		preselectedRangeStep = new Text(container, SWT.BORDER);
+		preselectedRangeStep.setText("5");
+		preselectedRangeStep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblStopcriterion = new Label(container, SWT.NONE);
 		lblStopcriterion.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -325,9 +338,249 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 			// add create the local configuration script
 			@Override
 			public void handleEvent(Event event) {
-				// TODO extract the odem file from the target project
+				IFile cfgfile = aProject.getFile(relativeprojectcfgpath);
+				
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				
+				// project name
+				String projectname = "project_name="+projectNameTextContent.getText().trim()+"\n";
+				try {
+					out.write(projectname.getBytes());
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				
+				// lang
+				String lang = "lang=java\n";
+				try {
+					out.write(lang.getBytes());
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+				
+				// odem_file;
+				if(!odemtextContent.getText().trim().equals("")){
+					String odem = "odem_file="+odemtextContent.getText().trim()+"\n";
+					try {
+						out.write(odem.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				// deps_rsf_file
+				if(!deptrsftextContent.getText().trim().equals("")){
+					String depsrsf = "deps_rsf_file="+deptrsftextContent.getText().trim()+"\n";
+					try {
+						out.write(depsrsf.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				// groundtruth
+				if(!grandtruthtextContent.getText().trim().equals("")){
+					String groundtruth = "ground_truth_file="+grandtruthtextContent.getText().trim()+"\n";
+					try {
+						out.write(groundtruth.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				// clustering algorithm
+				String clusteringalg = "clustering_algorithm=arc\n";
+				try {
+					out.write(clusteringalg.getBytes());
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 				
 				
+				// sim measure
+				if(simmeasurecombo.getSelectionIndex()!=-1){//"js","uem","uemnm","ilm","scm"
+					String simapp = "js";
+					switch(simmeasurecombo.getSelectionIndex()){
+					case 0:{//"js"
+						simapp = "js";
+						break;
+					}
+					case 1:{//"uem"
+						simapp = "uem";
+						break;
+					}
+					case 2:{//"uemnm"
+						simapp = "uemnm";
+						break;
+					}
+					case 3:{//"ilm"
+						simapp = "ilm";
+						break;
+					}
+					case 4:{//"scm"
+						simapp = "scm";
+						break;
+					}
+					}
+					String simmeasure = "sim_measure="+simapp+"\n";
+					try {
+						out.write(simmeasure.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				// granule
+				if(granulecombo.getSelectionIndex()!=-1){
+					String granfromcomb = "file";
+					switch(granulecombo.getSelectionIndex()){//"file","class","func"
+					case 0:{
+						granfromcomb = "file";
+						break;
+					}
+					case 1:{
+						granfromcomb = "class";
+						break;
+					}
+					case 2:{
+						granfromcomb = "func";
+						break;
+					}
+					}
+					String granule = "granule="+granfromcomb+"\n";
+					try {
+						out.write(granule.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				// preselected_rang
+				if((!preselectedRangeStart.getText().trim().equals(""))&&
+						(!preselectedRangeEnd.getText().trim().equals(""))&&
+						(!preselectedRangeStep.getText().trim().equals(""))){
+					String preselectedrangetext = "preselected_range= "+preselectedRangeStart.getText().trim()+","+
+							preselectedRangeEnd.getText().trim()+","+
+							preselectedRangeStep.getText().trim()+"\n";
+					try {
+						out.write(preselectedrangetext.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				// stop_criterion
+				if(stoppingcriteriacombo.getSelectionIndex()!=-1){
+					String stoppingcrition = "preselected";//"preselected","clustergain"
+					switch(stoppingcriteriacombo.getSelectionIndex()){
+					case 0:{
+						stoppingcrition = "preselected";
+						break;
+					}
+					case 1:{
+						stoppingcrition = "clustergain";
+						break;
+					}
+					}
+					
+					String stopping = "stop_criterion="+stoppingcrition+"\n";
+					try {
+						out.write(stopping.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				
+				// topics_dir
+				if(!topictextContent.getText().trim().equals("")){
+					String topics = "topics_dir="+topictextContent.getText().trim()+"\n";
+					try {
+						out.write(topics.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				
+				// numtopics_range
+				if((!numtopicrangeContentStart.getText().trim().equals(""))
+						&&(!numtopicrangeContentEnd.getText().trim().equals(""))
+						&&(!numtopicStep.getText().trim().equals(""))){
+					String topicrange = "numtopics_range= "+numtopicrangeContentStart.getText().trim()+","+
+							numtopicrangeContentEnd.getText().trim()+","+
+							numtopicStep.getText().trim()+"\n";
+					try {
+						out.write(topicrange.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				
+				//selected_pkgs
+				if(!selectePkgTextContent.getText().trim().equals("")){
+					String selectedPKg = "selected_pkgs="+selectePkgTextContent.getText().trim()+"\n";
+					try {
+						out.write(selectedPKg.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				
+				//doc_topics_file
+				if(!docTopicFileTextContent.getText().trim().equals("")){
+					String doctopic = "doc_topics_file="+docTopicFileTextContent.getText().trim()+"\n";
+					try {
+						out.write(doctopic.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				
+				//smell_clusters_file
+				if(!smellclstextContent.getText().trim().equals("")){
+					String smellclstext = "smell_clusters_file="+smellclstextContent.getText().trim()+"\n";
+					try {
+						out.write(smellclstext.getBytes());
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				
+				}
+				
+				
+				
+				InputStream inputsource = new ByteArrayInputStream(out.toByteArray());
+				try {
+					cfgfile.create(inputsource, EFS.NONE, null);
+					out.close();
+				} catch (CoreException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+				// set the configuration 
+				alg.setConfigurationFile(cfgfile);
 			}
 			 
 		});

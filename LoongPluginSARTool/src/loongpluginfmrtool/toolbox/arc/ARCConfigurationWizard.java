@@ -11,22 +11,27 @@ import org.eclipse.swt.widgets.Shell;
 public class ARCConfigurationWizard extends Wizard {
 
 	private ARCConfigurationWizardPageDataLoad dataload;
+	private ARCConfigurationWizardPageKeywordsDownload keywordload;
 	private ARCConfigurationWizardPageConfig cfg;
 	private ARCConfigurationWizardPageODEMDownloader odemload;
 	private ApplicationObserver aAO;
 	private IProject aProject;
-	public ARCConfigurationWizard(IProject pProject,ApplicationObserver pAO,Shell shell,String topicModelFilePath,String docTopicsFilePath,String arcClustersFilename,int minaltopics,int totaltopics) {
+	private ArchRConcernAlg alg;
+	public ARCConfigurationWizard(ArchRConcernAlg palg,IProject pProject,ApplicationObserver pAO,Shell shell,String topicModelFilePath,String docTopicsFilePath,String arcClustersFilename,int minaltopics,int totaltopics) {
 		super();
 		this.aProject = pProject;
 		this.aAO = pAO;
-		odemload = ARCConfigurationWizardPageODEMDownloader.getDefault(shell,aProject);
+		this.alg = palg;
+		keywordload = ARCConfigurationWizardPageKeywordsDownload.getDefault(aProject,shell);
+		odemload = ARCConfigurationWizardPageODEMDownloader.getDefault(aProject,shell);
 		dataload =  ARCConfigurationWizardPageDataLoad.getDefault(aProject,shell);
-		cfg = ARCConfigurationWizardPageConfig.getDefault(aProject,aAO,shell,topicModelFilePath,docTopicsFilePath,arcClustersFilename,minaltopics,totaltopics);
+		cfg = ARCConfigurationWizardPageConfig.getDefault(alg,aProject,aAO,shell,topicModelFilePath,docTopicsFilePath,arcClustersFilename,minaltopics,totaltopics);
 		setWindowTitle("Configuration Page");
 	}
 
 	@Override
 	public void addPages() {
+		addPage(keywordload);
 		addPage(odemload);
 		addPage(dataload);
 		addPage(cfg);
@@ -36,7 +41,9 @@ public class ARCConfigurationWizard extends Wizard {
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		// TODO Auto-generated method stub
-		if(page==dataload){
+	    if(page==keywordload){
+	    	return dataload;
+	    }else if(page==dataload){
 			return cfg;
 		}else if(page==odemload){
 			return dataload;
