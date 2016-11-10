@@ -82,7 +82,7 @@ public class ARCConfigurationWizardPageKeywordsDownload extends WizardPage {
 		btnOfflineUpload.setBounds(10, 34, 215, 18);
 		btnOfflineUpload.setText("Upload from local disk");
 		listeners[1] = new ARCConfigurationWizardKeywordsListener(this,DataLoadMode.offline);
-		btnOnlineDownload.addSelectionListener(listeners[1]);
+		btnOfflineUpload.addSelectionListener(listeners[1]);
 		
 		
 		new Label(container, SWT.NONE);

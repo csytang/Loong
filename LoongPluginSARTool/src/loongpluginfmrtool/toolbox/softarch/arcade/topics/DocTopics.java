@@ -34,7 +34,6 @@ import  loongpluginfmrtool.toolbox.softarch.arcade.util.FileUtil;
  */
 public class DocTopics {
 	ArrayList<DocTopicItem> dtItemList = new ArrayList<DocTopicItem>();
-	private Logger logger = Logger.getLogger(DocTopics.class);
 	
 	public DocTopics() {
 		super();
@@ -74,9 +73,9 @@ public class DocTopics {
 
 		InstanceList instances = new InstanceList(new SerialPipes(pipeList));
 		String testDir = srcDir;
-		logger.debug("Building instances for mallet...");
+		System.out.println("Building instances for mallet...");
 		for (File file : FileListing.getFileListing(new File(testDir))) {
-			logger.debug("Should I add " + file.getName() + " to instances?");
+			System.out.println("Should I add " + file.getName() + " to instances?");
 			if (file.isFile() && file.getName().endsWith(".java")) {
 				String shortClassName = file.getName().replace(".java", "");
 				BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -86,21 +85,19 @@ public class DocTopics {
 					String packageName = FileUtil.findPackageName(line);
 					if (packageName != null) {
 						fullClassName = packageName + "." + shortClassName;
-						logger.debug("\t I've identified the following full class name from analyzing files: " + fullClassName);
+						System.out.println("\t I've identified the following full class name from analyzing files: " + fullClassName);
 					}
 				}
 				reader.close();
-				logger.debug("I'm going to add this file to instances: " + file);
-				String data = FileUtil.readFile(file.getAbsolutePath(),
-						Charset.defaultCharset());
-				Instance instance = new Instance(data, "X", fullClassName,
-						file.getAbsolutePath());
+				System.out.println("I'm going to add this file to instances: " + file);
+				String data = FileUtil.readFile(file.getAbsolutePath(),Charset.defaultCharset());
+				Instance instance = new Instance(data, "X", fullClassName,file.getAbsolutePath());
 				instances.addThruPipe(instance);
 			}
 			Pattern p = Pattern.compile("\\.(c|cpp|cc|s|h|hpp|icc|ia|tbl|p)$");
 			// if we found a c or c++ file
 			if ( p.matcher(file.getName()).find() ) {
-				logger.debug("I'm going to add this file to instances: " + file);
+				System.out.println("I'm going to add this file to instances: " + file);
 				String depsStyleFilename = file.getAbsolutePath().replace(testDir, "");
 				String data = FileUtil.readFile(file.getAbsolutePath(),
 						Charset.defaultCharset());
@@ -121,7 +118,8 @@ public class DocTopics {
 //		}
 //		//save for next time
 //		instances.save(new File("tmp/int.data"));
-		InstanceList previousInstances = InstanceList.load(new File(artifactsDir+"/output.pipe"));
+		File outpipe = new File(artifactsDir+"/output.pipe");
+		InstanceList previousInstances = InstanceList.load(outpipe);
 		
 		/*
 		 * Reader fileReader = new InputStreamReader(new FileInputStream(new
@@ -252,7 +250,7 @@ public class DocTopics {
 			}
 			
 		}
-		logger.error("Cannot find doc topic for: " + name);
+		System.out.println("Cannot find doc topic for: " + name);
 		return null;
 	}
 	
@@ -261,7 +259,7 @@ public class DocTopics {
 	}
 
 	public void loadFromFile(String filename) throws FileNotFoundException {
-		logger.debug("Loading DocTopics from file...");
+		System.out.println("Loading DocTopics from file...");
 		boolean localDebug = false;
 		File f = new File(filename);
 
@@ -294,15 +292,15 @@ public class DocTopics {
 			}
 			dtItemList.add(dtItem);
 			if (localDebug)
-				logger.debug(line);
+				System.out.println(line);
 
 		}
 		
 		if (localDebug)
-			logger.debug("\n");
+			System.out.println("\n");
 		for (DocTopicItem dtItem : dtItemList) {
 			if (localDebug)
-				logger.debug(dtItem);
+				System.out.println(dtItem);
 		}
 
 	}	

@@ -39,14 +39,14 @@ public class ARCConfigurationWizard extends Wizard {
 
 
 	@Override
-	public IWizardPage getNextPage(IWizardPage page) {
+	public IWizardPage getNextPage(IWizardPage page) {// keyword  --> dataload --> odemload --> config
 		// TODO Auto-generated method stub
 	    if(page==keywordload){
 	    	return dataload;
 	    }else if(page==dataload){
-			return cfg;
+			return odemload;
 		}else if(page==odemload){
-			return dataload;
+			return cfg;
 		}
 		return null;
 	}

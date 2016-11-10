@@ -650,8 +650,7 @@ public class TopicUtil {
 		
 	}
 
-	public static void setDocTopicForFastClusterForMalletApi(
-			DocTopics docTopics2, FastCluster c) {
+	public static void setDocTopicForFastClusterForMalletApi(DocTopics docTopics2, FastCluster c) {
 		if (Config.getSelectedLanguage().equals(Language.java)) {
 			c.docTopicItem = docTopics.getDocTopicItemForJava(c.getName());
 		}

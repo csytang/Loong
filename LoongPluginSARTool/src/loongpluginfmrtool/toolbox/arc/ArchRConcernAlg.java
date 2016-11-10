@@ -173,7 +173,7 @@ public class ArchRConcernAlg {
 	
 	private void run(){
 		if(configrationset){
-			ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir+"/base", numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);
+			ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir, numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);
 	
 		}
 	}
