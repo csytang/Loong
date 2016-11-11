@@ -20,18 +20,18 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import edu.usc.softarch.arcade.clustering.ConcernClusteringRunner;
+import edu.usc.softarch.arcade.clustering.FastFeatureVectors;
+import edu.usc.softarch.arcade.clustering.FeatureVectorMap;
+import edu.usc.softarch.arcade.config.Config;
+import edu.usc.softarch.arcade.functiongraph.TypedEdgeGraph;
+import edu.usc.softarch.arcade.topics.TopicModelExtractionMethod;
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LRelation;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.ConcernClusteringRunner;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.FastFeatureVectors;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.FeatureVectorMap;
-import loongpluginfmrtool.toolbox.softarch.arcade.config.Config;
-import loongpluginfmrtool.toolbox.softarch.arcade.config.Config.StoppingCriterionConfig;
-import loongpluginfmrtool.toolbox.softarch.arcade.functiongraph.TypedEdgeGraph;
-import loongpluginfmrtool.toolbox.softarch.arcade.topics.TopicModelExtractionMethod;
+
 
 public class ArchRConcernAlg {
 
@@ -54,6 +54,8 @@ public class ArchRConcernAlg {
 	private IProject aProject;
 	private Shell shell;
 	private boolean configrationset = false;
+	private String relativeprojectcfgpath;
+	private IFile cfgfile;
 	/**
 	 * 
 	 * @param pAO application obersever by default
@@ -66,9 +68,10 @@ public class ArchRConcernAlg {
 		this.aDB = this.aAO.getProgramDatabase();
 		this.aProject = this.aAO.getInitializedProject();
 		this.abuilder = pbuilder;
-			
+		this.relativeprojectcfgpath = this.aProject.getName()+".cfg";
 		preconfig();
 		configuration();
+		setConfigurationFile();
 		run();
 	}
 	
@@ -155,8 +158,7 @@ public class ArchRConcernAlg {
 		topicModelFilename = projectPath + File.separatorChar + numTopics + "_topics.mallet";
 		docTopicsFilename = projectPath + File.separatorChar + numTopics + "-doc-topics.txt";
 		topWordsFilename = projectPath + File.separatorChar + numTopics + "_top_words_per_topic.txt";
-		arcClustersFilename =projectPath + File.separatorChar + numTopics + "_topics_"
-				+numClusters + "_arc_clusters.rsf";
+		arcClustersFilename =projectPath + File.separatorChar + numTopics + "_topics_"+numClusters + "_arc_clusters.rsf";
 	}
 	
 	private void configuration(){
@@ -165,16 +167,17 @@ public class ArchRConcernAlg {
 		dialog.open();
 	}
 	
-	public void setConfigurationFile(IFile cfgfile){
-		String fulllocationpath = projectPath+File.separatorChar+cfgfile.getLocation().toOSString();
+	public void setConfigurationFile(){
+		cfgfile = aProject.getFile(relativeprojectcfgpath);
+		String fulllocationpath = cfgfile.getLocation().toOSString();
 		Config.initConfigFromFile(fulllocationpath);
 		configrationset = true;
 	}
 	
 	private void run(){
 		if(configrationset){
-			ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir, numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);
-	
+			ConcernClusteringRunner runner = new ConcernClusteringRunner(ffVecs,TopicModelExtractionMethod.MALLET_API, sourcecodeDir,sourcecodeDir, numTopics, topicModelFilename, docTopicsFilename, topWordsFilename);	
+			System.out.println("Finish ARC Clustering...");
 		}
 	}
 	private boolean isValidFilePath(String filePath) {

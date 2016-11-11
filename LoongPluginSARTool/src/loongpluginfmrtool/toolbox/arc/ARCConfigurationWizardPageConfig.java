@@ -569,6 +569,9 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 				
 				InputStream inputsource = new ByteArrayInputStream(out.toByteArray());
 				try {
+					if(cfgfile.exists()){
+						cfgfile.delete(true, null);
+					}
 					cfgfile.create(inputsource, EFS.NONE, null);
 					out.close();
 				} catch (CoreException e1) {
@@ -579,8 +582,7 @@ public class ARCConfigurationWizardPageConfig extends WizardPage {
 					e.printStackTrace();
 				}
 		        
-				// set the configuration 
-				alg.setConfigurationFile(cfgfile);
+				
 			}
 			 
 		});

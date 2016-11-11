@@ -93,6 +93,9 @@ public class ClusteringResultRSFOutput {
 		}
 		InputStream inputsource = new ByteArrayInputStream(out.toByteArray());
 	    try {
+	    	if(file.exists()){
+	    		file.delete(true, null);
+	    	}
 			file.create(inputsource, EFS.NONE, null);
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block

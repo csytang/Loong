@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 import loongplugin.source.database.ApplicationObserver;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.toolbox.softarch.arcade.config.Config.StoppingCriterionConfig;
+import edu.usc.softarch.arcade.config.Config.StoppingCriterionConfig;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;

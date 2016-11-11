@@ -30,20 +30,20 @@ import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LRelation;
 import loongplugin.utils.ASTCreator;
 import loongpluginfmrtool.module.builder.ModuleBuilder;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.ClusterGainStoppingCriterion;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.ConcernClusteringRunner;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.FastCluster;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.FastFeatureVectors;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.FeatureVectorMap;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.PreSelectedStoppingCriterion;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.SingleClusterStoppingCriterion;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.StoppingCriterion;
-import loongpluginfmrtool.toolbox.softarch.arcade.clustering.WcaRunner;
-import loongpluginfmrtool.toolbox.softarch.arcade.config.Config;
-import loongpluginfmrtool.toolbox.softarch.arcade.config.Config.StoppingCriterionConfig;
-import loongpluginfmrtool.toolbox.softarch.arcade.functiongraph.TypedEdgeGraph;
-import loongpluginfmrtool.toolbox.softarch.arcade.topics.TopicModelExtractionMethod;
-import loongpluginfmrtool.toolbox.softarch.arcade.util.StopWatch;
+import edu.usc.softarch.arcade.clustering.ClusterGainStoppingCriterion;
+import edu.usc.softarch.arcade.clustering.ConcernClusteringRunner;
+import edu.usc.softarch.arcade.clustering.FastCluster;
+import edu.usc.softarch.arcade.clustering.FastFeatureVectors;
+import edu.usc.softarch.arcade.clustering.FeatureVectorMap;
+import edu.usc.softarch.arcade.clustering.PreSelectedStoppingCriterion;
+import edu.usc.softarch.arcade.clustering.SingleClusterStoppingCriterion;
+import edu.usc.softarch.arcade.clustering.StoppingCriterion;
+import edu.usc.softarch.arcade.clustering.WcaRunner;
+import edu.usc.softarch.arcade.config.Config;
+import edu.usc.softarch.arcade.config.Config.StoppingCriterionConfig;
+import edu.usc.softarch.arcade.functiongraph.TypedEdgeGraph;
+import edu.usc.softarch.arcade.topics.TopicModelExtractionMethod;
+import edu.usc.softarch.arcade.util.StopWatch;
 import loongpluginfmrtool.util.ClusteringResultRSFOutput;
 
 import java.io.File;
@@ -191,7 +191,7 @@ public class WeightedClusteringAlg {
 		System.out.println(timeInSecsToComputeClusters);
 		System.out.println(timeInMilliSecondsToComputeClusters);
 		System.out.println(timeInMilliSecondsToComputeClusters);
-		
+		System.out.println("Finish clustering");
 		
 		
 		ArrayList<FastCluster> fasterClusters = WcaRunner.getFastClusters();
@@ -207,6 +207,7 @@ public class WeightedClusteringAlg {
 		
 		// Output result
 		ClusteringResultRSFOutput.ModuledStrOutput(clusterresult, "wca", aProject);
+		System.out.println("Finish output");
 	}
 	
 	

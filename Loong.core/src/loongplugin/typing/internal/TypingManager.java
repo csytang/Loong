@@ -140,11 +140,15 @@ public class TypingManager {
 									&& (delta.getFlags() & IResourceDelta.CONTENT) > 0)
 								if (delta.getResource().getType() == IResource.FILE){
 									IFile deltaFile = (IFile) delta.getResource();
-									if(deltaFile.getFullPath().getFileExtension().endsWith(".clr")){
-										toCheck.add((CLRAnnotatedSourceFile) CLRAnnotatedSourceFile
-														.getColoredJavaSourceFile((IFile) delta
-																.getResource()));
-									}
+										if(deltaFile!=null){
+											if(deltaFile.getFullPath()!=null){
+												if(deltaFile.getFullPath().getFileExtension().endsWith(".clr")){
+													toCheck.add((CLRAnnotatedSourceFile) CLRAnnotatedSourceFile
+																.getColoredJavaSourceFile((IFile) delta
+																		.getResource()));
+												}
+											}
+										}
 								}
 									
 							return true;
