@@ -13,6 +13,7 @@ import loongplugin.feature.Feature;
 import loongplugin.utils.EmbeddedASTNodeCollector;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 /* JayFX - A Fact Extractor Plug-in for Eclipse
  * Copyright (C) 2006  McGill University (http://www.cs.mcgill.ca/~swevo/jayfx)
@@ -1236,6 +1237,10 @@ public class LElement {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public ICompilationUnit getICompilationUnit(){
+		return aColorSourceFile.getCompilationUnit();
 	}
 	
 	public String getASTID(){

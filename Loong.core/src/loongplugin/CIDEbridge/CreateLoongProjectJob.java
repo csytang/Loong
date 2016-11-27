@@ -214,6 +214,18 @@ public class CreateLoongProjectJob extends WorkspaceJob {
 		   {
 		      if (member instanceof IContainer) 
 		      {
+		    	  if(member instanceof IFolder){
+		    		  IFolder folder  = (IFolder)member;
+		    		  // create a target folder at the target project system
+		    		  IPath relativefolderPath = folder.getProjectRelativePath();
+		    		  IResource resource  = targetProject.findMember(relativefolderPath);
+		    		  if(resource==null){
+		    			  IFolder targetfolder = targetProject.getFolder(relativefolderPath);
+		    			  targetfolder.create(EFS.NONE, true, new SubProgressMonitor(monitor, 0));
+		    		  }
+		    		  
+		    	  }
+		    	  
 		    	  processContainer((IContainer)member,targetProject,monitor);
 		      }
 		      else if (member instanceof IFile)
@@ -247,6 +259,7 @@ public class CreateLoongProjectJob extends WorkspaceJob {
 		    		 
 		    		  if(memberfile.exists()){
 		    			  if(!targetfile.exists()){
+		    				  
 		    				  IFileStore targetfileLocation = EFS.getLocalFileSystem().getStore(workspaceRoot.append(targetProject.getFullPath()).append(relativefilePath));
 		    				  if(!targetfileLocation.getParent().fetchInfo().exists()){
 		    					  IPath parentPath = targetfile.getProjectRelativePath().removeLastSegments(1);
@@ -359,9 +372,31 @@ public class CreateLoongProjectJob extends WorkspaceJob {
 		if (source.getResource() instanceof IFolder) {
 			IPath path = source.getPath().makeAbsolute();
 			path = path.removeFirstSegments(1);// remove project
+			
 			IFolder folder = targetJavaProject.getProject().getFolder(path);
-			folder.create(false, true, null);
+			//assert folder.getParent().exists();
+			if(folder.getParent().exists()){
+				
+			}else{
+				IContainer noncreatedancent = folder.getParent();
+				Stack<IContainer>needCreate = new Stack<IContainer>();
+				while(!noncreatedancent.exists()){
+					needCreate.push(noncreatedancent);
+					noncreatedancent = noncreatedancent.getParent();
+				}
+				while(!needCreate.isEmpty()){
+					IContainer parentContainer = needCreate.pop();
+					if(parentContainer instanceof IFolder){
+						IFolder parentfolder = (IFolder)parentContainer;
+						parentfolder.create(EFS.NONE, true, null);
+					}
+				}
+				
+				
+			}
+			folder.create(EFS.NONE, true, null);
 			result = targetJavaProject.getPackageFragmentRoot(folder);
+			
 		}
 		if (source.getResource() instanceof IProject) {
 			result = targetJavaProject.getPackageFragmentRoot(targetJavaProject
@@ -430,7 +465,6 @@ public class CreateLoongProjectJob extends WorkspaceJob {
 				continue;
 			if (!sourceRoot.getPackageFragment(pkg.getElementName()).exists())
 				continue;
-
 			sum += countPackage(pkg);
 		}
 		return sum;

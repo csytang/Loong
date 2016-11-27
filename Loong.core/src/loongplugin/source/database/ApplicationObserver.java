@@ -2,6 +2,7 @@ package loongplugin.source.database;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 /* JayFX - A Fact Extractor Plug-in for Eclipse
@@ -27,7 +28,11 @@ import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.feature.Feature;
@@ -51,7 +56,7 @@ public class ApplicationObserver extends Observable{
     private LElementColorManager elementColorManager;
     private Analyzer aAnalyzer;
     private LFlyweightElementFactory elementFactory;
-    private Map<Integer, ICompilationUnit> compUnitMap;
+    private List<ICompilationUnit> lTargets = new LinkedList<ICompilationUnit>();
     private boolean hasbeenInialized = false;
 	private ApplicationObserver() {
 		AOB = null;
@@ -106,7 +111,8 @@ public class ApplicationObserver extends Observable{
 		// aDB = BerkeleyProgramDatabase.getInstance();
 		aDB = new ProgramDatabase();
 		selectedProject = aProject;
-		compUnitMap =  new HashMap<Integer, ICompilationUnit>();
+		
+		
 		elementFactory = new LFlyweightElementFactory();
 		
 		elementColorManager = new LElementColorManager(this);
@@ -114,19 +120,21 @@ public class ApplicationObserver extends Observable{
 		aAnalyzer = new Analyzer(aDB);
 		
 		// Collect all target classes
-    	List<ICompilationUnit> lTargets = new ArrayList<ICompilationUnit>();
+    	//List<ICompilationUnit> lTargets = new ArrayList<ICompilationUnit>();
     	for (IJavaProject lNext : getJavaProjects(aProject))
     	{
-    		lTargets.addAll(getCompilationUnits(lNext));
+    		lTargets.addAll(getICompilationUnits(lNext));
+    		
     	}
     	
     	if( pProgress != null ){ 
-    		pProgress.beginTask( "Building program database", lTargets.size());
+    		pProgress.beginTask( "Building program database", lTargets.size()*2);
     	}
     	
     	ApplicationDeclareandRelationBuilder abuilder;
     	for( ICompilationUnit lCU : lTargets )
     	{
+    		pProgress.subTask("Process CompilationUnit: "+lCU.getElementName());
           	try
   			{
           		IPackageDeclaration[] lPDs = lCU.getPackageDeclarations();
@@ -159,7 +167,7 @@ public class ApplicationObserver extends Observable{
     		relationBuilder.buildRelations(lCU,annotatedsourcefile,elementColorManager);
     		
     		if( pProgress != null ) 
-          		pProgress.worked(2);
+          		pProgress.worked(1);
     	}
         
         pProgress.done();
@@ -220,7 +228,7 @@ public class ApplicationObserver extends Observable{
 	 * @throws ApplicationControllerException
 	 *             If the method cannot complete correctly
 	 */
-	private static List<ICompilationUnit> getCompilationUnits(IJavaProject pProject) throws ApplicationObserverException {
+	public static List<ICompilationUnit> getICompilationUnits(IJavaProject pProject) throws ApplicationObserverException {
 		assert (pProject != null);
 
 		List<ICompilationUnit> lReturn = new ArrayList<ICompilationUnit>();
@@ -299,6 +307,37 @@ public class ApplicationObserver extends Observable{
 	public Set<String> getPackages() {
 		// TODO Auto-generated method stub
 		return aPackages;
+	}
+
+	
+
+	public List<CompilationUnit> getCompilationUnits() {
+		// TODO Auto-generated method stub
+		List<CompilationUnit>res = new LinkedList<CompilationUnit>();
+		for(ICompilationUnit iunit:this.lTargets){
+			
+			CLRAnnotatedSourceFile clrannotateFile = null;
+			IFile sourceFile = (IFile)iunit.getResource();
+			IPath clrFilePath = sourceFile.getFullPath().removeFileExtension().addFileExtension("clr");
+			clrannotateFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(ResourcesPlugin.getWorkspace().getRoot().getFile(clrFilePath));
+			CompilationUnit unit;
+			try {
+				unit = clrannotateFile.getAST();
+				if(!res.contains(unit)){
+					res.add(unit);
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return res;
+	}
+
+	public List<ICompilationUnit> getICompilationUnits() {
+		// TODO Auto-generated method stub
+		return this.lTargets;
 	}
 	
 

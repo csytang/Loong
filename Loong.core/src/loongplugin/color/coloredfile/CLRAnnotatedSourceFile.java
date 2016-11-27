@@ -24,7 +24,7 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 
 	protected final IFile colorFile;// .clr file
 
-	protected final ICompilationUnit compilationUnit;
+	protected ICompilationUnit compilationUnit;
 
 	protected WeakReference<CompilationUnit> astRef = null;
 
@@ -60,6 +60,10 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 				return r;
 		}
 
+		//@SuppressWarnings("static-access")
+		if(compilationUnit==null){
+			compilationUnit = getCompilationUnit(getJavaFile(colorFile));
+		}
 		CompilationUnit r = creator.createAST(compilationUnit);
 		astRef = new WeakReference<CompilationUnit>(r);
 		return r;
@@ -89,7 +93,7 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 		return (CompilationUnit) node.getRoot();
 	}
 
-	public static ICompilationUnit getCompilationUnit(CompilationUnit astRoot) {
+	public static ICompilationUnit getICompilationUnit(CompilationUnit astRoot) {
 		return (ICompilationUnit) astRoot.getJavaElement();
 	}
 
@@ -103,7 +107,7 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 	}
 	
 	public static IFile getResource(ASTNode node) {
-		return getResource(getCompilationUnit(getASTRoot(node)));
+		return getResource(getICompilationUnit(getASTRoot(node)));
 	}
 
 	public int hashCode() {
