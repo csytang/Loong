@@ -28,8 +28,6 @@ public class RecoveryFeatureModelLIMBO implements IObjectActionDelegate {
 	private Shell shell;
 	private IWorkbenchPart part;
 	private ApplicationObserver lDB;
-	private ModuleBuilder mbuilder;
-	private ModuleModelChangeListener listener;
 	
 	public RecoveryFeatureModelLIMBO() {
 		// TODO Auto-generated constructor stub
@@ -57,13 +55,8 @@ public class RecoveryFeatureModelLIMBO implements IObjectActionDelegate {
 		    });
 			
 		}else{
-			mbuilder = ModuleBuilder.getInstance(aProject, lDB);
-			mbuilder.init(false);
-		//	mbuilder.computeStatistic();
-			mbuilder.notifyModuleListener();
-			mbuilder.buildModuleHelper();
-	        //.out.println("Finish Module Helper");
-			LIMBOConfigurationDialog dialog = new LIMBOConfigurationDialog(mbuilder,shell);
+			
+			LIMBOConfigurationDialog dialog = new LIMBOConfigurationDialog(lDB,shell);
 			dialog.create();
 			dialog.open();
 		}

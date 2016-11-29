@@ -72,25 +72,25 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 		targettext = new Text(container, SWT.BORDER);
 		targettext.setBounds(10, 70, 430, 19);
 		
-		Button btnCheckButton = new Button(container, SWT.CHECK);
-		btnCheckButton.setBounds(10, 118, 126, 18);
-		btnCheckButton.setText("B (Body Header)");
+		Button btnCheckButton_b = new Button(container, SWT.CHECK);
+		btnCheckButton_b.setBounds(10, 118, 126, 18);
+		btnCheckButton_b.setText("B (Body Header)");
 		listener[0] = new ACDCConfigurationDialogCheckboxListener("b");
-		btnCheckButton.addSelectionListener(listener[0]);
+		btnCheckButton_b.addSelectionListener(listener[0]);
 		
 		
-		Button btnCheckButton_1 = new Button(container, SWT.CHECK);
-		btnCheckButton_1.setBounds(142, 118, 151, 18);
-		btnCheckButton_1.setText("S (SubGraph Dominator)");
+		Button btnCheckButton_s = new Button(container, SWT.CHECK);
+		btnCheckButton_s.setBounds(142, 118, 151, 18);
+		btnCheckButton_s.setText("S (SubGraph Dominator)");
 		listener[1] = new ACDCConfigurationDialogCheckboxListener("s");
-		btnCheckButton.addSelectionListener(listener[1]);
+		btnCheckButton_s.addSelectionListener(listener[1]);
 		
 		
-		Button btnCheckButton_2 = new Button(container, SWT.CHECK);
-		btnCheckButton_2.setBounds(310, 118, 130, 18);
-		btnCheckButton_2.setText("O (Orphan Adoption)");
+		Button btnCheckButton_o = new Button(container, SWT.CHECK);
+		btnCheckButton_o.setBounds(310, 118, 130, 18);
+		btnCheckButton_o.setText("O (Orphan Adoption)");
 		listener[2] = new ACDCConfigurationDialogCheckboxListener("o");
-		btnCheckButton.addSelectionListener(listener[2]);
+		btnCheckButton_o.addSelectionListener(listener[2]);
 		
 		
 		Label lblAcdcConfigurationOptions = new Label(container, SWT.NONE);
@@ -203,6 +203,7 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 			args[i] = argulist.get(i);
 		}
 		
+		@SuppressWarnings("unused")
 		ACDC acdc = new ACDC(args);
 		
 		super.okPressed();

@@ -650,7 +650,9 @@ public class TopicUtil {
 	public static void setDocTopicForFastClusterForMalletApi(DocTopics docTopics, FastCluster c) {
 		if (Config.getSelectedLanguage().equals(Language.java)) {
 			c.docTopicItem = docTopics.getDocTopicItemForJava(c.getName());
-			System.out.println("In java: set cluster:"+c.getName()+"\t 's docTopicItem:"+c.docTopicItem.toString());
+			if(c.docTopicItem!=null&& c.getName()!=null){
+				System.out.println("In java: set cluster:"+c.getName()+"\t 's docTopicItem:"+c.docTopicItem.toString());
+			}
 		}
 		if (Config.getSelectedLanguage().equals(Language.c)) {
 			c.docTopicItem = docTopics.getDocTopicItemForC(c.getName());

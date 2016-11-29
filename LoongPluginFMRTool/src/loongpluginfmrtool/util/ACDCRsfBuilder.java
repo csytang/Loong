@@ -101,6 +101,7 @@ public class ACDCRsfBuilder {
     	}
 		
 		for(ICompilationUnit iunit:ICompilUnits){
+			/*
 			String artType = "Module";
 			
 			String artName =  getFullNameICompilationUnit(iunit);
@@ -108,7 +109,8 @@ public class ACDCRsfBuilder {
 				monitor.subTask("Process CompilationUnit: "+artName);
 			}
 			String artString = "$INSTANCE\t"+artName+"\t"+artType+"\n";
-			this.contentRecordList.add(artString);
+			this.contentRecordList.add(artString);*/
+			
 			artifects.add(iunit);
 			if( monitor != null ) 
 				monitor.worked(1);

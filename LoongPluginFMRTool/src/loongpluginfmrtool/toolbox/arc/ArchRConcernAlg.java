@@ -99,65 +99,17 @@ public class ArchRConcernAlg {
 		Set<ICompilationUnit>artifects = new HashSet<ICompilationUnit>();
 		
 		// build the relation mapping
-		/*
-		for(LElement element:allelements){
-			CompilationUnit sourceunit = element.getCompilationUnit();
-			if(!compilationUnitFile.containsKey(sourceunit)){
-				ICompilationUnit iunit = (ICompilationUnit) sourceunit.getJavaElement();
-				IPath path = iunit.getPath().makeAbsolute();
-				String fullsourcePath = projectPath+path.toOSString();
-				String relativePath = path.toOSString();
-				File absolutefile = new File(fullsourcePath);
-				if(!allsourcefiles.contains(absolutefile)){
-					allsourcefiles.add(absolutefile);
-				}
-				compilationUnitFile.put(sourceunit, absolutefile);
-			}
-			for(LRelation relation:allcontainsrelations){
-					Set<LElement> alltargetelement = aAO.getRange(element, relation);
-					if(alltargetelement!=null){
-						for(LElement target:alltargetelement){
-							CompilationUnit targetunit = target.getCompilationUnit();
-							if(!compilationUnitFile.containsKey(targetunit)){
-								ICompilationUnit iunit = (ICompilationUnit) targetunit.getJavaElement();
-								IPath path = iunit.getPath().makeAbsolute();
-								String fullsourcePath = projectPath+path.toOSString();
-								File absolutefile = new File(fullsourcePath);
-								if(!allsourcefiles.contains(absolutefile)){
-									allsourcefiles.add(absolutefile);
-								}
-								compilationUnitFile.put(targetunit, absolutefile);
-							}
-							if(dependsrelationmapping.containsKey(sourceunit)){
-									Set<CompilationUnit>targestunits = dependsrelationmapping.get(sourceunit);
-									targestunits.add(targetunit);
-									dependsrelationmapping.put(sourceunit, targestunits);
-							}else{
-									Set<CompilationUnit>targestunits = new HashSet<CompilationUnit>();
-									targestunits.add(targetunit);
-									dependsrelationmapping.put(sourceunit, targestunits);
-							}
-							
-						}
-				}
-				
-			}
-		}
-		
-		// put the dependence mapping into type edge graph
-		for(Map.Entry<CompilationUnit, Set<CompilationUnit>>entry:dependsrelationmapping.entrySet()){
-			CompilationUnit sourceunit = entry.getKey();
-			String sourcename = getFullName(sourceunit);
-			Set<CompilationUnit> targetunits = entry.getValue();
-			for(CompilationUnit unit:targetunits){
-				typedEdgeGraph.addEdge("depends", sourcename, getFullName(unit));
-			}
-		}
-		*/
 		List<ICompilationUnit> ICompilUnits = this.aAO.getICompilationUnits();
 		for(ICompilationUnit iunit:ICompilUnits){
 			//String artName =  getFullNameICompilationUnit(iunit);
 			artifects.add(iunit);
+			IPath path = iunit.getPath().makeAbsolute();
+			String fullsourcePath = projectPath+path.toOSString();
+			File absolutefile = new File(fullsourcePath);
+			if(!allsourcefiles.contains(absolutefile)){
+				allsourcefiles.add(absolutefile);
+			}
+			
 		}
 
 		for(LElement element:allelements){

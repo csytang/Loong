@@ -57,7 +57,7 @@ public class ConcernClusteringRunner extends ClusteringAlgoRunner {
 		matrixCreateTimer.start();
 		List<List<Double>> simMatrix = createSimilarityMatrix(fastClusters);
 		matrixCreateTimer.stop();
-		System.out.println("time to create similarity matrix: " + matrixCreateTimer.getElapsedTime());
+		//System.out.println("time to create similarity matrix: " + matrixCreateTimer.getElapsedTime());
 
 		while (stoppingCriterion.notReadyToStop()) {
 
@@ -72,10 +72,9 @@ public class ConcernClusteringRunner extends ClusteringAlgoRunner {
 			//identifyMostSimClustersForConcernsMultiThreaded(data);
 			MaxSimData data  = identifyMostSimClusters(simMatrix);
 			timer.stop();
-			System.out.println("time to identify two most similar clusters: "
-					+ timer.getElapsedTime());
+			//System.out.println("time to identify two most similar clusters: "+ timer.getElapsedTime());
 			
-			boolean isPrintingTwoMostSimilar = true;
+			boolean isPrintingTwoMostSimilar = false;
 			if (isPrintingTwoMostSimilar) {
 				//printDataForTwoMostSimilarClustersWithTopicsForConcerns(data);
 				printDataForTwoMostSimilarClustersWithTopicsForConcerns(data);
@@ -102,8 +101,7 @@ public class ConcernClusteringRunner extends ClusteringAlgoRunner {
 			boolean isShowingPostMergeClusterInfo = false;
 
 		//	if (logger.isDebugEnabled()) {
-				System.out.println("after merge, clusters size: "
-						+ fastClusters.size());
+				System.out.println("after merge, clusters size: "+ fastClusters.size());
 			//}
 			if (isShowingPostMergeClusterInfo) {
 				//if (logger.isDebugEnabled()) {
@@ -427,7 +425,7 @@ public class ConcernClusteringRunner extends ClusteringAlgoRunner {
 				data.currentMaxSim = currJSDivergence;
 				data.c1 = cluster;
 				data.c2 = otherCluster;
-				boolean showCurrentMostSimilar = true;
+				boolean showCurrentMostSimilar = false;
 				if (showCurrentMostSimilar) {
 					//if (logger.isDebugEnabled()) {
 						System.out.println("Updated most similar values: ");

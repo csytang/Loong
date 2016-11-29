@@ -141,8 +141,7 @@ public class BatchSystemEvo {
 		//}
 	}
 	
-	private static void compareWithVdistGt1ForSubset(
-			List<File> clusterFiles) {
+	private static void compareWithVdistGt1ForSubset(List<File> clusterFiles) {
 		for (int comparisonDistance = 1; comparisonDistance < clusterFiles
 				.size(); comparisonDistance++) {
 			File prevFile = null;
@@ -180,8 +179,7 @@ public class BatchSystemEvo {
 		String[] sysEvoArgs = {prevFile.getAbsolutePath(),currFile.getAbsolutePath()};
 		SystemEvo.main(sysEvoArgs);
 		double sysEvoValue = SystemEvo.sysEvo;
-		System.out.println("SysEvo from " + prevFile.getName()
-				+ " to " + currFile.getName() + ": " + sysEvoValue);
+		System.out.println("SysEvo from " + prevFile.getName()+ " to " + currFile.getName() + ": " + sysEvoValue);
 		return sysEvoValue;
 	}
 

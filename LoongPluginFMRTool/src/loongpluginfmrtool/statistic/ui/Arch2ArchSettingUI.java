@@ -197,6 +197,8 @@ public class Arch2ArchSettingUI extends TitleAreaDialog {
 			public void handleEvent(Event event) {
 				// TODO Auto-generated method stub
 				if(combo.getSelectionIndex()!=-1){
+					lblValue.setText("Computing...");
+					
 					int selectedIndex = combo.getSelectionIndex();
 					// 1. get the method
 					if(recoveryResultTextContent.getText().trim().equals("")){

@@ -187,7 +187,7 @@ public class BatchBunchToRSFDialog extends TitleAreaDialog {
 							String prePath = inputPath.substring(0, lastIndex);
 							String shorFileName = inputPath.substring(lastIndex+1);
 							shorFileName = shorFileName.substring(0, shorFileName.length()-".bunch".length());
-							String outputPath = prePath+File.separatorChar+shorFileName+".rsf";
+							String outputPath = "bunch_"+prePath+File.separatorChar+shorFileName+".rsf";
 							
 							BunchClusterToRsfClusterConverter.BunchClusterToRsfClusterConverter(inputPath, outputPath);
 							File outputFile = new File(outputPath);

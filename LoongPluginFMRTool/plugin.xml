@@ -67,7 +67,7 @@
                class="loongpluginfmrtool.popup.actions.RecoveryFeatureModelARC"
                icon="icons/arch.png"
                id="LoongPluginFMRTool.featurerecoveryARC"
-               label="Recovery Feature Model with ARConcern"
+               label="Recovery Feature Model with ArchRecoveryConcern"
                menubarPath="LoongPlugin.FMRTool.FMRecoveryJ/group1">
          </action>
          <action

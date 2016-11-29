@@ -28,6 +28,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Text;
+
+import loongplugin.source.database.ApplicationObserver;
+
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -35,16 +38,16 @@ import org.eclipse.swt.events.DisposeEvent;
 public class LIMBOConfigurationDialog extends Dialog {
 	private Text text;
 	private Shell shell;
-	private ModuleBuilder builder;
+	private ApplicationObserver aAO;
 	private int cluster;
 	/**
 	 * Create the dialog.
 	 * @param parentShell
 	 */
-	public LIMBOConfigurationDialog(ModuleBuilder pbuilder,Shell parentShell) {
+	public LIMBOConfigurationDialog(ApplicationObserver pAO,Shell parentShell) {
 		super(parentShell);
 		this.shell = parentShell;
-		this.builder = pbuilder;
+		this.aAO = pAO;
 	}
 
 	/**
@@ -109,7 +112,7 @@ public class LIMBOConfigurationDialog extends Dialog {
 		try{
 			this.cluster = Integer.parseInt(textcontent);
 			
-			LIMBO limbo = new LIMBO(builder,cluster);
+			LIMBOClusteringAlg alg = new LIMBOClusteringAlg(aAO,this.cluster);
 		}catch(NumberFormatException e){
 			Display.getCurrent().syncExec(new Runnable(){
 

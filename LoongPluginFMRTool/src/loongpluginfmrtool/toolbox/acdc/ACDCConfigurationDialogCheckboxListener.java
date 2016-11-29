@@ -15,6 +15,7 @@ public class ACDCConfigurationDialogCheckboxListener extends SelectionAdapter {
 	@Override
 	public void widgetSelected(SelectionEvent e) {
 		Button button = (Button)e.widget;
+		//button.getSelection()
 		if(button.getSelection()){
 			switch(pattern){
 			case "b":{
