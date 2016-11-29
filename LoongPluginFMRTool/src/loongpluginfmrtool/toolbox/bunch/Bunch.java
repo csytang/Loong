@@ -61,11 +61,6 @@ public class Bunch {
 		  frame.setVisible(true);
 	}
 	
-	public void setInputMDGFile(File file,String projectPath){
-		//inputGraphFilename_d
-		frame.setInputMDGFile(file);
-		frame.selectGraphFile(file,projectPath);
-	}
 }
 
 

@@ -140,6 +140,7 @@ import java.util.*;
 
 import javax.swing.event.*;
 
+import edu.usc.softarch.arcade.util.StopWatch;
 import loongpluginfmrtool.toolbox.bunch.BunchServer.BunchSvrMsg;
 import loongpluginfmrtool.toolbox.bunch.stats.*;
 
@@ -862,8 +863,7 @@ public BunchFrame() {
  *
  * @returns True if agglomerative, false if user-directed
  */
-public boolean isAgglomerativeTechnique()
-{
+public boolean isAgglomerativeTechnique(){
   String action = (String)actionList_d.getSelectedItem();
   if(action.equals("Agglomerative Clustering"))
     return true;
@@ -876,8 +876,7 @@ public boolean isAgglomerativeTechnique()
  *
  * @returns True if user-directed, false if agglomerative
  */
-public boolean isUserDrivenTechnique()
-{
+public boolean isUserDrivenTechnique(){
   String action = (String)actionList_d.getSelectedItem();
   if(action.equals("User-Driven Clustering"))
     return true;
@@ -1303,16 +1302,13 @@ public CallbackImpl getSvrCallback()
  *
  * @param e the ActionEvent that triggered the method call
  */
-void
-runActionButton_d_actionPerformed(ActionEvent e)
-{
+void runActionButton_d_actionPerformed(ActionEvent e) {
 
   /**
    * First ensure that an input graph is specified
    */
   if (outputClusterFilename_d.getText() == null
-          || outputClusterFilename_d.getText().equals(""))
-  {
+          || outputClusterFilename_d.getText().equals("")){
     JOptionPane.showMessageDialog(this,
             "Error: missing input graph file\nor output graph filename.", "MQ Calculation: Missing Parameter",
             JOptionPane.ERROR_MESSAGE);
@@ -1354,6 +1350,10 @@ runActionButton_d_actionPerformed(ActionEvent e)
   graphOutput_d.setBasicName(fileBasicName_d);
   configureOptions();
 
+  StopWatch stopwatch = new StopWatch();
+
+  stopwatch.start();
+	
   //==================
   //DISTRIB CLUSTERING ENTRY POINT
   //=================
@@ -1361,8 +1361,7 @@ runActionButton_d_actionPerformed(ActionEvent e)
    * This path of code is used for the distributed clustering options
    */
   boolean doDistrib = distClustEnableCB.isSelected();
-  if(doDistrib == true)
-  {
+  if(doDistrib == true){
     /**
      * Get the distributed options
      */
@@ -1467,8 +1466,7 @@ runActionButton_d_actionPerformed(ActionEvent e)
     /**
      * We are using the standard, non distributed clustering engine
      */
-    else
-    {
+    else{
       /**
        * Get ready to display the clustering progress dialog box which will
        * manage the clustering process.
@@ -1501,6 +1499,16 @@ runActionButton_d_actionPerformed(ActionEvent e)
       if (outputFileFormatList_d.getSelectedItem().equals("Dotty"))
          visualizeButton_d.setEnabled(true);
     }
+    stopwatch.stop();
+
+	// Statistics
+	String timeInSecsToComputeClusters = "Time in seconds to compute clusters: "
+			+ stopwatch.getElapsedTimeSecs();
+	String timeInMilliSecondsToComputeClusters = "Time in milliseconds to compute clusters: "
+			+ stopwatch.getElapsedTime();
+	System.out.println(timeInSecsToComputeClusters);
+	System.out.println(timeInMilliSecondsToComputeClusters);
+	System.out.println("Finish clustering");
 }
 
 /**

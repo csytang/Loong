@@ -157,8 +157,6 @@ public class LIMBOClusteringAlg {
 		String timeInMilliSecondsToComputeClusters = "Time in milliseconds to compute clusters: "
 				+ stopwatch.getElapsedTime();
 		System.out.println(timeInSecsToComputeClusters);
-		System.out.println(timeInSecsToComputeClusters);
-		System.out.println(timeInMilliSecondsToComputeClusters);
 		System.out.println(timeInMilliSecondsToComputeClusters);
 		System.out.println("Finish clustering");
 		

@@ -34,6 +34,7 @@ import edu.usc.softarch.arcade.config.Config.SimMeasure;
 import edu.usc.softarch.arcade.config.Config.StoppingCriterionConfig;
 import edu.usc.softarch.arcade.functiongraph.TypedEdgeGraph;
 import edu.usc.softarch.arcade.topics.TopicModelExtractionMethod;
+import edu.usc.softarch.arcade.util.StopWatch;
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.ProgramDatabase;
 import loongplugin.source.database.model.LElement;
@@ -189,7 +190,21 @@ public class ArchRConcernAlg {
 			// have to set some Config settings before executing the runner
 			Config.stoppingCriterion = StoppingCriterionConfig.preselected;
 			Config.setCurrSimMeasure(SimMeasure.js);
+			StopWatch stopwatch = new StopWatch();
+
+			stopwatch.start();
+			
 			runner.computeClustersWithConcernsAndFastClusters(new PreSelectedStoppingCriterion());
+			
+			stopwatch.stop();
+
+			// Statistics
+			String timeInSecsToComputeClusters = "Time in seconds to compute clusters: "
+					+ stopwatch.getElapsedTimeSecs();
+			String timeInMilliSecondsToComputeClusters = "Time in milliseconds to compute clusters: "
+					+ stopwatch.getElapsedTime();
+			System.out.println(timeInSecsToComputeClusters);
+			System.out.println(timeInMilliSecondsToComputeClusters);
 			
 			
 			ArrayList<FastCluster> fasterClusters = runner.getFastClusters();

@@ -13,6 +13,7 @@ import loongplugin.recommendation.LElementRecommendationManager;
 import loongplugin.recommendation.RecommendationContextCollection;
 import loongplugin.source.database.ApplicationObserver;
 import loongplugin.source.database.model.LElement;
+import loongplugin.utils.StopWatch;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -70,7 +71,8 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 		
 		lerecommendationmanager.generateRecommendations();
 		
-		
+		StopWatch stopwatch = new StopWatch();
+		stopwatch.start();
 		for(Feature feature:FeatureModelManager.getInstance().getFeatures()){
 			System.out.println("For feature:"+feature.getName());
 			Map<LElement, RecommendationContextCollection> recommendermaps = lerecommendationmanager.getRecommendations(feature);
@@ -84,6 +86,14 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 			}
 			
 		}
+		stopwatch.stop();
+		// Statistics
+		String timeInSecsToComputeClusters = "Time in seconds to annotate features: "
+						+ stopwatch.getElapsedTimeSecs();
+		String timeInMilliSecondsToComputeClusters = "Time in milliseconds to annotate features: "
+						+ stopwatch.getElapsedTime();
+		System.out.println(timeInSecsToComputeClusters);
+		System.out.println(timeInMilliSecondsToComputeClusters);
 	}
 
 	@Override

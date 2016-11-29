@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import edu.usc.softarch.arcade.util.StopWatch;
+
 import org.eclipse.swt.widgets.Button;
 
 public class ACDCConfigurationDialog extends TitleAreaDialog {
@@ -204,7 +207,22 @@ public class ACDCConfigurationDialog extends TitleAreaDialog {
 		}
 		
 		@SuppressWarnings("unused")
+		StopWatch stopwatch = new StopWatch();
+
+		stopwatch.start();
+		
 		ACDC acdc = new ACDC(args);
+		
+		stopwatch.stop();
+
+		// Statistics
+		String timeInSecsToComputeClusters = "Time in seconds to compute clusters: "
+				+ stopwatch.getElapsedTimeSecs();
+		String timeInMilliSecondsToComputeClusters = "Time in milliseconds to compute clusters: "
+				+ stopwatch.getElapsedTime();
+		System.out.println(timeInSecsToComputeClusters);
+		System.out.println(timeInMilliSecondsToComputeClusters);
+		System.out.println("Finish clustering");
 		
 		super.okPressed();
 		
