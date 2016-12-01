@@ -203,13 +203,15 @@ public class FeatureView extends ViewPart{
 	@Override
 	public void createPartControl(Composite parent) {
 		// TODO Auto-generated method stub
-		createTable(parent);
-		createValidPanel(parent);
-		createLayout(parent);
-		makeActions();
-		hookContextMenu();
-		contributeToActionBars();
-		//hookDoubleClickAction();
+		if(project!=null){
+			createTable(parent);
+			createValidPanel(parent);
+			createLayout(parent);
+			makeActions();
+			hookContextMenu();
+			contributeToActionBars();
+			//hookDoubleClickAction();
+		}
 	}
 
 	
@@ -349,7 +351,8 @@ public class FeatureView extends ViewPart{
 	
 	
 	private void redraw() throws Exception {
-		
+		if(table==null)
+			return;
 		if (table.isDisposed()){
 				return;
 		}

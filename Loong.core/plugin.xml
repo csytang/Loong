@@ -189,8 +189,16 @@
                class="loongplugin.popup.actions.SetColorPopup"
                id="LoongPlugin.SetResourceColor"
                label="Set File/Directory Feature(Loong)"
-               menubarPath="group.open">
+               menubarPath="LoongPlugin.Resource/resourcegroup">
          </action>
+         <menu
+               id="LoongPlugin.Resource"
+               label="Loong"
+               path="additions">
+            <separator
+                  name="resourcegroup">
+            </separator>
+         </menu>
       </objectContribution>
    </extension>
    <extension

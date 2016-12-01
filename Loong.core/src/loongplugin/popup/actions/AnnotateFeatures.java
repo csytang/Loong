@@ -65,20 +65,21 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 		
 		// 生成FeatureColorModel 文件
 		ModelIDCLRFile modelIDCLRFIle = new ModelIDCLRFile(FeatureModelManager.getInstance().getFeatureModel(),lDB.getInitializedProject());
-		
+		StopWatch stopwatch = new StopWatch();
+		stopwatch.start();
 		
 		LElementRecommendationManager lerecommendationmanager = new LElementRecommendationManager();
 		
+		
 		lerecommendationmanager.generateRecommendations();
 		
-		StopWatch stopwatch = new StopWatch();
-		stopwatch.start();
+		
 		for(Feature feature:FeatureModelManager.getInstance().getFeatures()){
 			System.out.println("For feature:"+feature.getName());
 			Map<LElement, RecommendationContextCollection> recommendermaps = lerecommendationmanager.getRecommendations(feature);
 			
 			for(LElement element:recommendermaps.keySet()){
-			//	System.out.println("LElement:"+element.getId());
+				System.out.println("Annotate LElement:"+element.getId());
 				CLRAnnotatedSourceFile clrsourcefile = element.getCLRFile();
 				CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrsourcefile.getColorManager();
 				annotatedfeatureToNode(clrsourcefile.getCompilationUnit(),colormanager,element.getASTNode(),feature);

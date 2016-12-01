@@ -58,6 +58,8 @@ public class SetColorPopup implements IWorkbenchWindowActionDelegate, IObjectAct
 		assert !resources.isEmpty();
 		
 		IProject project = resources.get(0).getProject();
+		
+		// Process unsupported multiple files selections from different projects
 		for (IResource r : resources) {
 			if (r.getProject() != project) {
 				MessageBox messageBox = new MessageBox(Display.getCurrent()

@@ -114,12 +114,12 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 	}
 	
 	public static FeatureModelManager getInstance(){
-		if(instance==null){
-			if(ApplicationObserver.getInstance().getInitializedProject()!=null){
+		
+		if(ApplicationObserver.getInstance().getInitializedProject()!=null){
 				instance = new FeatureModelManager(ApplicationObserver.getInstance().getInitializedProject());
-			}else
+		}else
 				instance = new FeatureModelManager(getCurrentProject());
-		}
+		
 		return instance;
 	}
 	
@@ -155,6 +155,30 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 	}
 	
 	public FeatureModel getFeatureModel(){
+		if(this.project!=null){
+			if(fmodel==null||fmodel.getRoot()==null){
+				fmodel = new FeatureModel();
+				gReader = new GuidslReader(fmodel);
+				
+				mFile = this.project.getFile("model.m");
+				try {
+					if(mFile.exists()){
+						gReader.parseInputStream(mFile.getContents());
+					}else{
+						if (!mFile.exists()) {
+							mFile.create(new ByteArrayInputStream(
+									"Project : [Feature1] [Feature2] :: _Project ;".getBytes()), true,
+									null);
+						}
+						gReader.parseInputStream(mFile.getContents());
+					}
+				} catch (UnsupportedModelException | CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				fmodel = gReader.getFeatureModel();
+			}
+		}
 		return fmodel;
 	}
 	

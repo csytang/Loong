@@ -44,12 +44,13 @@ public class SlicingVariable {
 		}else if(node instanceof SingleVariableDeclaration){
 			ibinding = ((SingleVariableDeclaration)node).getType().resolveBinding();
 		}else{
+			/*
 			try {
-				throw new Exception("Unkown ASTNode:"+node);
+				//throw new Exception("Unkown ASTNode:"+node);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 		}
 		
 	}
