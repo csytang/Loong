@@ -203,7 +203,7 @@ public class FeatureView extends ViewPart{
 	@Override
 	public void createPartControl(Composite parent) {
 		// TODO Auto-generated method stub
-		if(project!=null){
+		
 			createTable(parent);
 			createValidPanel(parent);
 			createLayout(parent);
@@ -211,7 +211,7 @@ public class FeatureView extends ViewPart{
 			hookContextMenu();
 			contributeToActionBars();
 			//hookDoubleClickAction();
-		}
+		
 	}
 
 	
