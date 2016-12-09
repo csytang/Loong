@@ -32,20 +32,11 @@ public class LElementColorManager{
 		FeatureModel model = manager.getFeatureModel();
 		// check whether the model is null
 		
-		if(model==null){
-			System.out.println("Model is null");
-		}
 		
-		if(model.getRoot()==null){
-			System.out.println("Model.root is null");
-		}
-		
-
 		Set<Feature> alwaysTrueElements = new HashSet<Feature>();
 		Set<Feature> alwaysFalseElements = new HashSet<Feature>();
 		model.getSelectedAndUnselectedFeatures(new HashSet<Feature>(),alwaysTrueElements, alwaysFalseElements);
 		
-		System.out.println("--------------------------------");
 		for (Feature curFeature : model.getFeatures()) {
 
 			//ININT
@@ -138,6 +129,7 @@ public class LElementColorManager{
 
 		return result;
 	}
+	
 /*
 	public Set<Feature> getRelatedNonFeatures(Feature color) {
 		Set<Feature> result = feature2alternativeFeatures.get(color);
