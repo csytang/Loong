@@ -58,7 +58,9 @@ public class Configuration {
 
 	public Configuration(FeatureModel featureModel) {
 		this.featureModel = featureModel;
-		
+		if(featureModel==null){
+			System.err.println("In Configure Feature Model is Nulll");
+		}
 
 		root = new SelectableFeature(this, featureModel.getRoot());
 		initFeatures(root, featureModel.getRoot());
@@ -70,16 +72,18 @@ public class Configuration {
 	}
 
 	private void initFeatures(SelectableFeature sFeature, Feature feature) {
+		
+		System.out.println("init features:"+feature.getName());
 		features.add(sFeature);
 		table.put(sFeature.getName(), sFeature);
-		//System.out.println("init features:"+feature.getName());
+		
 		for (Feature child : feature.getChildren()) {
 			SelectableFeature sChild = new SelectableFeature(this, child);
 			//System.out.println("init features:"+feature.getName()+" 's child "+child.getName());
 			sFeature.addChild(sChild);
 			initFeatures(sChild, child);
 		}
-		//System.out.println("Feature:"+sFeature.getName()+" has "+sFeature.getChildren().length+" children");
+		System.out.println("Feature:"+sFeature.getName()+" has "+sFeature.getChildren().length+" children");
 	}
 
 	/**

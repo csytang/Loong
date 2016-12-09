@@ -53,8 +53,10 @@ public class FeatureConfDialog extends TitleAreaDialog {
 	private FeatureModel fmodel;
 	private ColorManager clrmanager;
 	private FeatureModelChangeListener featuremodelListener;
+	private IProject aproject;
 	public FeatureConfDialog(Shell parentShell,IProject project) {
 		super(parentShell);
+		aproject = project;
 		fmodel = FeatureModelManager.getInstance(project).getFeatureModel();
 		clrmanager = FeatureModelManager.getInstance(project).getColorManager();
 		featuremodelListener = new FeatureModelChangeListener();
@@ -151,7 +153,7 @@ public class FeatureConfDialog extends TitleAreaDialog {
 		}
 
 		public Object[] getElements(Object inputElement) {
-			return FeatureModelManager.getInstance().getFeatureModel().getRankedFeature().toArray();
+			return FeatureModelManager.getInstance(aproject).getFeatureModel().getRankedFeature().toArray();
 			
 		}
 
@@ -278,19 +280,19 @@ public class FeatureConfDialog extends TitleAreaDialog {
 		@Override
 		public void featureModelChanged(FeatureModelChangedEvent event) {
 			
-			if(!FeatureModelManager.getInstance().hasbeenReset(event)){
+			if(!FeatureModelManager.getInstance(aproject).hasbeenReset(event)){
 				fmodel = event.getFeatureModel();
-				FeatureModelManager.getInstance().setFeatureModel(fmodel);
+				FeatureModelManager.getInstance(aproject).setFeatureModel(fmodel);
 				fmodel.setIdToAllFeatures();	
 				
 				// Initial color to all features
-				FeatureModelManager.getInstance().setColorManager(new ColorManager(fmodel));
-				FeatureModelManager.getInstance().getColorManager().featureColorInit();
+				FeatureModelManager.getInstance(aproject).setColorManager(new ColorManager(fmodel));
+				FeatureModelManager.getInstance(aproject).getColorManager().featureColorInit();
 				FeatureModelManager.resetEvent.add(event);
 			}
 			
-			fmodel = FeatureModelManager.getInstance().getFeatureModel();
-			clrmanager = FeatureModelManager.getInstance().getColorManager();
+			fmodel = FeatureModelManager.getInstance(aproject).getFeatureModel();
+			clrmanager = FeatureModelManager.getInstance(aproject).getColorManager();
 			
 		}
 		

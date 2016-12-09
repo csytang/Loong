@@ -31,7 +31,6 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.Workbench;
 
 import loongplugin.LoongPlugin;
 import loongplugin.color.ColorManager;
@@ -59,9 +58,7 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 	@SuppressWarnings("static-access")
 	public FeatureModelManager(IProject project) {
 		super(LoongPlugin.PLUGIN_ID,"featureModelProvider");
-		if(instance!=null && project==instance.project){
-			return;
-		}
+		
 		
 		fmodel = new FeatureModel();
 		gReader = new GuidslReader(fmodel);
@@ -108,21 +105,33 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		
 		
 		instance = this;
-		
+		instance.cmanager = cmanager;
 		featuremodelListener = new FeatureModelChangeListener();
 		LoongPlugin.getDefault().addFeatureModelChangeListener(featuremodelListener);
 	}
 	
-	public static FeatureModelManager getInstance(){
-		
-		if(ApplicationObserver.getInstance().getInitializedProject()!=null){
-				instance = new FeatureModelManager(ApplicationObserver.getInstance().getInitializedProject());
-		}else
-				instance = new FeatureModelManager(getCurrentProject());
+	public static FeatureModelManager getInstance(IProject pproject){
+		if(instance!=null&&project!=null){
+			return instance;
+		}
+		if(project==null){
+			project = pproject;
+		}else if(project!=pproject){
+			project = pproject;
+		}
+		instance = new FeatureModelManager(project);
 		
 		return instance;
 	}
-	
+	public static FeatureModelManager getInstance() {
+		// TODO Auto-generated method stub
+		assert project!=null;
+		if(instance!=null)
+			return instance;
+		else
+			instance = new FeatureModelManager(project);
+		return instance;
+	}
 	
 	public boolean hasbeenReset(FeatureModelChangedEvent event){
 		if(FeatureModelManager.resetEvent.contains(event))
@@ -134,17 +143,7 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		this.fmodel = pmodel;
 	}
 	
-	public static FeatureModelManager getInstance(IProject currentProject)  {
-		// TODO Auto-generated method stub
-		if(instance==null){
-			instance = new FeatureModelManager(currentProject);
-		}else if(project!=currentProject){
-			instance = new FeatureModelManager(currentProject);
-		}else if(instance.getFeatureModel()==null){
-			instance = new FeatureModelManager(currentProject);
-		}
-		return instance;
-	}
+	
 	
 	public ColorManager getColorManager(){
 		return cmanager;
@@ -155,30 +154,7 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 	}
 	
 	public FeatureModel getFeatureModel(){
-		if(this.project!=null){
-			if(fmodel==null||fmodel.getRoot()==null){
-				fmodel = new FeatureModel();
-				gReader = new GuidslReader(fmodel);
-				
-				mFile = this.project.getFile("model.m");
-				try {
-					if(mFile.exists()){
-						gReader.parseInputStream(mFile.getContents());
-					}else{
-						if (!mFile.exists()) {
-							mFile.create(new ByteArrayInputStream(
-									"Project : [Feature1] [Feature2] :: _Project ;".getBytes()), true,
-									null);
-						}
-						gReader.parseInputStream(mFile.getContents());
-					}
-				} catch (UnsupportedModelException | CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				fmodel = gReader.getFeatureModel();
-			}
-		}
+		
 		return fmodel;
 	}
 	
@@ -197,28 +173,7 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		return rgb;
 	}
 	
-	public static IProject getCurrentProject(){    
-        ISelectionService selectionService = Workbench.getInstance().getActiveWorkbenchWindow().getSelectionService();    
-
-        ISelection selection = selectionService.getSelection();    
-
-        IProject project = null;    
-        if(selection instanceof IStructuredSelection) {    
-            Object element = ((IStructuredSelection)selection).getFirstElement();    
-
-            if (element instanceof IResource) {    
-                project= ((IResource)element).getProject();    
-            } else if (element instanceof PackageFragmentRootContainer) {    
-                IJavaProject jProject =     
-                    ((PackageFragmentRootContainer)element).getJavaProject();    
-                project = jProject.getProject();    
-            } else if (element instanceof IJavaElement) {    
-                IJavaProject jProject= ((IJavaElement)element).getJavaProject();    
-                project = jProject.getProject();    
-            }    
-        }     
-        return project;    
-    }
+	
 	private static WeakHashMap<RGB, Color> colorCache = new WeakHashMap<RGB, Color>();
 	
 	public static Color getCombinedColor(Collection<Feature> featureList) {
@@ -329,4 +284,11 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		// TODO Auto-generated method stub
 		cmanager = colorManager;
 	}
+
+	public static IProject getCurrentProject() {
+		// TODO Auto-generated method stub
+		return project;
+	}
+
+	
 }

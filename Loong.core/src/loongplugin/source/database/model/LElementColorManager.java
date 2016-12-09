@@ -27,9 +27,19 @@ public class LElementColorManager{
 		
 		feature2relatedFeatures = new HashMap<Feature, Set<Feature>>();
 		feature2alternativeFeatures = new HashMap<Feature, Set<Feature>>();
-		FeatureModelManager manager = FeatureModelManager.getInstance();
+		FeatureModelManager manager = FeatureModelManager.getInstance(AO.getInitializedProject());
 		
 		FeatureModel model = manager.getFeatureModel();
+		// check whether the model is null
+		
+		if(model==null){
+			System.out.println("Model is null");
+		}
+		
+		if(model.getRoot()==null){
+			System.out.println("Model.root is null");
+		}
+		
 
 		Set<Feature> alwaysTrueElements = new HashSet<Feature>();
 		Set<Feature> alwaysFalseElements = new HashSet<Feature>();

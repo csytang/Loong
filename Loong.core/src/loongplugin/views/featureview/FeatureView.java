@@ -264,7 +264,11 @@ public class FeatureView extends ViewPart{
 			fmodel = FeatureModelManager.getInstance().getFeatureModel();
 		else
 			fmodel = null;
-
+		if(fmodel==null)
+			return;
+		else{
+			
+		}
 		try {
 			redraw();
 		} catch (Exception e) {
@@ -354,7 +358,7 @@ public class FeatureView extends ViewPart{
 		if(table==null)
 			return;
 		if (table.isDisposed()){
-				return;
+			return;
 		}
 		try {
 			table.setRedraw(false);
