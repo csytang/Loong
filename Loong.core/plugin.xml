@@ -349,19 +349,5 @@
             provider="loongplugin.recommendation.typesystem.typing.jdt.JDTTypingExtension">
       </typingProvider>
    </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            id="LoongPlugin.newwizard"
-            name="Loong">
-      </category>
-      <wizard
-            category="LoongPlugin.newwizard"
-            class="loongplugin.uml.classdiagram.wizard.NewClassDiagramWizard"
-            icon="icons/umlicon.png"
-            id="LoongPlugin.uml.wizard"
-            name="Class Diagram">
-      </wizard>
-   </extension>
 
 </plugin>
