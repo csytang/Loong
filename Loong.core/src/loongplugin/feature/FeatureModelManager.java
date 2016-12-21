@@ -111,7 +111,7 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 	}
 	
 	public static FeatureModelManager getInstance(IProject pproject){
-		if(instance!=null&&project!=null){
+		if(instance!=null&&project!=null&&project==pproject){
 			return instance;
 		}
 		if(project==null){
