@@ -33,10 +33,11 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import com.thoughtworks.xstream.converters.ConversionException;
+
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.feature.Feature;
-import loongplugin.recommendation.topology.ca.mcgill.cs.serg.cm.model.io.ConversionException;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LElementColorManager;
 import loongplugin.source.database.model.LFlyweightElementFactory;

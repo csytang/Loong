@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -28,6 +29,8 @@ public class CreateDatabaseAction implements IObjectActionDelegate{
 	 */
 	private IStructuredSelection aSelection;
 	private IProject aProject;
+	private Shell shell;
+	private IWorkbenchPart part;
 	public CreateDatabaseAction() {
 		// TODO Auto-generated constructor stub
 		
@@ -71,7 +74,8 @@ public class CreateDatabaseAction implements IObjectActionDelegate{
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		// TODO Auto-generated method stub
-		
+		this.part = targetPart;
+		shell = targetPart.getSite().getShell();
 	}
 	
 	private IProject getSelectedProject() {
