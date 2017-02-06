@@ -136,6 +136,7 @@ public class ApplicationObserver extends Observable{
     	for( ICompilationUnit lCU : lTargets )
     	{
     		pProgress.subTask("Process CompilationUnit: "+lCU.getElementName());
+    		System.out.println("Process CompilationUnit: "+lCU.getElementName());
           	try
   			{
           		IPackageDeclaration[] lPDs = lCU.getPackageDeclarations();
@@ -162,7 +163,7 @@ public class ApplicationObserver extends Observable{
     	for( ICompilationUnit lCU : lTargets )
     	{
     		pProgress.subTask("Creating relations in "+lCU.getElementName());
-    		
+    		System.out.println("Creating relations in : "+lCU.getElementName());
     		CLRAnnotatedSourceFile annotatedsourcefile = getCLRAnnotatedSourceFile(lCU);
     		
     		relationBuilder.buildRelations(lCU,annotatedsourcefile,elementColorManager);

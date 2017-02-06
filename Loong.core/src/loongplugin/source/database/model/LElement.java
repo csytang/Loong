@@ -140,7 +140,19 @@ public class LElement {
 			feature.addASTNodeToFeature(aColorSourceFile.getCompilationUnit(), pastNode);
 		}
 	}
-	
+	public LElement(LElement element){
+		this.aId = element.aId;
+		this.aColorSourceFile = element.aColorSourceFile;
+		this.aColorManager = element.aColorManager;
+		this.aastNode = element.aastNode;
+		this.aindex = element.aindex;
+		this.acategory = element.acategory;
+		this.subcategories = element.subcategories;
+		for(Feature feature:aColorManager.getOwnColors(aastNode)){
+			feature.addLElementToFeature(this);
+			feature.addASTNodeToFeature(aColorSourceFile.getCompilationUnit(), element.aastNode);
+		}
+	}
 	public int getIndex(){
 		return this.aindex;
 	}
