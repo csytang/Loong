@@ -83,8 +83,7 @@ public class AccessRelationBuilder {
 		private LElement element;
 		private ASTNode accessNode;
 
-		public LocalContextElement(ASTNode node, ASTNode accessNode,
-				LElement element) {
+		public LocalContextElement(ASTNode node, ASTNode accessNode, LElement element) {
 			this.node = node;
 			this.element = element;
 			this.accessNode = accessNode;
