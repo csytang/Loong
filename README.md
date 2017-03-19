@@ -1,4 +1,4 @@
-# Loong
+# Loong [![Build Status](https://travis-ci.org/csytang/Loong.svg?branch=master)](https://travis-ci.org/csytang/Loong)
 Loong system for product line engineering
 Loong Eclipse Plug-in - An Eclipse plug-in for migrating legacy system into product line and product line development
 
