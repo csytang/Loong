@@ -105,7 +105,7 @@ public class AccessRelationBuilder {
 	
 	public AccessRelationBuilder(ProgramDatabase pDB,
 			LFlyweightElementFactory pLElementFactory) {
-		// TODO Auto-generated constructor stub
+
 		this.aDB = pDB;
 		this.LElementFactory = pLElementFactory;
 	}
@@ -113,7 +113,7 @@ public class AccessRelationBuilder {
 	public void buildRelations(ICompilationUnit lCU,
 			CLRAnnotatedSourceFile pannotatedsourcefile,
 			LElementColorManager pelementColorManager) {
-		// TODO Auto-generated method stub
+
 		this.aannotatedsourcefile = pannotatedsourcefile;
 		this.LElementColorManager = pelementColorManager;
 		this.sourceColorManager = (CompilationUnitColorManager) pannotatedsourcefile.getColorManager();
@@ -271,10 +271,9 @@ public class AccessRelationBuilder {
 				}
 			}
 
-			private boolean collectExtendsAndImplementsTypeRelations(
-					ITypeBinding declTypeBinding,
-					List<TypePathItem> directTypes,
-					List<TypePathItem> transitiveTypes) {
+			private boolean collectExtendsAndImplementsTypeRelations(ITypeBinding declTypeBinding,
+					List<TypePathItem> directTypes,List<TypePathItem> transitiveTypes) 
+			{
 
 				if (declTypeBinding == null || transitiveTypes == null
 						|| directTypes == null)
@@ -492,8 +491,7 @@ public class AccessRelationBuilder {
 				handleEndMethodCall(node);
 			}
 
-			private void handleMethodCall(ASTNode node, IMethodBinding binding,
-					List arguments) {
+			private void handleMethodCall(ASTNode node, IMethodBinding binding, List arguments) {
 
 				if (binding != null) {
 

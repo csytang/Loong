@@ -274,14 +274,12 @@ public class ApplicationObserver extends Observable{
 	}
 
 	public Set<Feature> getRelatedFeatures(Feature feature) {
-		// TODO Auto-generated method stub
 		return elementColorManager.getRelatedFeatures(feature);
 	}
 	
 	
 	
 	public Set<Feature> getElementFeatures(LElement element) {
-		// TODO Auto-generated method stub
 		return elementColorManager.getElementFeatures(element);
 	}
 
@@ -290,7 +288,6 @@ public class ApplicationObserver extends Observable{
 	}
 
 	public Set<LElement> getRange(LElement element, LRelation tmpTransRelation) {
-		// TODO Auto-generated method stub
 		return aAnalyzer.getRange(element,tmpTransRelation);
 	}
 
@@ -307,14 +304,12 @@ public class ApplicationObserver extends Observable{
 	}
 
 	public Set<String> getPackages() {
-		// TODO Auto-generated method stub
 		return aPackages;
 	}
 
 	
 
 	public List<CompilationUnit> getCompilationUnits() {
-		// TODO Auto-generated method stub
 		List<CompilationUnit>res = new LinkedList<CompilationUnit>();
 		for(ICompilationUnit iunit:this.lTargets){
 			
@@ -338,7 +333,6 @@ public class ApplicationObserver extends Observable{
 	}
 
 	public List<ICompilationUnit> getICompilationUnits() {
-		// TODO Auto-generated method stub
 		return this.lTargets;
 	}
 	

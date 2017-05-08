@@ -103,6 +103,11 @@
                menubarPath="LoongPlugin.menu/group4">
          </action>
          <action
+               class="loongplugin.Action1"
+               id="LoongPlugin.action1"
+               label="Refactoring">
+         </action>
+         <action
                class="loongplugin.popup.actions.StatusRollBack"
                icon="icons/rollback.jpg"
                id="LoongPlugin.recoverytocertainstatus"
