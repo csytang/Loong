@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
+import loongplugin.configuration.EquationEditorPage;
 import loongplugin.configuration.NonValidatingConfigurationListPage;
 import loongplugin.featureconfiguration.Configuration;
 import loongplugin.featureconfiguration.Selection;
@@ -761,7 +762,8 @@ public class FeatureModel implements PropertyConstants,Serializable {
 
 	public AbstractConfigurationPage getConfigurationPage(String string) {
 		// TODO Auto-generated method stub
-		return new NonValidatingConfigurationListPage(string,this);
+		return new EquationEditorPage(string,this);
+		//	return new NonValidatingConfigurationListPage(string,this);
 	}
 	
 }

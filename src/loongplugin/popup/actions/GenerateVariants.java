@@ -34,7 +34,7 @@ public class GenerateVariants implements IObjectActionDelegate {
 
 		IProject project = getSelectedProject();
 		if (project != null) {
-			FeatureModel fm = FeatureModelManager.getInstance().getFeatureModel();
+			FeatureModel fm = FeatureModelManager.getInstance(project).getFeatureModel();
 			
 			WizardCreateConfiguration wizard = new WizardCreateConfiguration(project, fm);
 			WizardDialog dialog = new WizardDialog(shell, wizard);
