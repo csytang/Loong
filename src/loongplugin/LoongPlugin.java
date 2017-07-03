@@ -12,10 +12,12 @@ package loongplugin;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
@@ -34,6 +36,7 @@ import loongplugin.events.ColorListChangedEvent;
 import loongplugin.events.FileColorChangedEvent;
 import loongplugin.featuremodeleditor.IFeatureModelChangeListener;
 import loongplugin.featuremodeleditor.event.FeatureModelChangedEvent;
+import loongplugin.nature.LoongProjectNature;
 import loongplugin.typing.internal.TypingManager;
 /**
  * The activator class controls the plug-in life cycle
@@ -67,11 +70,13 @@ public class LoongPlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-	
+		
+		plugin = this;
 		typingManager = new TypingManager();
 		typingManager.register();
-		plugin.getTypingManager().recheckProjects(ResourcesPlugin.getWorkspace().getRoot().getProjects());
-		plugin = this;
+
+		// initial type-check
+		
 	}
 
 	/*
@@ -80,7 +85,7 @@ public class LoongPlugin extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		
-		typingManager.unregister();
+		
 		plugin = null;
 		super.stop(context);
 	}
@@ -109,12 +114,10 @@ public class LoongPlugin extends AbstractUIPlugin {
 		getDefault().getLog().log(status);
 	}
 	
-	public static String getPluginId() {
-		return "loong"; //$NON-NLS-1$
-	}
+	
 	
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message,
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message,
 				null));
 	}
 
@@ -123,14 +126,13 @@ public class LoongPlugin extends AbstractUIPlugin {
 			logErrorMessage(message);
 			return;
 		}
-		MultiStatus multi = new MultiStatus(getPluginId(), IStatus.ERROR,
-				message, null);
+		MultiStatus multi = new MultiStatus(PLUGIN_ID, IStatus.ERROR, message, null);
 		multi.add(status);
 		log(multi);
 	}
 
 	public static void log(String message, Throwable e) {
-		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, e));
+		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, e));
 	}
 	
 
@@ -262,13 +264,18 @@ public class LoongPlugin extends AbstractUIPlugin {
 	}
 
 	public static boolean isLoongProject(IProject project) {
-		// TODO Auto-generated method stub
-		return false;
+		//has nature checking
+		try {
+			IProjectDescription description = project.getDescription();
+			return Arrays.asList(description.getNatureIds()).contains(
+					LoongProjectNature.NATURE_ID);
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
-	public TypingManager getTypingManager() {
-		return typingManager;
-	}
+	
 
 	
 	public static void logException(Throwable ex) {
@@ -283,5 +290,9 @@ public class LoongPlugin extends AbstractUIPlugin {
 
 		// TODO debug
 		ex.printStackTrace();
+	}
+
+	public TypingManager getTypingManager() {
+		return typingManager;
 	}
 }

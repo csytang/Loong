@@ -777,7 +777,7 @@ public class ASTView extends ViewPart implements IShowInSource {
 	}
 	
 	private IStatus getErrorStatus(String message, Throwable th) {
-		return new Status(IStatus.ERROR, LoongPlugin.getPluginId(), IStatus.ERROR, message, th);
+		return new Status(IStatus.ERROR, LoongPlugin.PLUGIN_ID, IStatus.ERROR, message, th);
 	}
 	
 	/*
@@ -1382,7 +1382,7 @@ public class ASTView extends ViewPart implements IShowInSource {
 	}
 	
 	private void showAndLogError(String message, Throwable e) {
-		IStatus status= new Status(IStatus.ERROR, LoongPlugin.getPluginId(), 0, message, e);
+		IStatus status= new Status(IStatus.ERROR, LoongPlugin.PLUGIN_ID, 0, message, e);
 		LoongPlugin.log(status);
 		ErrorDialog.openError(getSite().getShell(), "AST View", null, status); //$NON-NLS-1$
 	}

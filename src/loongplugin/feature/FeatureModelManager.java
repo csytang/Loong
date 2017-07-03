@@ -59,7 +59,6 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 	public FeatureModelManager(IProject project) {
 		super(LoongPlugin.PLUGIN_ID,"featureModelProvider");
 		
-		
 		fmodel = new FeatureModel();
 		gReader = new GuidslReader(fmodel);
 		this.project = project;
@@ -96,13 +95,10 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		}else{
 			// Assign Id to all features;		
 			fmodel.setIdToAllFeatures();	
-			
 			// Initial color to all features
 			cmanager = new ColorManager(fmodel);
 			cmanager.featureColorInit();
 		}
-		
-		
 		
 		instance = this;
 		instance.cmanager = cmanager;
@@ -123,8 +119,8 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		
 		return instance;
 	}
+	
 	public static FeatureModelManager getInstance() {
-		// TODO Auto-generated method stub
 		assert project!=null;
 		if(instance!=null)
 			return instance;
@@ -236,8 +232,6 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 			return fmodel.getFeatures();
 		}
 	}
-
-	
 
 	@Override
 	protected FeatureModelProviderProxy parseExtension(

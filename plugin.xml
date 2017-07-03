@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="evaluationStrategy" name="Loong Evaluation Strategy(Inherited CIDE)" schema="schema/evaluationStrategy.exsd"/>
-   <extension-point id="typingProvider" name="Loong Type Provider(Inherited CIDE TypeCheck)" schema="schema/typeProvider.exsd"/>
    <extension-point id="featureModelProvider" name="Loong Feature Model Provider" schema="schema/featureModelProvider.exsd"/>
+   <extension-point id="evaluationStrategy" name="evaluationStrategy" schema="schema/evaluationStrategy.exsd"/>
+   <extension-point id="typingProvider" name="typingProvider" schema="schema/typingProvider.exsd"/>
 
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -103,11 +103,6 @@
                menubarPath="LoongPlugin.menu/group4">
          </action>
          <action
-               class="loongplugin.Action1"
-               id="LoongPlugin.action1"
-               label="Refactoring">
-         </action>
-         <action
                class="loongplugin.popup.actions.StatusRollBack"
                icon="icons/rollback.jpg"
                id="LoongPlugin.recoverytocertainstatus"
@@ -132,6 +127,12 @@
                </objectState>
             </and>
          </visibility>
+         <action
+               class="loongplugin.typing.internal.ForceValidationAction"
+               id="LoongPlugin.validTypeChecking"
+               label="Force Full Type Checking"
+               menubarPath="LoongPlugin.menu/group4">
+         </action>
       </objectContribution>
       <objectContribution
             adaptable="false"
@@ -303,15 +304,6 @@
       </featureModelProvider>
    </extension>
    <extension
-         point="LoongPlugin.evaluationStrategy">
-      <evaluationStrategy
-            featureModelProvider="LoongPlugin.feature.guidsl.GuidslFMProvider"
-            id="loong.guidsl"
-            name="Guidsl (sat4j) Evaluation Strategy"
-            strategy="loongplugin.typing.internal.SatEvaluationStrategy">
-      </evaluationStrategy>
-   </extension>
-   <extension
          id="loong.typing.problem"
          point="org.eclipse.core.resources.markers">
       <super
@@ -338,20 +330,20 @@
       </markerResolutionGenerator>
    </extension>
    <extension
-         point="org.eclipse.jdt.core.compilationParticipant">
-      <compilationParticipant
-            class="loongplugin.recommendation.typesystem.typing.jdt.JDTProfiler"
-            createsProblems="false"
-            id="loongplugin.recommendation.typesystem.typing.jdt.JDTProfiler"
-            modifiesEnvironment="false">
-      </compilationParticipant>
+         point="LoongPlugin.evaluationStrategy">
+      <evaluationStrategy
+            featureModelProvider="LoongPlugin.feature.guidsl.GuidslFMProvider"
+            id="loong.guidsl"
+            name="Guidsl (sat4j) Evaluation Strategy"
+            strategy="loongplugin.typing.internal.SatEvaluationStrategy">
+      </evaluationStrategy>
    </extension>
    <extension
          point="LoongPlugin.typingProvider">
       <typingProvider
-            id="LoongPlugin.typingProvider"
-            name="JDT Typing Provider"
-            provider="loongplugin.recommendation.typesystem.typing.jdt.JDTTypingExtension">
+            id="loongplugin.typing.jdt"
+            name="Java Annotation Typing Checks"
+            provider="loongplugin.typing.jdt.JDTTypingExtension">
       </typingProvider>
    </extension>
 

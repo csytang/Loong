@@ -20,12 +20,11 @@ public abstract class ExtensionPointManager<T> {
 	private List<T> cachedProviders = null;
 
 	private void loadProviders() {
-		if (cachedProviders != null)
-			return;
+		if(cachedProviders!=null)
+			return; 
 		cachedProviders = new ArrayList<T>();
 		IExtension[] extensions = Platform.getExtensionRegistry()
-				.getExtensionPoint(namespace, extensionPointName)
-				.getExtensions();
+				.getExtensionPoint(namespace, extensionPointName).getExtensions();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] configurationElements = extension
 					.getConfigurationElements();

@@ -14,23 +14,23 @@ import loongplugin.recommendation.typesystem.typing.jdt.model.IEvaluationStrateg
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LICategories;
 import loongplugin.source.database.model.LRelation;
-import loongplugin.typing.internal.manager.EvaluationStrategyManager;
 
 public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 
 	
 	private FeatureModel featuremodel;
-	private IEvaluationStrategy strategy;
+	//private IEvaluationStrategy strategy;
 	
 	public TypeCheckLElementRecommender(){
 		featuremodel = FeatureModelManager.getInstance().getFeatureModel();
+		/*
 		try {
-			strategy = EvaluationStrategyManager.getInstance()
-					.getEvaluationStrategy(AOB.getInstance().getInitializedProject());
+			strategy = EvaluationStrategyManager.getInstance().getEvaluationStrategy(AOB.getInstance().getInitializedProject());
 		} catch (FeatureModelNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}	
+		*/	
 	}
 	
 	
@@ -51,12 +51,11 @@ public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 
 			ReferenceCheck check = new ReferenceCheck(element, accessElement,
 					featuremodel);
-			if (!check.evaluate(strategy)
-					&& isValidRecommendation(accessElement, feature)) {
+			//if (!check.evaluate(strategy)	&& isValidRecommendation(accessElement, feature)) {
 				// access element should be recommended
 				RecommendationContext context = new RecommendationContext(element, "Check Accesses", getRecommendationType(), 1);
 				recommendations.put(accessElement, context);
-			}
+			//}
 
 		}
 		
@@ -79,7 +78,7 @@ public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 
 			InvocationCheck check = new InvocationCheck(element,paramTargetElement, bodySourceElement, bodyTargetElement,featuremodel);
 
-			if (!check.evaluate(strategy)) {
+			//if (!check.evaluate(strategy)) {
 				// access element should be recommended
 				int solutionsCount = 0;
 				boolean[] solutions = new boolean[2];
@@ -107,7 +106,7 @@ public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 					if (solutions[1])
 						recommendations.put(paramTargetElement, context);
 				}
-			}
+			//}
 		}
 		// CHECK PARAM ACCESS
 		if (element.getCategory().equals(LICategories.PARAMETER_ACCESS)) {
@@ -135,7 +134,7 @@ public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 			InvocationCheck check = new InvocationCheck(paramSourceElement,paramTargetElement, bodySourceElement, bodyTargetElement,
 							featuremodel);
 
-			if (!check.evaluate(strategy)) {
+			//if (!check.evaluate(strategy)) {
 				// create recommendations
 
 				int solutionsCount = 0;
@@ -180,7 +179,7 @@ public class TypeCheckLElementRecommender extends AbstractLElementRecommnder{
 						}
 					}
 
-		}		
+		//}		
 		
 		
 		

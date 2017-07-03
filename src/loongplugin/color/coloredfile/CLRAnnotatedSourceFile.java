@@ -218,9 +218,18 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 		return colorFile.getFullPath().toOSString();
 	}
 
-	
+	public static boolean isFileColored(IFile file) {
+		if(file.getFileExtension().equals("clr"))
+			return true;
+		else
+			return false;
+		
+	}
 
+	public boolean isColored() {
+		return getColorManager().hasColors();
+	}
 	
-
+ 
 	
 }
