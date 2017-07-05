@@ -8,7 +8,7 @@ import java.util.Set;
 
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.utils.EmbeddedASTNodeCollector;
 
@@ -100,7 +100,7 @@ public class LElement {
 
 	private String aId;
 	private CLRAnnotatedSourceFile aColorSourceFile;
-	private CompilationUnitColorManager aColorManager; 
+	private SourceFileColorManager aColorManager; 
 	private ASTNode aastNode;
 	private int aindex;
 	private LICategories acategory;
@@ -130,7 +130,7 @@ public class LElement {
 	{
 		aId = pId;
 		aColorSourceFile = pColorSourceFile;
-		aColorManager = (CompilationUnitColorManager) pColorSourceFile.getColorManager();
+		aColorManager = (SourceFileColorManager) pColorSourceFile.getColorManager();
 		aastNode = pastNode;
 		aindex = pindex;
 		acategory = pcategory;

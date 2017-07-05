@@ -17,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -49,7 +49,7 @@ public class CIDEcolorFileReader {
 	private IFile clrFile = null;
 	private CLRAnnotatedSourceFile javaCLRFile;
 	private ICompilationUnit compilationUnit;
-	private CompilationUnitColorManager colormanager;
+	private SourceFileColorManager colormanager;
 	
 	private FeatureModel fmodel;
 	private Set<ASTNode> compilationASTNodeSet = new HashSet<ASTNode>();
@@ -83,7 +83,7 @@ public class CIDEcolorFileReader {
 			assert javaFile.getFileExtension().contains("java")==true;
 			compilationUnit = JavaCore.createCompilationUnitFrom(javaFile);
 			javaCLRFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(compilationUnit);
-			colormanager = (CompilationUnitColorManager) javaCLRFile.getColorManager();
+			colormanager = (SourceFileColorManager) javaCLRFile.getColorManager();
 			
 			try {
 				ASTIDToFeatures = readJavaColorFile(fmodel);

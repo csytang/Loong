@@ -9,7 +9,7 @@ import java.util.Set;
 
 import loongplugin.color.ColorHelper;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.editor.SelectionFinder;
 import loongplugin.editor.SingleNodeFinder;
 import loongplugin.feature.Feature;
@@ -34,7 +34,7 @@ public abstract class ColoredTextHover implements IJavaEditorTextHover {
 	protected CLRAnnotatedSourceFile sourceFile;
 	protected static final String NOT_COLORED = "Selected code fragment cannot be colored";
 	// private final IProject project;
-	private CompilationUnitColorManager colorManager;
+	private SourceFileColorManager colorManager;
 	protected String NL = "\n";
 	
 	public ColoredTextHover(CLRAnnotatedSourceFile psourceFile){
@@ -45,7 +45,7 @@ public abstract class ColoredTextHover implements IJavaEditorTextHover {
 		// TODO Auto-generated method stub
 		this.sourceFile = psourceFile;
 		if(this.sourceFile!=null){
-			this.colorManager = (CompilationUnitColorManager) this.sourceFile.getColorManager();
+			this.colorManager = (SourceFileColorManager) this.sourceFile.getColorManager();
 		}else{
 			this.colorManager = null;
 		}

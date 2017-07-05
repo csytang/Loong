@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Image;
 
 import loongplugin.LoongPlugin;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.color.coloredfile.IColorManager;
 import loongplugin.events.ASTColorChangedEvent;
 import loongplugin.feature.Feature;

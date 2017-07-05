@@ -1,16 +1,21 @@
 package loongplugin.configuration;
 
+import java.io.ByteArrayInputStream;
 import java.util.HashSet;
 import java.util.Set;
 
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.color.coloredfile.IColoredJavaSourceFile;
 import loongplugin.feature.Feature;
+import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
+import loongplugin.utils.EmbeddedASTNodeCollector;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -26,7 +31,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
+import colordide.cideconfiguration.DefaultConfigurationMechanism;
 
 public class CreateConfigurationJob extends WorkspaceJob {
 
@@ -38,197 +46,223 @@ public class CreateConfigurationJob extends WorkspaceJob {
 
 	private final IProject targetProject;
 
-	public CreateConfigurationJob(IProject sourceProject,
-			Set<Feature> selectedFeatures, String projectName) {
-		super("Creating Configuration: " + sourceProject.getName() + " -> "
+	private FeatureModel featureModel;
+
+
+	public CreateConfigurationJob(IProject sourceProject, Set<Feature> selectedFeatures, String projectName) {
+		super("Generating Variant: " + sourceProject.getName() + " -> "
 				+ projectName);
 		this.sourceProject = sourceProject;
 		root = ResourcesPlugin.getWorkspace().getRoot();
 		this.targetProject = root.getProject(projectName);
 		this.selectedFeatures = selectedFeatures;
+
 	}
 
 	public IStatus runInWorkspace(IProgressMonitor monitor)
 			throws CoreException {
-		IJavaProject sourceJavaProject = JavaCore.create(sourceProject);
-		int compUnitCount = countJavaProject(sourceJavaProject);
+		int coloredFileCount = countColoredFiles(sourceProject);
 
-		monitor.beginTask("Creating Configuration", compUnitCount+3);
+		monitor.beginTask("Generating Variant", coloredFileCount + 3);
 
 		if (targetProject.exists()) {
 			monitor.subTask("Removing existing project.");
-			targetProject.delete(true,  new SubProgressMonitor(monitor, 0));
+			targetProject.delete(true, new SubProgressMonitor(monitor, 0));
 		}
 		monitor.worked(1);
 
 		monitor.subTask("Creating target project.");
-		targetProject.create(sourceProject.getDescription(),  new SubProgressMonitor(monitor, 0));
-		targetProject.open( new SubProgressMonitor(monitor, 0));
+		targetProject.create(sourceProject.getDescription(),
+				new SubProgressMonitor(monitor, 0));
+		targetProject.open(new SubProgressMonitor(monitor, 0));
 		monitor.worked(1);
-		monitor.subTask("Configuring new project.");
+		monitor.subTask("Generating new project variant.");
 		IFile cpFile = sourceProject.getFile(".classpath");
 		if (cpFile.exists())
 			cpFile.copy(targetProject.getFile(".classpath").getFullPath(),
 					true, new SubProgressMonitor(monitor, 0));
 		monitor.worked(1);
 
-
-		IJavaProject targetJavaProject = JavaCore.create(targetProject);
-		configureJavaProject(sourceJavaProject, targetJavaProject, monitor);
+		featureModel = FeatureModelManager.getInstance(sourceProject).getFeatureModel();
+		
+		configureProject(sourceProject, targetProject, monitor);
 
 		monitor.done();
 		return Status.OK_STATUS;
 	}
 
-	private void configureJavaProject(IJavaProject sourceJavaProject,
-			IJavaProject targetJavaProject, IProgressMonitor monitor)
-			throws CoreException {
-		monitor.subTask("Configuring Project "
-				+ targetJavaProject.getProject().getName());
-
-		for (IPackageFragmentRoot root : sourceJavaProject
-				.getPackageFragmentRoots()) {
-			if (monitor.isCanceled())
-				return;
-			if (!root.exists())
-				continue;
-			if (root.getKind() == IPackageFragmentRoot.K_BINARY)
-				continue;
-
-			IPackageFragmentRoot targetRoot = copySourceFolder(root,
-					targetJavaProject);
-			configurePackageFragementRoot(sourceJavaProject, root, targetRoot,
-					monitor);
-		}
-	}
-
-	private void configurePackageFragementRoot(IJavaProject sourceJavaProject,
-			IPackageFragmentRoot sourceRoot, IPackageFragmentRoot targetRoot,
-			IProgressMonitor monitor) throws CoreException {
-		for (IPackageFragment pkg : sourceJavaProject.getPackageFragments()) {
-			if (monitor.isCanceled())
-				return;
-			if (pkg.getKind() == IPackageFragmentRoot.K_BINARY)
-				continue;
-			if (!sourceRoot.getPackageFragment(pkg.getElementName()).exists())
-				continue;
-
-			IPackageFragment targetPackage = targetRoot.createPackageFragment(
-					pkg.getElementName(), true,  new SubProgressMonitor(monitor, 0));
-			configurePackage(pkg, targetPackage, monitor);
-			if (pkg.getCompilationUnits().length == 0)
-				pkg.delete(false,  new SubProgressMonitor(monitor, 0));
-		}
-
-	}
-
-	private void configurePackage(IPackageFragment sourcePackage,
-			IPackageFragment targetPackage, IProgressMonitor monitor)
-			throws CoreException {
-		for (ICompilationUnit compUnit : sourcePackage.getCompilationUnits()) {
-			if (monitor.isCanceled())
-				return;
-
-			IColoredJavaSourceFile sourceFile = CLRAnnotatedSourceFile.getColoredJavaSourceFile(compUnit);
-			String configuredSource;
-			try {
-				configuredSource = configureSource(sourceFile, monitor);
-			} catch (Exception e) {
-				System.out.println(compUnit);
-				e.printStackTrace();
-				configuredSource = "";
+	private int countColoredFiles(IContainer directory) throws CoreException {
+		int count = 0;
+		for (IResource resource : directory.members()) {
+			if (resource.getType() == IResource.FOLDER)
+				count += countColoredFiles((IContainer) resource);
+			if (resource.getType() == IResource.FILE) {
+				IFile file = (IFile) resource;
+				if ("clr".equals(file.getFileExtension()))
+					count++;
 			}
-			if (!configuredSource.trim().equals(""))
-				targetPackage.createCompilationUnit(compUnit.getElementName(),
-						configuredSource, true,  new SubProgressMonitor(monitor, 0));
+		}
+		return count;
+	}
+
+	private void configureProject(IProject sourceProject,
+			IProject targetProject, IProgressMonitor monitor)
+			throws CoreException {
+		monitor.subTask("Generating Project Variant "
+				+ targetProject.getProject().getName());
+
+		configureContainer(sourceProject, monitor);
+	}
+
+	private void configureContainer(IContainer container, IProgressMonitor monitor) throws CoreException {	
+
+		/**
+		 * Debug
+		 */
+		System.out.println("Selected features:");
+		for(Feature sel:selectedFeatures){
+			System.out.println(sel.getName());
+		}
+		for (IResource resource : container.members()) {
+			if (monitor.isCanceled())
+				return;
+			if (!resource.exists())
+				continue;
+			if (resource.getType() == IResource.FOLDER)
+				configureContainer((IContainer) resource, monitor);
+			if (resource.getType() == IResource.FILE)
+				configureFile((IFile) resource, monitor);
+		}
+
+	}
+
+	private void configureFile(IFile file, IProgressMonitor monitor) throws CoreException {
+		if (monitor.isCanceled())
+			return;
+
+		if (FeatureModelManager.getInstance().isFeatureModelFile(file))
+			return;
+
+		// check whether the whole file is colored and should be removed
+		if (skipColoredFile(file))//java file
+			return;
+		
+		if(!file.getFileExtension().equals("java")){
+			IFile targetFile = targetProject.getFile(file.getFullPath().removeFirstSegments(1));
+			ensureDirectoryExists(targetFile, monitor);
+			if (!targetFile.exists())
+				file.copy(targetFile.getFullPath(), true, monitor);
+			return;
+		}
+		
+		if(getFileColors(file).isEmpty()){
+			IFile targetFile = targetProject.getFile(file.getFullPath().removeFirstSegments(1));
+			ensureDirectoryExists(targetFile, monitor);
+			if (!targetFile.exists())
+				file.copy(targetFile.getFullPath(), true, monitor);
+			return;
+		}
+		
+		IFile clrfile = CLRAnnotatedSourceFile.getColorFile(file);
+		/*
+		if(!clrfile.exists()){
+			IFile targetFile = targetProject.getFile(file.getFullPath().removeFirstSegments(1));
+			ensureDirectoryExists(targetFile, monitor);
+			if (!targetFile.exists())
+				file.copy(targetFile.getFullPath(), true, monitor);
+			return;
+		}
+		*/
+		CLRAnnotatedSourceFile sourceFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(clrfile);
+
+
+		String configuredSource;
+		try {
+			configuredSource = configureSource(sourceFile, monitor);
+		} catch (Exception e) {
+			System.out.println(file);
+			e.printStackTrace();
+			System.exit(-1);
+			configuredSource = "";
+		}
+		if (!configuredSource.trim().equals("")) {
+			IFile targetFile = targetProject.getFile(file.getFullPath().removeFirstSegments(1));
+			ensureDirectoryExists(targetFile, monitor);
+			targetFile.create(new ByteArrayInputStream(configuredSource.getBytes()), true, monitor);
 		}
 	}
 
-	private String configureSource(IColoredJavaSourceFile sourceFile,
+	private boolean skipColoredFile(IFile file) {	
+		
+		if(file.getFileExtension().equals("clr")){
+			return true;
+		}else{
+			Set<Feature> hiddenColors = new HashSet<Feature>();
+			hiddenColors.addAll(featureModel.getFeatures());
+			hiddenColors.removeAll(selectedFeatures);
+			
+			
+			Set<Feature> fileColors = getFileColors(file);
+			
+			if(hiddenColors.containsAll(fileColors)){
+				return true;
+			}
+			
+			return false;
+		}
+	}
+
+	
+	private Set<Feature> getFileColors(IFile file) {
+		if(!file.getFileExtension().equals("java"))
+			return new HashSet<Feature>();
+		
+		IFile clrfile = CLRAnnotatedSourceFile.getColorFile(file);
+		if(!clrfile.exists())
+			return new HashSet<Feature>();
+		
+		CLRAnnotatedSourceFile clr = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(clrfile);
+		ICompilationUnit icompilationunit= null;
+		try {
+			icompilationunit = clr.getICompilationUnit(clr.getAST());
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Set<Feature> features = new HashSet<Feature>();
+		Set<ASTNode> allastNodes = EmbeddedASTNodeCollector.collectASTNodes(icompilationunit);
+		for(ASTNode node:allastNodes){
+			features.addAll(clr.getColorManager().getColors(node));
+		}
+		return features;
+	}
+
+	private void ensureDirectoryExists(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
+		if (resource.getParent() instanceof IFolder) {
+			ensureDirectoryExists(resource.getParent(), monitor);
+		}
+
+		if (resource instanceof IFolder) {
+			IFolder folder = (IFolder) resource;
+			if (!folder.exists()) {
+				folder.create(true, true, monitor);
+			}
+		}
+	}
+
+	private String configureSource(CLRAnnotatedSourceFile sourceFile,
+			IProgressMonitor monitor) throws ConfigurationException {
 		if (monitor.isCanceled())
 			return "";
-		String n = "...";
-		if (sourceFile.getCompilationUnit().getTypes().length > 0)
-			n = sourceFile.getCompilationUnit().getTypes()[0].getFullyQualifiedName();
-		monitor.subTask("Configuring "+ n);
+		monitor.subTask("Generating " + sourceFile.getName());
 
 		try {
-			Set<Feature> hiddenColors = new HashSet<Feature>();
-			hiddenColors.addAll(FeatureModelManager.getInstance(sourceProject).getFeatures());
-			hiddenColors.removeAll(selectedFeatures);
-			return DeleteHiddenNodesVisitor.hideCode(sourceFile, hiddenColors);
+			DefaultConfigurationMechanism mechanism = new DefaultConfigurationMechanism();
+			return mechanism.configureFile(sourceFile, selectedFeatures);
 		} finally {
 			monitor.worked(1);
 		}
-	}
-
-	private IPackageFragmentRoot copySourceFolder(IPackageFragmentRoot source,
-			IJavaProject targetJavaProject) throws CoreException {
-
-		IPackageFragmentRoot result = null;
-		if (source.getResource() instanceof IFolder) {
-			IPath path = source.getPath().makeAbsolute();
-			path = path.removeFirstSegments(1);// remove project
-			IFolder folder = targetJavaProject.getProject().getFolder(path);
-			folder.create(false, true, null);
-			result = targetJavaProject.getPackageFragmentRoot(folder);
-		}
-		if (source.getResource() instanceof IProject) {
-			result = targetJavaProject.getPackageFragmentRoot(targetJavaProject
-					.getProject());
-		}
-		if (result != null) {
-			IClasspathEntry[] oldEntries = targetJavaProject.getRawClasspath();
-			boolean containsPath = false;
-			for (IClasspathEntry entry : oldEntries) {
-				if (entry.getPath().equals(result.getPath()))
-					containsPath = true;
-			}
-			if (!containsPath) {
-				IClasspathEntry[] newEntries = new IClasspathEntry[oldEntries.length + 1];
-				System.arraycopy(oldEntries, 0, newEntries, 0,
-						oldEntries.length);
-				newEntries[oldEntries.length] = JavaCore.newSourceEntry(result
-						.getPath());
-				targetJavaProject.setRawClasspath(newEntries, null);
-			}
-		}
-		return result;
-	}
-
-	private int countJavaProject(IJavaProject sourceJavaProject)
-			throws CoreException {
-		int sum = 0;
-		for (IPackageFragmentRoot root : sourceJavaProject
-				.getPackageFragmentRoots()) {
-			if (!root.exists())
-				continue;
-			if (root.getKind() == IPackageFragmentRoot.K_BINARY)
-				continue;
-
-			sum += countPackageFragementRoot(sourceJavaProject, root);
-		}
-		return sum;
-	}
-
-	private int countPackageFragementRoot(IJavaProject sourceJavaProject,
-			IPackageFragmentRoot sourceRoot) throws CoreException {
-		int sum = 0;
-		for (IPackageFragment pkg : sourceJavaProject.getPackageFragments()) {
-			if (pkg.getKind() == IPackageFragmentRoot.K_BINARY)
-				continue;
-			if (!sourceRoot.getPackageFragment(pkg.getElementName()).exists())
-				continue;
-
-			sum += countPackage(pkg);
-		}
-		return sum;
-	}
-
-	private int countPackage(IPackageFragment sourcePackage)
-			throws CoreException {
-		return sourcePackage.getCompilationUnits().length;
 	}
 
 }

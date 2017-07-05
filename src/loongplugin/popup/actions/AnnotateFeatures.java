@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.dialog.MiningStrategyConfDialog;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModelManager;
@@ -81,7 +81,7 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 			for(LElement element:recommendermaps.keySet()){
 				System.out.println("Annotate LElement:"+element.getId());
 				CLRAnnotatedSourceFile clrsourcefile = element.getCLRFile();
-				CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrsourcefile.getColorManager();
+				SourceFileColorManager colormanager = (SourceFileColorManager) clrsourcefile.getColorManager();
 				annotatedfeatureToNode(clrsourcefile.getCompilationUnit(),colormanager,element.getASTNode(),feature);
 				
 			}
@@ -109,7 +109,7 @@ public class AnnotateFeatures implements IObjectActionDelegate{
 		// TODO Auto-generated method stub
 		
 	}
-	public void annotatedfeatureToNode(ICompilationUnit unit,CompilationUnitColorManager colormanager,ASTNode node,Feature feature){
+	public void annotatedfeatureToNode(ICompilationUnit unit,SourceFileColorManager colormanager,ASTNode node,Feature feature){
 		
 		colormanager.beginBatch();
 		colormanager.addColor(node, feature);

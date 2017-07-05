@@ -6,7 +6,7 @@ import java.util.Set;
 
 import loongplugin.LoongPlugin;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.events.ASTColorChangedEvent;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModelNotFoundException;
@@ -58,7 +58,7 @@ public class OrganizeAllImportsJob extends ColoredSourceFileIteratorJob {
 	public static void organizeImports(CLRAnnotatedSourceFile source,
 			BindingProjectColorCache bindingProjectColorCache)
 			throws  CoreException {
-		CompilationUnitColorManager colorManager = (CompilationUnitColorManager) source.getColorManager();
+		SourceFileColorManager colorManager = (SourceFileColorManager) source.getColorManager();
 		colorManager.beginBatch();
 		Set<ASTNode> changedNodes = new HashSet<ASTNode>();
 		try {

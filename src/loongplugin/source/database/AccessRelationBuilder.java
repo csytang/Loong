@@ -41,7 +41,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LElementColorManager;
@@ -74,7 +74,7 @@ public class AccessRelationBuilder {
 	private Stack<LocalContextElement> curContextReminder;
 
 	private Map<String, LElement> importMap;
-	private CompilationUnitColorManager sourceColorManager;
+	private SourceFileColorManager sourceColorManager;
 	
 	private boolean puremod =false;
 	private class LocalContextElement {
@@ -116,7 +116,7 @@ public class AccessRelationBuilder {
 
 		this.aannotatedsourcefile = pannotatedsourcefile;
 		this.LElementColorManager = pelementColorManager;
-		this.sourceColorManager = (CompilationUnitColorManager) pannotatedsourcefile.getColorManager();
+		this.sourceColorManager = (SourceFileColorManager) pannotatedsourcefile.getColorManager();
 		CompilationUnit ast = JDTParserWrapper.parseCompilationUnit(lCU);
 		reset();
 		update(ast);

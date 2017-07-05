@@ -3,7 +3,7 @@ package loongplugin.views.astview;
 import java.util.List;
 import loongplugin.LoongPlugin;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.events.ASTColorChangedEvent;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -29,7 +29,7 @@ public class CleanASTColorAction extends Action  {
 		// TODO Auto-generated method stub
 		super.run();
 		this.setChecked(!this.isChecked());
-		CompilationUnitColorManager colormanager = (CompilationUnitColorManager) file.getColorManager();
+		SourceFileColorManager colormanager = (SourceFileColorManager) file.getColorManager();
 		colormanager.beginBatch();
 		ASTVisitor colorRemover = new ColorRemover(colormanager);
 		for (ASTNode node : affectednodes)
@@ -40,9 +40,9 @@ public class CleanASTColorAction extends Action  {
 	
 	
 	public static final class ColorRemover extends ASTVisitor {
-		private CompilationUnitColorManager colorManager;
+		private SourceFileColorManager colorManager;
 
-		public ColorRemover(CompilationUnitColorManager colorManager) {
+		public ColorRemover(SourceFileColorManager colorManager) {
 			this.colorManager = colorManager;
 		}
 

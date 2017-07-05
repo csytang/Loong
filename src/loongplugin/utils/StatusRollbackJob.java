@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -71,7 +71,7 @@ public class StatusRollbackJob extends WorkspaceJob {
 				Set<ASTNode> associatedASTNodes = bindentry.getValue();
 				ICompilationUnit unit = JavaCore.createCompilationUnitFrom(file);
 				CLRAnnotatedSourceFile clrannotatedfile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(unit);
-				CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrannotatedfile.getColorManager();
+				SourceFileColorManager colormanager = (SourceFileColorManager) clrannotatedfile.getColorManager();
 				colormanager.beginBatch();
 				for(ASTNode node:associatedASTNodes){
 					colormanager.addColor(node, f);

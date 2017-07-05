@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -63,11 +63,12 @@ public class SetCompUnitColorJob extends WorkspaceJob{
 					parser.setSource(compilationUnit);
 					CompilationUnit result = (CompilationUnit) parser.createAST(null);
 					CLRAnnotatedSourceFile clrFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(compilationUnit);
-					CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrFile.getColorManager();
+					SourceFileColorManager colormanager = (SourceFileColorManager) clrFile.getColorManager();
 					//收集所有的AST节点
-					Set<ASTNode> allastNodes = EmbeddedASTNodeCollector.collectASTNodes(compilationUnit);
+					// Set<ASTNode> allastNodes = EmbeddedASTNodeCollector.collectASTNodes(compilationUnit);
 					
 					colormanager.beginBatch();
+					/*
 					for(Feature f:features){
 						for(ASTNode node:allastNodes){
 							if(node instanceof MethodDeclaration||
@@ -77,6 +78,13 @@ public class SetCompUnitColorJob extends WorkspaceJob{
 							}
 						}
 					}
+					*/
+					
+					for(Feature f:features){
+						colormanager.addColor(result,f);
+						f.addASTNodeToFeature(compilationUnit, result);
+					}
+					
 					colormanager.endBatch();
 				}
 			}
@@ -93,7 +101,7 @@ public class SetCompUnitColorJob extends WorkspaceJob{
 							parser.setSource(compilationUnit);
 							CompilationUnit result = (CompilationUnit) parser.createAST(null);
 							CLRAnnotatedSourceFile clrFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(compilationUnit);
-							CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrFile.getColorManager();
+							SourceFileColorManager colormanager = (SourceFileColorManager) clrFile.getColorManager();
 							//收集所有的AST节点
 							Set<ASTNode> allastNodes = EmbeddedASTNodeCollector.collectASTNodes(compilationUnit);
 							

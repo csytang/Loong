@@ -125,7 +125,7 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 	 */
 	public IColorManager getColorManager() {
 		if (colorManager == null) {
-			colorManager = new CompilationUnitColorManager(colorFile, this);
+			colorManager = new SourceFileColorManager(colorFile, this);
 		}
 		return colorManager;
 	}
@@ -178,18 +178,17 @@ public class CLRAnnotatedSourceFile  implements IColoredJavaSourceFile {
 	}
 
 	protected static IFile getJavaFile(IFile colorFile) {
-		IPath javaFilePath = colorFile.getFullPath().removeFileExtension()
-				.addFileExtension("java");
+		IPath javaFilePath = colorFile.getFullPath().removeFileExtension().addFileExtension("java");
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(javaFilePath);
 	}
+	
 	//DEBUG
 	public IFile getColorFile(){
 		return colorFile;
 	}
 
-	protected static IFile getColorFile(IFile javaFile) {
-		IPath colorFilePath = javaFile.getFullPath().removeFileExtension()
-				.addFileExtension("clr");
+	public static IFile getColorFile(IFile javaFile) {
+		IPath colorFilePath = javaFile.getFullPath().removeFileExtension().addFileExtension("clr");
 		return ResourcesPlugin.getWorkspace().getRoot().getFile(colorFilePath);
 	}
 

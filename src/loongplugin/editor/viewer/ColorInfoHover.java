@@ -22,7 +22,7 @@ import org.eclipse.ui.IEditorPart;
 
 import loongplugin.color.ColorManager;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.color.coloredfile.IColorManager;
 import loongplugin.color.coloredfile.IColoredJavaSourceFile;
 import loongplugin.editor.CLREditor;
@@ -35,7 +35,7 @@ import loongplugin.utils.EditorUtility;
 public class ColorInfoHover extends ColoredTextHover implements ITextHover,ITextHoverExtension2 {
 
 	private IColoredJavaSourceFile sourceFile;
-	private CompilationUnitColorManager colorManager;
+	private SourceFileColorManager colorManager;
 	
 	
 	public ColorInfoHover(CLRAnnotatedSourceFile psourcefile){

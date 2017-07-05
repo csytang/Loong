@@ -16,7 +16,7 @@ import loongplugin.CIDEbridge.CIDEASTNodeCollector;
 import loongplugin.color.ColorManager;
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -141,7 +141,7 @@ public class LegacyAnnotationCaptureJob extends WorkspaceJob {
 			    		  continue;
 					  if(extension.equals("clr")){
 						  CLRAnnotatedSourceFile clrfile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(memberfile);
-						  CompilationUnitColorManager compUnitColorManager = (CompilationUnitColorManager)clrfile.getColorManager();
+						  SourceFileColorManager compUnitColorManager = (SourceFileColorManager)clrfile.getColorManager();
 						  HashMap<ASTID, Set<Feature>> astIDFeature = compUnitColorManager.getNode2Colors();
 						 
 						  
@@ -172,7 +172,7 @@ public class LegacyAnnotationCaptureJob extends WorkspaceJob {
 	}
 	
 	
-	private void synchronizeASTNodeWithColorAnnotation(Map<ASTID, Set<Feature>> astIDFeature,CompilationUnitColorManager manager,ICompilationUnit unit) {
+	private void synchronizeASTNodeWithColorAnnotation(Map<ASTID, Set<Feature>> astIDFeature,SourceFileColorManager manager,ICompilationUnit unit) {
 		// TODO Auto-generated method stub
 		/*
 		 * 

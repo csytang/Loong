@@ -28,7 +28,7 @@ import loongplugin.feature.Feature;
  * @author cKaestner
  * 
  */
-public class CompilationUnitColorManager extends AbstractColorManager implements IColorManager {
+public class SourceFileColorManager extends AbstractColorManager implements IColorManager {
 
 	private final IFile colorFile;//.clr file
 
@@ -37,7 +37,7 @@ public class CompilationUnitColorManager extends AbstractColorManager implements
 	private IColoredJavaSourceFile source;// .java file
 	private Map<ASTID,ASTNode> ASTIdToASTNode = new HashMap<ASTID,ASTNode>();
 	
-	public CompilationUnitColorManager(IFile colorFile,IColoredJavaSourceFile source) {
+	public SourceFileColorManager(IFile colorFile,IColoredJavaSourceFile source) {
 		this.colorFile = colorFile;
 		this.source = source;
 		

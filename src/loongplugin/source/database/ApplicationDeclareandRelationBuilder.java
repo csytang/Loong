@@ -5,7 +5,7 @@ import java.util.Stack;
 
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.source.database.model.LElement;
 import loongplugin.source.database.model.LElementColorManager;
@@ -42,7 +42,7 @@ public class ApplicationDeclareandRelationBuilder {
 	private ICompilationUnit alCU;
 	private LFlyweightElementFactory aelementfactory;
 	private ProgramDatabase aDB;
-	private CompilationUnitColorManager acolorManager;
+	private SourceFileColorManager acolorManager;
 	private LElement curCUElement;
 	private LElement curType;
 	private LElement curMethod;
@@ -56,7 +56,7 @@ public class ApplicationDeclareandRelationBuilder {
 		alCU = lCU;
 		aannotatedsourcefile = pannotatedsourcefile;
 		aelementfactory = pelementfactory;
-		acolorManager = (CompilationUnitColorManager) aannotatedsourcefile.getColorManager();
+		acolorManager = (SourceFileColorManager) aannotatedsourcefile.getColorManager();
 		curTypeReminder = new Stack<LElement>();
 		aelementcolormanager = pelementColorManager;
 		curParamIndex = -1;

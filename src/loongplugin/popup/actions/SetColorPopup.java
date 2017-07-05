@@ -7,7 +7,7 @@ import java.util.Set;
 
 import loongplugin.color.ColorHelper;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -62,10 +62,8 @@ public class SetColorPopup implements IWorkbenchWindowActionDelegate, IObjectAct
 		// Process unsupported multiple files selections from different projects
 		for (IResource r : resources) {
 			if (r.getProject() != project) {
-				MessageBox messageBox = new MessageBox(Display.getCurrent()
-						.getActiveShell(), SWT.OK);
-				messageBox
-						.setText("Unsupported selection. Select resources from a single project only.");
+				MessageBox messageBox = new MessageBox(Display.getCurrent().getActiveShell(), SWT.OK);
+				messageBox.setText("Unsupported selection. Select resources from a single project only.");
 				messageBox.open();
 				return;
 			}
@@ -73,25 +71,25 @@ public class SetColorPopup implements IWorkbenchWindowActionDelegate, IObjectAct
 		
 		if (!resources.isEmpty()) {
 			FeatureModel fm = FeatureModelManager.getInstance().getFeatureModel();
-			SelectFeatureSetWizard wizard = new SelectFeatureSetWizard(
-					ColorHelper.sortFeatures(fm.getFeatures()), null);
+			SelectFeatureSetWizard wizard = new SelectFeatureSetWizard(ColorHelper.sortFeatures(fm.getFeatures()), null);
 			try {
 				calcInitialSelection(resources, wizard, fm);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 			WizardDialog dialog = new WizardDialog(new Shell(), wizard);
 			dialog.create();
 			dialog.open();
 			Set<Feature> features = wizard.getSelectedFeatures();
 			Set<Feature> removedfeatures = wizard.getNotSelectedFeatures();
-			if (features != null 
-					&& (features.size() + removedfeatures.size() > 0)) {
+			if (features != null && (features.size() + removedfeatures.size() > 0)) {
 				WorkspaceJob op = new SetCompUnitColorJob(resources,features,removedfeatures);
 				op.setUser(true);
 				op.schedule();
 			}
+			
 		}
 	}
 
@@ -109,7 +107,7 @@ public class SetColorPopup implements IWorkbenchWindowActionDelegate, IObjectAct
 					parser.setSource(compilationUnit);
 					CompilationUnit result = (CompilationUnit) parser.createAST(null);
 					CLRAnnotatedSourceFile clrFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(compilationUnit);
-					CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrFile.getColorManager();
+					SourceFileColorManager colormanager = (SourceFileColorManager) clrFile.getColorManager();
 					colors = colormanager.getColors(result);
 				}
 			}
@@ -124,7 +122,7 @@ public class SetColorPopup implements IWorkbenchWindowActionDelegate, IObjectAct
 						parser.setSource(compilationUnit);
 						CompilationUnit result = (CompilationUnit) parser.createAST(null);
 						CLRAnnotatedSourceFile clrFile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(compilationUnit);
-						CompilationUnitColorManager colormanager = (CompilationUnitColorManager) clrFile.getColorManager();
+						SourceFileColorManager colormanager = (SourceFileColorManager) clrFile.getColorManager();
 						if(!colormanager.getColors(result).isEmpty()){
 							colors.addAll(colormanager.getColors(result));
 						}

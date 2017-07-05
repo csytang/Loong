@@ -29,25 +29,8 @@ public class ASTColorInheritance {
 	 * 
 	 * @return
 	 */
-	// public static List<ASTNode> getNotInheritedChildren(ASTNode parent){
-	// // to not inherit to blocks beneath if statements
-	// if (parent instanceof IfStatement)
-	// return wrapItems(((IfStatement) parent).getThenStatement(),((IfStatement)
-	// parent).getElseStatement());
-	// // same for for, while, do
-	// if (parent instanceof WhileStatement)
-	// return wrapItem(((WhileStatement) parent).getBody());
-	// if (parent instanceof ForStatement)
-	// return wrapItem(((ForStatement) parent).getBody());
-	// if (parent instanceof DoStatement)
-	// return wrapItem(((DoStatement) parent).getBody());
-	// // same for try
-	// if (parent instanceof TryStatement)
-	// return wrapItem(((TryStatement) parent).getBody());
-	// return null;
-	// }
-	public static final Set<ChildPropertyDescriptor> notInheritedProperties;
-	static {
+	
+	public static final Set<ChildPropertyDescriptor> notInheritedProperties; static {
 		notInheritedProperties = new HashSet<ChildPropertyDescriptor>();
 		notInheritedProperties.add(IfStatement.THEN_STATEMENT_PROPERTY);
 		notInheritedProperties.add(IfStatement.ELSE_STATEMENT_PROPERTY);
@@ -60,18 +43,5 @@ public class ASTColorInheritance {
 		notInheritedProperties.add(ConditionalExpression.ELSE_EXPRESSION_PROPERTY);
 	}
 
-	// private static List<ASTNode> wrapItem(ASTNode node){
-	// List<ASTNode> result=new ArrayList<ASTNode>();
-	// if (node!=null)
-	// result.add(node);
-	// return result;
-	// }
-	// private static List<ASTNode> wrapItems(ASTNode nodeA,ASTNode nodeB){
-	// List<ASTNode> result=new ArrayList<ASTNode>();
-	// if (nodeA!=null)
-	// result.add(nodeA);
-	// if (nodeB!=null)
-	// result.add(nodeB);
-	// return result;
-	// }
+	
 }

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -160,14 +160,14 @@ public class LElementColorManager{
 
 	public boolean addElementToColor(Feature color, LElement element) {
 		CLRAnnotatedSourceFile aColorSourceFile = element.getCLRFile();
-		CompilationUnitColorManager aColorManager = (CompilationUnitColorManager) aColorSourceFile.getColorManager();
+		SourceFileColorManager aColorManager = (SourceFileColorManager) aColorSourceFile.getColorManager();
 		aColorManager.addColor(element.getASTNode(), color);
 		return true;
 	}
 
 	private boolean removeElementFromColor(Feature color, LElement element) {
 		CLRAnnotatedSourceFile aColorSourceFile = element.getCLRFile();
-		CompilationUnitColorManager aColorManager = (CompilationUnitColorManager) aColorSourceFile.getColorManager();
+		SourceFileColorManager aColorManager = (SourceFileColorManager) aColorSourceFile.getColorManager();
 		if(aColorManager.getOwnColors(element.getASTNode()).contains(color)){
 			aColorManager.removeColor(element.getASTNode(), color);
 		}

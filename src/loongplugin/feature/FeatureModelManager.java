@@ -284,5 +284,9 @@ public class FeatureModelManager extends ExtensionPointManager<FeatureModelProvi
 		return project;
 	}
 
+	public boolean isFeatureModelFile(IFile file) {
+		return file.equals(this.mFile);
+	}
+
 	
 }

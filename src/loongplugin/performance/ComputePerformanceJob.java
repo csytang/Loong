@@ -12,7 +12,7 @@ import loongplugin.LoongPlugin;
 import loongplugin.CIDEbridge.CIDEASTNodeCollector;
 import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
-import loongplugin.color.coloredfile.CompilationUnitColorManager;
+import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
 import loongplugin.feature.FeatureModel;
 import loongplugin.feature.FeatureModelManager;
@@ -426,7 +426,7 @@ public class ComputePerformanceJob extends WorkspaceJob {
 		 */
 		
 		CLRAnnotatedSourceFile clrfile = (CLRAnnotatedSourceFile) CLRAnnotatedSourceFile.getColoredJavaSourceFile(miningclrfile);
-		CompilationUnitColorManager clrcolormanager = (CompilationUnitColorManager)clrfile.getColorManager();
+		SourceFileColorManager clrcolormanager = (SourceFileColorManager)clrfile.getColorManager();
 		
 		Map<Feature,Set<Integer>>featureToLineNumbers = new HashMap<Feature,Set<Integer>>();
 		for(ASTID id:clrcolormanager.getNode2Colors().keySet()){
