@@ -115,6 +115,18 @@
                label="Generate Variants..."
                menubarPath="LoongPlugin.menu/group4">
          </action>
+         <action
+               class="loongplugin.popup.actions.GenerateAllVariantsText"
+               id="LoongPlugin.generateallVariant"
+               label="Generate All Variants Texted..."
+               menubarPath="LoongPlugin.menu/group4">
+         </action>
+         <action
+               class="loongplugin.popup.actions.GenerateAllVariantsTextbased"
+               id="LoongPlugin.generateallVariantLabeled"
+               label="Generate All Variants Texted-Labeled..."
+               menubarPath="LoongPlugin.menu/group4">
+         </action>
          <visibility>
             <and>
                <objectState

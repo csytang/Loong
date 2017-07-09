@@ -299,6 +299,7 @@ public class FeatureModel implements PropertyConstants,Serializable {
 				layers.add(feature);
 		return Collections.unmodifiableCollection(layers);
 	}*/
+	
 	private LinkedList<Feature> layers = new LinkedList<Feature>();
 	
 	public Collection<Feature> getLayers(){
@@ -656,8 +657,7 @@ public class FeatureModel implements PropertyConstants,Serializable {
 	 *            a list of feature names for which
 	 * @return a list of features that is common to all variants
 	 */
-	public Collection<String> commonFeatures(long timeout,
-			Object... selectedFeatures) {
+	public Collection<String> commonFeatures(long timeout,Object... selectedFeatures) {
 		Node formula = NodeCreator.createNodes(this);
 		if (selectedFeatures.length > 0)
 			formula = new And(formula, new Or(selectedFeatures));

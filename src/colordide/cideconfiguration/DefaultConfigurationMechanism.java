@@ -28,6 +28,7 @@ import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.configuration.ConfigurationException;
 import loongplugin.configuration.IConfigurationMechanism;
 import loongplugin.feature.Feature;
+import loongplugin.hidefeatures.cide.DeleteHiddenNodesVisitor;
 
 
 

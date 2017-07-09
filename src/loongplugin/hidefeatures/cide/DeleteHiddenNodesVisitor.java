@@ -1,27 +1,5 @@
-/**
-    Copyright 2010 Christian K�stner
 
-    This file is part of CIDE.
-
-    CIDE is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, version 3 of the License.
-
-    CIDE is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with CIDE.  If not, see <http://www.gnu.org/licenses/>.
-
-    See http://www.fosd.de/cide/ for further information.
-*/
-
-/**
- * 
- */
-package colordide.cideconfiguration;
+package loongplugin.hidefeatures.cide;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +28,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
+import colordide.cideconfiguration.JDTColorManagerBridge;
 import loongplugin.color.coloredfile.ASTColorInheritance;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.color.coloredfile.SourceFileColorManager;
@@ -61,23 +40,18 @@ public class DeleteHiddenNodesVisitor extends ASTVisitor {
 
 	public static String hideCode(CLRAnnotatedSourceFile source, Collection<Feature> selectedColors) throws ConfigurationException {
 		try {
-			ICompilationUnit compUnit = JDTParserWrapper
-					.getICompilationUnit(source.getResource());
+			ICompilationUnit compUnit = JDTParserWrapper.getICompilationUnit(source.getResource());
 			assert compUnit != null;
-
-			CompilationUnit ast = JDTParserWrapper.parseJavaFile(source
-					.getResource());
+			CompilationUnit ast = JDTParserWrapper.parseJavaFile(source.getResource());
 			assert ast != null;
 
-			return hideCode(compUnit.getBuffer().getContents(), ast,
-					new JDTColorManagerBridge((SourceFileColorManager) source.getColorManager(), source), selectedColors);
+			return hideCode(compUnit.getBuffer().getContents(), ast, new JDTColorManagerBridge((SourceFileColorManager) source.getColorManager(), source), selectedColors);
 		} catch (Exception e) {
 			throw new ConfigurationException(e);
 		}
 	}
 
-	public static String hideCode(String buffer, CompilationUnit ast,
-			JDTColorManagerBridge nodeColors, Collection<Feature> visibleColors)
+	public static String hideCode(String buffer, CompilationUnit ast, JDTColorManagerBridge nodeColors, Collection<Feature> visibleColors)
 			throws JavaModelException, IllegalArgumentException {
 		Set<Feature> compUnitColors = nodeColors.getColors(ast);
 		for (Feature color : compUnitColors)
@@ -126,8 +100,7 @@ public class DeleteHiddenNodesVisitor extends ASTVisitor {
 			List<ASTNode> replacements = new ArrayList<ASTNode>();
 			for (Object prop : node.structuralPropertiesForType()) {
 				if (ASTColorInheritance.notInheritedProperties.contains(prop)) {
-					Object replace = rewrite.get(node,
-							(StructuralPropertyDescriptor) prop);
+					Object replace = rewrite.get(node,(StructuralPropertyDescriptor) prop);
 					if (replace instanceof ASTNode)
 						replacements.add((ASTNode) replace);
 				}
@@ -192,13 +165,11 @@ public class DeleteHiddenNodesVisitor extends ASTVisitor {
 			rewrite.set(parent, prop, defaultValue, null);
 	}
 
-	private void rewriteIfWhileEtc(ASTNode node, ASTNode parent,
-			StructuralPropertyDescriptor prop, List<ASTNode> replacements) {
+	private void rewriteIfWhileEtc(ASTNode node, ASTNode parent,StructuralPropertyDescriptor prop, List<ASTNode> replacements) {
 		Block replacement = node.getAST().newBlock();
 		rewrite.set(parent, prop, replacement, null);
 		if (replacements.size() > 0) {
-			ListRewrite blockRewriteList = getRewriteList(replacement,
-					Block.STATEMENTS_PROPERTY);
+			ListRewrite blockRewriteList = getRewriteList(replacement,Block.STATEMENTS_PROPERTY);
 			for (ASTNode s : replacements)
 				for (ASTNode n : resolveBlock(s)) {
 					blockRewriteList.insertLast(move(n), null);
@@ -207,8 +178,7 @@ public class DeleteHiddenNodesVisitor extends ASTVisitor {
 			rewrite.set(parent, prop, null, null);
 	}
 
-	private void rewriteListChild(ASTNode node, ASTNode parent,
-			ChildListPropertyDescriptor prop, List<ASTNode> replacements) {
+	private void rewriteListChild(ASTNode node, ASTNode parent,ChildListPropertyDescriptor prop, List<ASTNode> replacements) {
 		ListRewrite statementsListRewrite = getRewriteList(parent, prop);
 		int position = statementsListRewrite.getRewrittenList().indexOf(node);
 		statementsListRewrite.remove(node, null);
@@ -237,8 +207,7 @@ public class DeleteHiddenNodesVisitor extends ASTVisitor {
 
 	private List<ASTNode> resolveBlock(ASTNode replacement) {
 		if (replacement instanceof Block) {
-			ListRewrite rewrittenBlock = getRewriteList(replacement,
-					Block.STATEMENTS_PROPERTY);
+			ListRewrite rewrittenBlock = getRewriteList(replacement, Block.STATEMENTS_PROPERTY);
 			List l = rewrittenBlock.getRewrittenList();
 			if (replacement.getStartPosition() == -1)
 				return new ArrayList<ASTNode>();// TODO debugging only

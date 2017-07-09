@@ -19,10 +19,12 @@
 package loongplugin.featureconfiguration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import loongplugin.LoongPlugin;
@@ -54,7 +56,7 @@ public class Configuration {
 
 	private FeatureModel featureModel;
 
-	
+	private Map<Feature,SelectableFeature> feature_selectablefeature = new HashMap<Feature,SelectableFeature>();
 
 	public Configuration(FeatureModel featureModel) {
 		this.featureModel = featureModel;
@@ -70,20 +72,26 @@ public class Configuration {
 
 		updateAutomaticValues();
 	}
+	
+	public  Map<Feature,SelectableFeature> getFeaturetoSelectableFeature(){
+		return feature_selectablefeature;
+	}
 
 	private void initFeatures(SelectableFeature sFeature, Feature feature) {
 		
-		System.out.println("init features:"+feature.getName());
+	//	System.out.println("init features:"+feature.getName());
 		features.add(sFeature);
 		table.put(sFeature.getName(), sFeature);
-		
+		feature_selectablefeature.put(feature, sFeature);
 		for (Feature child : feature.getChildren()) {
 			SelectableFeature sChild = new SelectableFeature(this, child);
 			//System.out.println("init features:"+feature.getName()+" 's child "+child.getName());
+			feature_selectablefeature.put(child, sChild);
 			sFeature.addChild(sChild);
 			initFeatures(sChild, child);
+			
 		}
-		System.out.println("Feature:"+sFeature.getName()+" has "+sFeature.getChildren().length+" children");
+	//	System.out.println("Feature:"+sFeature.getName()+" has "+sFeature.getChildren().length+" children");
 	}
 
 	/**
@@ -201,6 +209,8 @@ public class Configuration {
 		feature.setManual(selection);
 		updateAutomaticValues();
 	}
+	
+	
 
 	public void setManual(String name, Selection selection) {
 		SelectableFeature feature = table.get(name);
@@ -256,5 +266,7 @@ public class Configuration {
 	public FeatureModel getFeatureModel() {
 		return featureModel;
 	}
+
+	
 
 }

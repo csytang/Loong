@@ -3,6 +3,7 @@ package loongplugin.configuration;
 import loongplugin.feature.FeatureModel;
 //import loongplugin.featureconfiguration.CreateConfigurationJob;
 import loongplugin.variants.AbstractConfigurationPage;
+import loongplugin.variants.CreateConfigurationJob;
 import loongplugin.variants.WizardPageCreateProject;
 
 import org.eclipse.core.resources.IProject;

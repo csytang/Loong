@@ -1,11 +1,8 @@
 package loongplugin.popup.actions;
 
-import loongplugin.configuration.WizardCreateConfiguration;
-import loongplugin.feature.FeatureModel;
-import loongplugin.feature.FeatureModelManager;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.packageview.PackageFragmentRootContainer;
@@ -19,27 +16,32 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.Workbench;
 
-public class GenerateVariants implements IObjectActionDelegate {
+import loongplugin.configuration.WizardCreateConfiguration;
+import loongplugin.feature.FeatureModel;
+import loongplugin.feature.FeatureModelManager;
+import loongplugin.variants.CreateFullConfigurationJob;
+
+public class GenerateAllVariantsText implements IObjectActionDelegate {
 
 	private ISelection selection;
 	
-	public GenerateVariants() {
+	public GenerateAllVariantsText() {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void run(IAction action) {
+		// TODO Auto-generated method stub
 		Shell shell = new Shell();
 
 		IProject project = getSelectedProject();
 		if (project != null) {
 			FeatureModel fm = FeatureModelManager.getInstance(project).getFeatureModel();
-			
-			WizardCreateConfiguration wizard = new WizardCreateConfiguration(project, fm);
-			WizardDialog dialog = new WizardDialog(shell, wizard);
-			dialog.create();
-			dialog.open();
+			CreateFullConfigurationJob job = new CreateFullConfigurationJob(project,fm);
+			job.setUser(true);
+			job.setPriority(Job.LONG);
+			job.schedule();
 		}
-		
 	}
 
 	@Override
@@ -69,5 +71,6 @@ public class GenerateVariants implements IObjectActionDelegate {
         }    
         return project;
 	}
+	
 
 }

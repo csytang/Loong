@@ -3,17 +3,12 @@ package colordide.cideconfiguration;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.dom.ASTNode;
-
 import loongplugin.color.coloredfile.ASTColorInheritance;
-import loongplugin.color.coloredfile.ASTID;
 import loongplugin.color.coloredfile.CLRAnnotatedSourceFile;
 import loongplugin.color.coloredfile.SourceFileColorManager;
 import loongplugin.feature.Feature;
-import loongplugin.utils.EmbeddedASTNodeCollector;
 
 /**
  * bride that provides access to the color manager also for JDT-AST nodes
